@@ -11,8 +11,10 @@ OBS builds the packages and publishes a repository for each distribution. The pr
 | `openSUSE_Tumbleweed` | `openSUSE:Factory/snapshot` | `x86_64`, `aarch64` | openSUSE Tumbleweed |
 | `RockyLinux_10` | `RockyLinux:10/baseos`, `appstream`, `CRB`, then `Fedora:EPEL:10/standard` | `x86_64` | Rocky Linux 10 |
 | `AlmaLinux_10` | `AlmaLinux:10/baseos`, `appstream`, `CRB`, then `Fedora:EPEL:10/standard` | `x86_64`, `aarch64` | AlmaLinux 10 |
-| `Debian_13` | Debian 13 (from the list of distributions) | `x86_64`, `aarch64` | Debian 13 |
-| `xUbuntu_24.04` | Ubuntu 24.04 (from the list of distributions) | `x86_64`, `aarch64` | Ubuntu 24.04 |
+| `Debian_13` | Debian 13 (from the list of distributions) | `x86_64` | Debian 13 |
+| `xUbuntu_26.04`, `xUbuntu_26.10` | Ubuntu 26.04 and 26.10 (from the list of distributions) | `x86_64` | Ubuntu 26.04 and 26.10 |
+
+Ubuntu 24.04 was built too, but its repository never got published, so it was left out: whoever needs it builds the package.
 
 The package is pure Python, so the build is the same everywhere.
 
