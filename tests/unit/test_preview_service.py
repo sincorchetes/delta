@@ -93,7 +93,10 @@ def test_clear_without_any_preview_is_harmless(root):
 
 def test_two_previews_of_the_same_version_do_not_collide(root):
     previews = service(root, FakeEngine(files={"/home/u/a.txt": "old"}))
-    assert previews.preview("first", "/home/u/a.txt") != previews.preview("first", "/home/u/a.txt")
+    first = previews.preview("first", "/home/u/a.txt")
+    second = previews.preview("first", "/home/u/a.txt")
+
+    assert first != second
 
 
 def test_a_path_the_snapshot_lacks_leaves_nothing_behind(root):
