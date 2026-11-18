@@ -28,13 +28,8 @@ finish-args:
   - --env=GSETTINGS_BACKEND=keyfile
 
 modules:
-  - name: python3-borgbackup
-    buildsystem: simple
-    build-options:
-      build-args:
-        - --share=network # development builds only: Flathub builds are offline (flatpak/README.md)
-    build-commands:
-      - pip3 install --prefix=/app --no-cache-dir borgbackup
+  # Generated with flatpak-pip-generator: pinned sources and hashes, so the build needs no network.
+  - python3-borgbackup.json
 
   - name: delta
     buildsystem: meson
