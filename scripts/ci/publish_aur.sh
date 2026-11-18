@@ -41,14 +41,16 @@ chown -R root "$work"
 
 cd "$work"
 git config --global --add safe.directory "$work"
-if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
-    echo "The AUR already has $version"
+
+# Only the two files of the package count: updpkgsums leaves the tarball it downloaded beside them.
+git add PKGBUILD .SRCINFO
+if git diff --cached --quiet; then
+    echo "The AUR already has this PKGBUILD for $version"
     exit 0
 fi
 
 git config user.name "${AUR_GIT_NAME:?AUR_GIT_NAME is not set}"
 git config user.email "${AUR_GIT_EMAIL:?AUR_GIT_EMAIL is not set}"
-git add PKGBUILD .SRCINFO
 git commit -q -m "Update to $version"
 git show --stat HEAD
 
