@@ -135,7 +135,8 @@ def test_many_threads_can_use_it_at_once():
     def work(n):
         try:
             for _ in range(200):
-                assert cache.get("/r", "s1", "home/u/Pictures/trip") is not None
+                if cache.get("/r", "s1", "home/u/Pictures/trip") is None:
+                    failures.append("an entry that was put in was not found")  # not an assert: the except below would swallow it
                 cache.put("/r", f"s{n}", "p", "x")
         except Exception as err:  # noqa: BLE001 - the test reports any failure of any thread
             failures.append(err)

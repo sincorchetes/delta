@@ -30,8 +30,10 @@ WHEN = datetime(2026, 1, 2, 3, 4, 5)
 
 
 def test_a_generated_passphrase_carries_thirty_two_bytes_of_randomness():
-    assert len(generate_passphrase()) == 43  # 32 bytes, URL-safe base64 without padding
-    assert generate_passphrase() != generate_passphrase()
+    first, second = generate_passphrase(), generate_passphrase()
+
+    assert len(first) == 43  # 32 bytes, URL-safe base64 without padding
+    assert first != second
 
 
 def test_the_preview_folder_is_private_to_the_user(tmp_path):
