@@ -77,8 +77,9 @@ The AUR credentials are in a GitHub environment named `release` (*Settings → E
 | `AUR_SSH_PRIVATE_KEY` | secret | A key made only for this, whose public half is in the AUR account. |
 | `AUR_GIT_NAME`, `AUR_GIT_EMAIL` | variables | The author of the commits in the AUR. |
 
-The host keys of the AUR are in `scripts/ci/aur_known_hosts` (`ssh-keyscan aur.archlinux.org`, checked against the fingerprints in
-the Arch wiki before committing), so the workflow never trusts a key it was not given.
+The host keys of the AUR are in `scripts/ci/aur_known_hosts` (taken with `ssh-keyscan aur.archlinux.org`; the Arch wiki does not
+publish their fingerprints), so the workflow never trusts a key it was not given. If the AUR ever changes its keys, the push fails
+on purpose: take them again, check them from a network that is not yours, and commit the file.
 
 ## Reporting problems
 
