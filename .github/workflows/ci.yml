@@ -26,9 +26,9 @@ jobs:
         with:
           fetch-depth: 0 # Sonar needs the history to attribute new code
 
-      - uses: cachix/install-nix-action@v31
+      - uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086 # v31
 
-      - uses: cachix/cachix-action@v17
+      - uses: cachix/cachix-action@38b082610b782e7e93e209c35fd730d399dee866 # v17
         with:
           name: devenv
 
@@ -60,7 +60,7 @@ jobs:
       - name: SonarQube Cloud
         # Secrets are not handed to pull requests from forks. The project is given here, not in a file.
         if: env.SONAR_TOKEN != ''
-        uses: SonarSource/sonarqube-scan-action@v8
+        uses: SonarSource/sonarqube-scan-action@59202af334b4ba7b5db01b701b8e79f8b3bef0f4 # v8
         with:
           args: >
             -Dsonar.organization=sincorchetes
@@ -84,9 +84,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: oven-sh/setup-bun@v2
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
 
-      - run: bun install --frozen-lockfile
+      - run: bun install --frozen-lockfile --ignore-scripts
 
       # Type-checks the content, then writes plain files to website/dist: GitHub Pages serves no code.
       - run: bun run build
