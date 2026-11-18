@@ -3,6 +3,20 @@
 All notable changes to Delta are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.1] - 2026-11-18
+
+No change to the program: packaging and documentation.
+
+### Added
+
+- **A Flatpak bundle** attached to each release, built by CI offline from pinned sources (GNOME 51 runtime).
+- **Repositories** for Fedora, Rocky Linux, AlmaLinux, openSUSE, Debian and Ubuntu (openSUSE Build Service) and a package in the AUR,
+  with the installation page rewritten around them.
+
+### Fixed
+
+- The optional dependency of the Arch package is `nautilus-python`, the real name of the package.
+
 ## [0.1.0] - 2026-11-18
 
 The first release.
@@ -25,4 +39,5 @@ The first release.
   and a Flatpak (the Delta window, with its own timer started through the Background portal).
 - **Documentation** at <https://delta.sincorchetes.tech>, in English and Spanish.
 
+[0.1.1]: https://github.com/sincorchetes/delta/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sincorchetes/delta/releases/tag/v0.1.0
