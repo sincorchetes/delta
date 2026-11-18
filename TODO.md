@@ -55,13 +55,16 @@ Do it after the first CI run, so that the names of the checks exist.
       container (see `packaging/obs/README.md`).
 - [ ] **OBS, Ubuntu 24.04:** its repository built but was never published, so it was left out. Try it again later.
 - [x] **AUR:** `delta-backup` is published, and builds, installs and imports in a clean Arch container.
-- [ ] **AUR, next version:** in `packaging/arch/PKGBUILD` the optional dependency is `python-nautilus`; the real name in Arch is
-      `nautilus-python`.
+- [x] **AUR, 0.1.1:** the optional dependency is `nautilus-python`, the real name in Arch.
 - [x] **Flatpak:** built offline from pinned sources, installed from its bundle in Fedora and tried (`flatpak/`); the bundle is
       attached to the GitHub Release. It has no automatic updates: each release needs its bundle built and attached.
 - [ ] **Flatpak, updates:** a repository of its own (for instance in GitHub Pages) would update it by itself.
 - [ ] **Flathub:** left out on purpose for now. Its policy does not accept manifests with AI-assisted content, which this one has,
       and asks for a stable project with some history. Look at it again when the project has both.
+- [ ] **NixOS module** (`nixosModules.default`) for `configuration.nix` without Home Manager: `services.delta.enable` that sets
+      up the user unit (`systemd.packages`), the D-Bus service (`services.dbus.packages`), the settings schema and
+      `nautilus-python`. Try it on a real NixOS (`nixos-rebuild build-vm` or a `nixosTest`) before documenting it; until then
+      the installation page sends NixOS users without Home Manager to the Flatpak.
 
 ## 5. Try it on a real system
 
