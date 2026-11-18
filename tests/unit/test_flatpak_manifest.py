@@ -17,7 +17,11 @@ def top_level(key: str) -> str:
     return re.search(rf"^{re.escape(key)}:\s*(.+)$", TEXT, re.M).group(1).strip()
 
 
-FINISH_ARGS = re.findall(r"^  - (--[^\s#]+)", TEXT.split("finish-args:")[1].split("modules:")[0], re.M)
+def finish_args(text: str) -> list[str]:
+    return re.findall(r"^  - (--[^\s#]+)", text.split("finish-args:")[1].split("modules:")[0], re.M)
+
+
+FINISH_ARGS = finish_args(TEXT)
 
 
 def test_the_application_is_the_one_of_the_desktop_entry_and_the_metadata():
@@ -74,4 +78,11 @@ def test_no_wider_permission_is_asked_for(wider):
 
 
 def test_borg_is_part_of_the_sandbox_since_the_computers_one_cannot_be_reached():
-    assert "- name: python3-borgbackup" in TEXT and "pip3 install --prefix=/app" in TEXT
+    assert "- python3-borgbackup.json" in TEXT
+
+
+def test_borg_comes_from_pinned_sources_so_that_the_build_needs_no_network():
+    module = (ROOT / "flatpak" / "python3-borgbackup.json").read_text(encoding="utf-8")
+
+    assert "--share=network" not in TEXT and "--share=network" not in module
+    assert module.count('"type": "file"') == module.count('"sha256"') > 0

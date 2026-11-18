@@ -2,11 +2,10 @@
 # need the computer outside the sandbox: no «Browse as a folder» (a FUSE mount inside the sandbox is not
 # seen by the file manager) and no Nautilus extension (Nautilus loads its extensions from the host).
 #
-# This is the manifest for building and testing here. To publish on Flathub the Python modules must come
-# from pinned, offline sources (see flatpak/README.md) and the runtime must be the current stable one.
+# Builds the working copy, offline (see flatpak/README.md); CI uses it to build the bundle of each release.
 app-id: io.github.sincorchetes.Delta
 runtime: org.gnome.Platform
-runtime-version: '50' # GNOME 48 is out of support since 2026-03-24; use the newest one listed by `flatpak remote-ls --runtime flathub`
+runtime-version: '51'
 sdk: org.gnome.Sdk
 command: delta-ui
 # The translations stay in the application, not in a separate locale extension: the optional Nautilus
@@ -28,13 +27,8 @@ finish-args:
   - --env=GSETTINGS_BACKEND=keyfile
 
 modules:
-  - name: python3-borgbackup
-    buildsystem: simple
-    build-options:
-      build-args:
-        - --share=network # development builds only: Flathub builds are offline (flatpak/README.md)
-    build-commands:
-      - pip3 install --prefix=/app --no-cache-dir borgbackup
+  # Generated with flatpak-pip-generator: pinned sources and hashes, so the build needs no network.
+  - python3-borgbackup.json
 
   - name: delta
     buildsystem: meson
