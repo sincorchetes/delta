@@ -97,10 +97,12 @@ It is for **installing** Delta, not for developing it (that is devenv). The Pyth
 
 ## CI
 
-`.github/workflows/ci.yml`, in this order: the tests (a devenv job: lint, build, pytest with coverage) → the **mutation tests**
-(`scripts/ci/check_mutants.sh`: it fails if more than one mutant survives, the known equivalent one) → the **website** (it builds
-the site and checks its pages) → **publishing** (only on `main`). The packages for each distribution are not built here: OBS builds
-them when a tag is published. **CodeQL** (`.github/workflows/codeql.yml`) analyzes, in another workflow, the Python code and the
+`.github/workflows/ci.yml` has two pipelines, and `scripts/ci/changed_areas.sh` decides which one a change needs. A change
+**outside `website/`** runs the tests (a devenv job: lint, build, pytest with coverage, then the **mutation tests** of
+`scripts/ci/check_mutants.sh`, which fail if more than one mutant survives, the known equivalent one, and Sonar). A change
+**in `website/`** runs only the website: it builds the site, checks its pages and, on `main`, **publishes** it. A change in
+both runs both. The job that does not apply is skipped, and a skipped job counts as passed for the required checks. The packages
+for each distribution are not built here: OBS builds them when a tag is published. **CodeQL** (`.github/workflows/codeql.yml`) analyzes, in another workflow, the Python code and the
 workflows themselves, on every PR, on `main` and once a week.
 
 **The system libraries of each distribution** are checked in another workflow, `.github/workflows/distros.yml`, which does not block
