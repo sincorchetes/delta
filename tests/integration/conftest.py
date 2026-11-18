@@ -1,5 +1,3 @@
-import os
-import shutil
 import subprocess
 
 import gi
@@ -11,31 +9,13 @@ from gi.repository import Gio, GLib
 IFACE, PATH = "io.github.sincorchetes.Delta.Service1", "/io/github/sincorchetes/Delta/Service1"
 
 
-def session_bus_options() -> list[str]:
-    """How to start a session bus: `--session` asks for /etc/dbus-1/session.conf, which not every system has.
-
-    The dbus of Nix, for one, keeps its configuration in its own share/. The file next to the program is used when it is there.
-    """
-    program = shutil.which("dbus-daemon")
-    if program is None:
-        return ["--session"]
-    config = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(program))), "share", "dbus-1", "session.conf")
-    return ["--config-file", config] if os.path.exists(config) else ["--session"]
-
-
-@pytest.fixture(scope="session")
-def bus_options():
-    """For the tests that start their own bus (the keyring ones): the options that `bus` uses."""
-    return session_bus_options()
-
-
 @pytest.fixture
-def bus(monkeypatch):
+def bus(monkeypatch, bus_options):
     # A plain dbus-daemon, not Gio.TestDBus: TestDBus forks a copy of the test process to watch the
     # bus, and once a GTK test has played media that copy outlives the run, spinning and holding its
     # output open. Its down() also waits ~30 s for the g_bus_get() singleton GTK keeps alive.
     daemon = subprocess.Popen(
-        ["dbus-daemon", *session_bus_options(), "--nofork", "--print-address=1"], stdout=subprocess.PIPE, text=True
+        ["dbus-daemon", *bus_options, "--nofork", "--print-address=1"], stdout=subprocess.PIPE, text=True
     )
     try:
         address = daemon.stdout.readline().strip()
