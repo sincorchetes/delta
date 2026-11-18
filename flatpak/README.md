@@ -20,14 +20,14 @@ flatpak run io.github.sincorchetes.Delta
 Without devenv, the same by hand:
 
 ```sh
-flatpak install flathub org.gnome.Platform//50 org.gnome.Sdk//50
+flatpak install flathub org.gnome.Platform//51 org.gnome.Sdk//51
 flatpak-builder --user --install --force-clean build-flatpak flatpak/io.github.sincorchetes.Delta.yaml
 ```
 
 On NixOS add `--disable-rofiles-fuse` (`flatpak-build` does): `rofiles-fuse` needs a setuid `fusermount`, and the
 one of the Nix store is not.
 
-The runtime (`50`) is the one the manifest names: use the current stable GNOME runtime when publishing.
+The runtime (`51`) is the one the manifest names: use the current stable GNOME runtime when publishing.
 
 ## For Flathub
 

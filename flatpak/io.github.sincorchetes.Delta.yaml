@@ -6,7 +6,7 @@
 # from pinned, offline sources (see flatpak/README.md) and the runtime must be the current stable one.
 app-id: io.github.sincorchetes.Delta
 runtime: org.gnome.Platform
-runtime-version: '50' # GNOME 48 is out of support since 2026-03-24; use the newest one listed by `flatpak remote-ls --runtime flathub`
+runtime-version: '51'
 sdk: org.gnome.Sdk
 command: delta-ui
 # The translations stay in the application, not in a separate locale extension: the optional Nautilus
