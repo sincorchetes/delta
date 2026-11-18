@@ -58,9 +58,20 @@ jobs:
         run: devenv shell -- sh scripts/ci/check_mutants.sh
 
       - name: SonarQube Cloud
-        # Secrets are not handed to pull requests from forks.
+        # Secrets are not handed to pull requests from forks. The project is given here, not in a file.
         if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@v8
+        with:
+          args: >
+            -Dsonar.organization=sincorchetes
+            -Dsonar.projectKey=sincorchetes_delta
+            -Dsonar.projectName=Delta
+            -Dsonar.sources=src
+            -Dsonar.tests=tests
+            -Dsonar.python.version=3.12,3.13,3.14
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.exclusions=po/**,data/**,nix/**
+            -Dsonar.sourceEncoding=UTF-8
 
   # The website is built only after the tests and the mutation tests have passed, and published only from main.
   web:
