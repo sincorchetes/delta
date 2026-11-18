@@ -15,9 +15,9 @@ import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 
 <Aside type="note" title="Where Delta is today">
 Delta is published in a **repository for each distribution**, built by the openSUSE Build Service: add it once, and your
-package manager installs Delta and keeps it up to date. Fedora, Rocky Linux, AlmaLinux and openSUSE have one, and Arch
-Linux has the AUR. Debian and Ubuntu do not have a repository yet: for them, build the package yourself, use Nix, or
-build from source. A Flatpak is planned for the 1.0 release.
+package manager installs Delta and keeps it up to date. Fedora (43 and 44), Rocky Linux 10, AlmaLinux 10, openSUSE
+Tumbleweed, Debian 13 and Ubuntu (26.04 and 26.10) have one, and Arch Linux has the AUR. For any other distribution, or
+version, build the package yourself, use Nix, or build from source. A Flatpak is planned for the 1.0 release.
 </Aside>
 
 ## Install from the repository
@@ -50,6 +50,19 @@ Python bindings) as its own dependencies.
     sudo zypper install delta-backup
     ```
   </TabItem>
+  <TabItem label="Debian, Ubuntu">
+    The repository is signed with a key that you add first. This is for Debian 13. On Ubuntu, use `xUbuntu_26.04` or
+    `xUbuntu_26.10` in the two addresses instead of `Debian_13`.
+
+    ```sh
+    sudo apt install curl gnupg ca-certificates
+    sudo install -d /etc/apt/keyrings
+    curl -fsSL https://download.opensuse.org/repositories/home:/sincorchetes:/delta/Debian_13/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/delta.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/delta.gpg] https://download.opensuse.org/repositories/home:/sincorchetes:/delta/Debian_13/ /" | sudo tee /etc/apt/sources.list.d/delta.list
+    sudo apt update
+    sudo apt install delta-backup
+    ```
+  </TabItem>
   <TabItem label="Arch Linux">
     From the AUR, with your AUR helper:
 
@@ -63,7 +76,7 @@ Then log out and back in, so Files loads the extension and your session finds th
 
 ## Build the package yourself
 
-Where there is no repository (Debian and Ubuntu, for now), or if you prefer to build it, each package is named
+Where there is no repository (for example Ubuntu 24.04, or another version or distribution), or if you prefer to build it, each package is named
 `delta-backup` and installs the same files as the source build, with your distribution's own dependencies. Get the source first:
 
 ```sh
@@ -165,7 +178,7 @@ Files loads its extensions from your computer, never from a Flatpak, so the Flat
 right-click menu by itself. If you want it, install one small file next to Files. It does not need the rest of Delta: it opens the Flatpak.
 
 1. Install **nautilus-python** from your distribution. For example, `sudo dnf install nautilus-python` on Fedora,
-   `sudo pacman -S python-nautilus` on Arch, `sudo apt install python3-nautilus` on Debian and Ubuntu.
+   `sudo pacman -S nautilus-python` on Arch, `sudo apt install python3-nautilus` on Debian and Ubuntu.
 2. Put the extension where Files looks for it, and restart Files:
 
    ```sh
