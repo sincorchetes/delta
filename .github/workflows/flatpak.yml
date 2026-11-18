@@ -1,0 +1,57 @@
+name: Flatpak
+
+# Builds the Flatpak offline (BorgBackup from pinned sources) on every change to what goes into it, and
+# attaches the bundle to the GitHub Release when a version tag is pushed.
+on:
+  pull_request:
+    paths:
+      - flatpak/**
+      - src/**
+      - data/**
+      - po/**
+      - meson.build
+      - .github/workflows/flatpak.yml
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the Flatpak
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-51
+      options: --privileged
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - uses: flatpak/flatpak-github-actions/flatpak-builder@79327416609af08178ad73b352877e51450790b3 # v6
+        with:
+          bundle: delta.flatpak
+          manifest-path: flatpak/io.github.sincorchetes.Delta.yaml
+          cache-key: flatpak-builder-${{ github.sha }}
+
+  release:
+    name: Attach the bundle to the release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          path: bundle
+          merge-multiple: true
+
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          bundle=$(find bundle -name '*.flatpak' | head -n 1)
+          mv "$bundle" "delta-${TAG#v}.flatpak"
+          gh release upload "$TAG" "delta-${TAG#v}.flatpak" --clobber --repo "$GITHUB_REPOSITORY"
