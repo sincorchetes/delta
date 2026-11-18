@@ -14,16 +14,57 @@ import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 - A **systemd user session**, which runs the scheduled backups. Every GNOME desktop on a mainstream distribution has one.
 
 <Aside type="note" title="Where Delta is today">
-Delta is not in any distribution's repositories yet. The packages for Fedora, Rocky Linux and AlmaLinux,
-openSUSE, Debian, Ubuntu and Arch are written and build cleanly; the repositories that will let your package manager
-install and update them, and a Flatpak, are planned for the 1.0 release. Until then, build the package for your
-distribution, use Nix, or build from source.
+Delta is published in a **repository for each distribution**, built by the openSUSE Build Service: add it once, and your
+package manager installs Delta and keeps it up to date. Fedora, Rocky Linux, AlmaLinux and openSUSE have one, and Arch
+Linux has the AUR. Debian and Ubuntu do not have a repository yet: for them, build the package yourself, use Nix, or
+build from source. A Flatpak is planned for the 1.0 release.
 </Aside>
 
-## Build the package for your distribution
+## Install from the repository
 
-Each package is named `delta-backup` and installs the same files as the source build, with your distribution's own
-dependencies. Get the source first:
+Add the repository of your distribution once, and install **`delta-backup`**. The packages are signed: your package
+manager asks you to trust the key the first time. The package brings what Delta needs (BorgBackup, the keyring, the
+Python bindings) as its own dependencies.
+
+<Tabs>
+  <TabItem label="Fedora">
+    ```sh
+    sudo dnf config-manager addrepo --from-repofile=https://download.opensuse.org/repositories/home:/sincorchetes:/delta/Fedora_44/home:sincorchetes:delta.repo
+    sudo dnf install delta-backup
+    ```
+    On Fedora 43, use `Fedora_43` in the address.
+  </TabItem>
+  <TabItem label="Rocky, AlmaLinux">
+    BorgBackup comes from EPEL, so enable it first. On AlmaLinux, use `AlmaLinux_10` in the address instead of `RockyLinux_10`.
+
+    ```sh
+    sudo dnf install epel-release
+    sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:/sincorchetes:/delta/RockyLinux_10/home:sincorchetes:delta.repo
+    sudo dnf install delta-backup
+    ```
+  </TabItem>
+  <TabItem label="openSUSE Tumbleweed">
+    ```sh
+    sudo zypper addrepo https://download.opensuse.org/repositories/home:/sincorchetes:/delta/openSUSE_Tumbleweed/home:sincorchetes:delta.repo
+    sudo zypper refresh
+    sudo zypper install delta-backup
+    ```
+  </TabItem>
+  <TabItem label="Arch Linux">
+    From the AUR, with your AUR helper:
+
+    ```sh
+    yay -S delta-backup
+    ```
+  </TabItem>
+</Tabs>
+
+Then log out and back in, so Files loads the extension and your session finds the Delta service.
+
+## Build the package yourself
+
+Where there is no repository (Debian and Ubuntu, for now), or if you prefer to build it, each package is named
+`delta-backup` and installs the same files as the source build, with your distribution's own dependencies. Get the source first:
 
 ```sh
 git clone https://github.com/sincorchetes/delta.git && cd delta
