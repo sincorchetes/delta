@@ -46,7 +46,7 @@ def _name_has_owner(connection) -> bool:
 
 
 @pytest.fixture(scope="module")
-def store(tmp_path_factory):
+def store(tmp_path_factory, bus_options):
     # A plain dbus-daemon, not Gio.TestDBus: TestDBus.down() waits for the g_bus_get()
     # singleton that libsecret keeps alive, which cost ~30 s of teardown.
     if shutil.which("dbus-daemon") is None:
@@ -55,7 +55,7 @@ def store(tmp_path_factory):
     runtime = root / "run"
     runtime.mkdir(mode=0o700)
     bus = subprocess.Popen(
-        ["dbus-daemon", "--session", "--nofork", "--print-address=1"],
+        ["dbus-daemon", *bus_options, "--nofork", "--print-address=1"],
         stdout=subprocess.PIPE,
         text=True,
     )

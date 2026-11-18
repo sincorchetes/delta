@@ -68,7 +68,7 @@ class ProcMountUsage:
     @staticmethod
     def _watches(folder: str, device: str) -> bool:
         info = os.path.join(folder, "fdinfo")
-        for name in os.listdir(info):
+        for name in sorted(os.listdir(info)):  # the same order everywhere: it stops at the first watch it finds
             try:
                 with open(os.path.join(info, name)) as text:
                     lines = text.read().splitlines()

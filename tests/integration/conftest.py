@@ -23,6 +23,12 @@ def session_bus_options() -> list[str]:
     return ["--config-file", config] if os.path.exists(config) else ["--session"]
 
 
+@pytest.fixture(scope="session")
+def bus_options():
+    """For the tests that start their own bus (the keyring ones): the options that `bus` uses."""
+    return session_bus_options()
+
+
 @pytest.fixture
 def bus(monkeypatch):
     # A plain dbus-daemon, not Gio.TestDBus: TestDBus forks a copy of the test process to watch the
