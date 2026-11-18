@@ -80,8 +80,18 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_datadir}/metainfo/%{appid}.metainfo.xml
 %{_datadir}/icons/hicolor/scalable/apps/%{appid}.svg
 %{_datadir}/icons/hicolor/symbolic/apps/%{appid}-symbolic.svg
-%if ! 0%{?suse_version}
-# openSUSE's find_lang already lists the help pages in delta.lang.
+# openSUSE's find_lang already lists the help pages in delta.lang, so only the other distributions list them here.
+# openSUSE's build also fails on a directory that no package owns: these belong to the icon themes and to
+# nautilus-python, which Delta does not depend on, so it owns them too (two packages may own the same directory).
+%if 0%{?suse_version}
+%dir %{_datadir}/icons/hicolor
+%dir %{_datadir}/icons/hicolor/scalable
+%dir %{_datadir}/icons/hicolor/scalable/apps
+%dir %{_datadir}/icons/hicolor/symbolic
+%dir %{_datadir}/icons/hicolor/symbolic/apps
+%dir %{_datadir}/nautilus-python
+%dir %{_datadir}/nautilus-python/extensions
+%else
 %{_datadir}/help/C/delta/
 %lang(es) %{_datadir}/help/es/delta/
 %endif
