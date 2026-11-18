@@ -14,7 +14,7 @@ Flatpak was built and tried on Fedora.
       it is already gone from the tree). Keep a copy of the old `.git` outside the repository.
 - [ ] Push the first commit to `main` and make the repository public.
 - [ ] Tag `v0.1.0` (no dot after the `v`), set the release date in `CHANGELOG.md` and create the GitHub Release from its notes.
-- [ ] Set the real `sha256sums` in `packaging/arch/PKGBUILD` (it is `SKIP` now) and try the download from the tag with `makepkg`.
+- [x] The real `sha256sums` is in `packaging/arch/PKGBUILD`, and the download from the tag builds and installs in a clean Arch container.
 
 ## 2. Configure GitHub
 

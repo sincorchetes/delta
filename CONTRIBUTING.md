@@ -59,6 +59,10 @@ A release is one more pull request. It changes the version in `meson.build`, `pa
 release in the changelog. `tests/unit/test_packaging.py` fails if they disagree. Once it is merged, tag `main` as `vX.Y.Z`
 (for example `v0.1.0`, with no dot after the `v`).
 
+The checksum of the `PKGBUILD` is the one thing that cannot be in that pull request: it is the sum of the tarball that GitHub makes
+from the tag, so it is set after tagging (`updpkgsums` in `packaging/arch/`) in a pull request of its own, and then the package is
+pushed to the AUR.
+
 ## Reporting problems
 
 - A bug or an idea: open an issue and fill in the form.
