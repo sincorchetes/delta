@@ -159,6 +159,13 @@ service started first.
 
 </Steps>
 
+<Aside type="caution" title="NixOS without Home Manager">
+Delta only has a module for Home Manager. A NixOS module for `configuration.nix` is planned but does not exist yet, and
+installing the package in `environment.systemPackages` alone is not enough: the user service, the D-Bus service and the
+settings schema also have to be found, which is what the Home Manager module takes care of. On NixOS without Home Manager,
+use the [Flatpak](#install-the-flatpak) (`services.flatpak.enable = true;`), or add Home Manager.
+</Aside>
+
 ## Build it from source
 
 <Steps>

@@ -159,6 +159,13 @@ arranque primero.
 
 </Steps>
 
+<Aside type="caution" title="NixOS sin Home Manager">
+Delta solo tiene un módulo para Home Manager. Un módulo de NixOS para `configuration.nix` está previsto, pero aún no existe, e
+instalar el paquete solo en `environment.systemPackages` no basta: también hay que encontrar el servicio de usuario, el servicio
+de D-Bus y el esquema de ajustes, que es lo que resuelve el módulo de Home Manager. En NixOS sin Home Manager, usa el
+[Flatpak](#instalar-el-flatpak) (`services.flatpak.enable = true;`) o añade Home Manager.
+</Aside>
+
 ## Compilar desde el código fuente
 
 <Steps>
