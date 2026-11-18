@@ -101,12 +101,17 @@ It is for **installing** Delta, not for developing it (that is devenv). The Pyth
 (`scripts/ci/check_mutants.sh`: it fails if more than one mutant survives, the known equivalent one) → the **website** (it builds
 the site and checks its pages) → **publishing** (only on `main`). The packages for each distribution are not built here: OBS builds
 them when a tag is published. **CodeQL** (`.github/workflows/codeql.yml`) analyzes, in another workflow, the Python code and the
-workflows themselves, on every PR, on `main` and once a week. Alongside all that, a matrix of containers (Fedora is required; Arch,
-Tumbleweed, AlmaLinux 10, Rocky 10, Ubuntu 24.04 and Debian 13 are informative until they run clean). Each one installs its packages
-with `scripts/ci/install-deps.sh`, checks the minimum base with `scripts/ci/check_base.py` (GNOME 46: GTK 4.10, libadwaita 1.5,
-Python 3.12), builds with Meson, validates the GSettings schema, the `.desktop` file and the AppStream (`meson test`) and runs
-`uv run pytest`. Toolchain changes must keep CI and devenv in parity; when you add a system dependency, add it to
-`install-deps.sh` too.
+workflows themselves, on every PR, on `main` and once a week.
+
+**The system libraries of each distribution** are checked in another workflow, `.github/workflows/distros.yml`, which does not block
+a pull request: you run it by hand, and it runs by itself once a week. It covers Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10,
+Rocky 10, Ubuntu 24.04 and Debian 13, plus a build of the Nix flake. Each distribution installs the packages it ships (its
+`python3-gobject`, GTK, libadwaita, BorgBackup) with `scripts/ci/install-deps.sh`, with **no uv and nothing from PyPI**: it is what
+a user of that distribution's package gets. It checks the minimum base with `scripts/ci/check_base.py` (GNOME 46: GTK 4.10,
+libadwaita 1.5, Python 3.12), builds with Meson, validates the GSettings schema, the `.desktop` file and the AppStream
+(`meson test`) and runs `python3 -m pytest`. The `pyproject.toml` and `uv.lock` pins are only for development (devenv), the Nix
+package and the Flatpak; a Flatpak brings its own runtime and is not part of that check. Toolchain changes must keep devenv and the
+distributions in parity; when you add a system dependency, add it to `install-deps.sh` too.
 
 ## Workflow
 
@@ -114,8 +119,7 @@ Python 3.12), builds with Meson, validates the GSettings schema, the `.desktop` 
   `main`; the only exception is the first commit of the repository.
 - Every change follows the same path: a **new branch from `main`** (`feature/…`, `fix/…`, `docs/…`) → a **pull request** → CI
   green → a squash merge → the branch is deleted.
-- To merge, the jobs `devenv` (tests and mutants), `Fedora` and `web` must pass in the PR. The other containers are informative
-  until they run clean.
+- To merge, the jobs `devenv` (tests and mutants) and `web` must pass in the PR. The distributions workflow is a check, not a gate.
 - A new version is one more PR: it raises the version in `meson.build`, `packaging/rpm/delta-backup.spec` (with its `%changelog`),
   `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/_service` and `CHANGELOG.md` (`tests/unit/test_packaging.py` fails
   if they disagree) and, once in `main`, it is tagged `vX.Y.Z` (with the `v` attached to the number: `v0.1.0`, never `v.0.1.0`).

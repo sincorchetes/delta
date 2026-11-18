@@ -1,7 +1,8 @@
 """LibsecretStore against a real gnome-keyring-daemon on an isolated bus.
 
-The bus and daemon are module-scoped: libsecret uses the g_bus_get() singleton,
-which Gio caches per process, so the session bus must outlive every test here.
+The bus is the private one of the whole run (tests/conftest.py) and the daemon is module-scoped: libsecret uses the
+g_bus_get() singleton, which Gio caches per process, so the session bus must outlive every test here and be fixed
+before the first test that needs one.
 """
 
 import os
@@ -46,24 +47,15 @@ def _name_has_owner(connection) -> bool:
 
 
 @pytest.fixture(scope="module")
-def store(tmp_path_factory):
-    # A plain dbus-daemon, not Gio.TestDBus: TestDBus.down() waits for the g_bus_get()
-    # singleton that libsecret keeps alive, which cost ~30 s of teardown.
-    if shutil.which("dbus-daemon") is None:
+def store(tmp_path_factory, private_session_bus):
+    # The keyring goes on the private bus of the whole run (tests/conftest.py): libsecret uses the connection
+    # that g_bus_get() fixed for the process, and that is this bus, not the one of whoever runs the tests.
+    if private_session_bus is None:
         pytest.skip("dbus-daemon not installed")
+    address = private_session_bus
     root = tmp_path_factory.mktemp("keyring")
     runtime = root / "run"
     runtime.mkdir(mode=0o700)
-    bus = subprocess.Popen(
-        ["dbus-daemon", "--session", "--nofork", "--print-address=1"],
-        stdout=subprocess.PIPE,
-        text=True,
-    )
-    assert bus.stdout is not None
-    address = bus.stdout.readline().strip()
-    assert address, "dbus-daemon did not print its address"
-    environment = pytest.MonkeyPatch()
-    environment.setenv("DBUS_SESSION_BUS_ADDRESS", address)
     env = {
         **os.environ,
         "XDG_DATA_HOME": str(root / "data"),
@@ -96,9 +88,6 @@ def store(tmp_path_factory):
     daemon.terminate()
     daemon.wait(timeout=5)
     connection.close_sync(None)
-    bus.terminate()
-    bus.wait(timeout=5)
-    environment.undo()
 
 
 def test_missing_secret_is_none(store):

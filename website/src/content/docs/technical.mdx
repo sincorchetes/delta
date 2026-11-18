@@ -32,7 +32,8 @@ Delta's quality is measured, not claimed. Every figure below comes from a comman
   tell apart**, because it changes nothing the program can observe.
 - **Checks of the project itself.** Every visible text is translated, the help pages are valid and their links exist, the version of every package matches the build,
   the Flatpak asks for no more permissions than agreed, and the AppStream and desktop entries are validated.
-- **Seven distributions in continuous integration**, and the packages are built and installed in clean containers on Fedora, Rocky Linux, openSUSE, Debian, Ubuntu and Arch.
+- **Each distribution's own libraries.** Once a week, and whenever it is asked for, Delta is built and its tests are run on Fedora, Arch, openSUSE, AlmaLinux, Rocky Linux, Ubuntu and Debian
+  with the packages each one ships and its own Python, which is what the user of its package gets; and the Nix package is built. The packages are also built and installed in clean containers on Fedora, Rocky Linux, openSUSE, Debian, Ubuntu and Arch.
 
 ## Why BorgBackup
 

@@ -9,7 +9,8 @@ architecture rules, the development environment and what "done" means.
 
 1. Create a **new branch** from `main`: `feature/…`, `fix/…` or `docs/…`.
 2. Open a **pull request**. The template lists what to check.
-3. The **CI must be green**: tests, mutation tests, the website build and the Fedora job. The other distributions are informative.
+3. The **CI must be green**: the tests, the mutation tests and the website build. The check on each distribution's own libraries is
+   a separate workflow that does not block a pull request.
 4. It is merged by **squash**, and the branch is deleted.
 
 ## Set up

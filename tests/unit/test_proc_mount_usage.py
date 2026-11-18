@@ -120,7 +120,9 @@ def test_a_program_that_ends_while_it_is_being_looked_at_is_not_a_problem(proc, 
 def test_what_cannot_be_read_is_skipped(proc, usage):
     folder = program(proc, 7, files=[], watching=[DEVICE])
     (folder / "fd" / "3").write_text("a file, not a link: readlink fails like for a closed fd")
-    (folder / "fdinfo" / "4").mkdir()  # reading it fails like for an fd that vanished
+    # Reading it fails like for an fd that vanished. Its name sorts before the readable watch ("10"): the search stops at the
+    # first watch it finds, so the unreadable entry has to come first for the test to go through it.
+    (folder / "fdinfo" / "1").mkdir()
 
     assert usage.users(MOUNT) != []  # the readable watch still counts
 

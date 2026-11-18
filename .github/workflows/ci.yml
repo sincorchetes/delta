@@ -14,6 +14,8 @@ permissions:
 
 jobs:
   # The same environment developers use (devenv), so "works on my machine" is the CI.
+  # The packages for each distribution are built by OBS, and `distros.yml` checks Delta on the system libraries
+  # of each one (it does not block a pull request).
   devenv:
     name: devenv (tests, quality, Sonar)
     runs-on: ubuntu-latest
@@ -56,66 +58,20 @@ jobs:
         run: devenv shell -- sh scripts/ci/check_mutants.sh
 
       - name: SonarQube Cloud
-        # Secrets are not handed to pull requests from forks.
+        # Secrets are not handed to pull requests from forks. The project is given here, not in a file.
         if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@v8
-
-  # The minimum base (GNOME 46) on the distributions Delta is meant for, each with its own system packages.
-  # Fedora must pass; the others report until they have run clean once, so one distribution's packaging
-  # quirk does not hide the rest (set `experimental: false` as each one proves itself).
-  distros:
-    name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
-    container: ${{ matrix.image }}
-    continue-on-error: ${{ matrix.experimental }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - { name: "Fedora", image: "fedora:latest", experimental: false }
-          - { name: "Arch Linux", image: "archlinux:latest", experimental: true }
-          - { name: "openSUSE Tumbleweed", image: "opensuse/tumbleweed:latest", experimental: true }
-          - { name: "AlmaLinux 10", image: "almalinux:10", experimental: true }
-          - { name: "Rocky Linux 10", image: "rockylinux/rockylinux:10", experimental: true }
-          - { name: "Ubuntu 24.04", image: "ubuntu:24.04", experimental: true }
-          - { name: "Debian 13", image: "debian:trixie", experimental: true }
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Install the distribution's packages
-        run: sh scripts/ci/install-deps.sh
-
-      - name: Install uv
-        run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-
-      - name: Sync Python environment
-        run: sh scripts/sync-venv.sh
-
-      - name: The minimum base is there (versions and the interface classes Delta calls)
-        run: uv run python scripts/ci/check_base.py
-
-      - name: Build
-        run: |
-          meson setup build
-          meson compile -C build
-
-      - name: Validate GSettings schema
-        run: glib-compile-schemas --strict --dry-run data
-
-      - name: Validate the desktop entry and the AppStream metadata
-        run: meson test -C build
-
-      - name: Tests
-        # Widget tests need a display: without Xvfb they are left out and the log says so.
-        run: |
-          if command -v xvfb-run > /dev/null; then
-            xvfb-run -a uv run pytest -q
-          else
-            echo "::warning::no xvfb-run on this distribution: the GTK widget tests were not run"
-            uv run pytest -q --ignore=tests/gtk
-          fi
+        with:
+          args: >
+            -Dsonar.organization=sincorchetes
+            -Dsonar.projectKey=sincorchetes_delta
+            -Dsonar.projectName=Delta
+            -Dsonar.sources=src
+            -Dsonar.tests=tests
+            -Dsonar.python.version=3.12,3.13,3.14
+            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.exclusions=po/**,data/**,nix/**
+            -Dsonar.sourceEncoding=UTF-8
 
   # The website is built only after the tests and the mutation tests have passed, and published only from main.
   web:

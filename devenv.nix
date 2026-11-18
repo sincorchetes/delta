@@ -21,6 +21,7 @@
     flatpak-builder # builds flatpak/*.yaml
     flatpak # enough for --user installs; to run it integrated in the session use services.flatpak.enable on NixOS
     gvfs
+    shared-mime-info # the MIME database: Gio.content_type_guess needs it to know that note.txt is text (NixOS has it; the CI does not)
     gtk4
     libadwaita
     gst_all_1.gstreamer
@@ -50,6 +51,8 @@
 
   enterShell = ''
     export PATH="$DEVENV_ROOT/.devenv/state/venv/bin:$PATH"
+    # Where GLib looks for the MIME database: devenv does not add the share/ of its packages by itself.
+    export XDG_DATA_DIRS="${pkgs.shared-mime-info}/share''${XDG_DATA_DIRS:+:$XDG_DATA_DIRS}"
   '';
 
   scripts.sync.exec = ''

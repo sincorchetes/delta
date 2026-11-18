@@ -78,7 +78,8 @@ def test_a_second_copy_never_overwrites_the_first(home):
     first = restore.restore_beside("first", str(doc), replace=False)
     second = restore.restore_beside("first", str(doc), replace=False)
 
-    assert first != second and second.endswith("doc (restored 2026-11-10) 2.txt")
+    assert first != second
+    assert second == str(home / "docs" / "doc (restored 2026-11-10) 2.txt")  # next to the original, not in the working directory
     assert read(first) == read(second) == "old"
 
 
