@@ -1,0 +1,73 @@
+name: Flatpak
+
+# Builds the Flatpak offline (BorgBackup from pinned sources) on every change to what goes into it, and
+# attaches the bundle to the GitHub Release when a version tag is pushed.
+on:
+  pull_request:
+    paths:
+      - flatpak/**
+      - src/**
+      - data/**
+      - po/**
+      - meson.build
+      - .github/workflows/flatpak.yml
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build the Flatpak
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # Directly on the runner, not in the container of the Flatpak actions: updating a GNOME 51 runtime
+      # inside that container fails with "Invalid cross-device link". Ubuntu restricts the user namespaces
+      # that the sandbox of flatpak-builder needs.
+      - name: Install flatpak-builder
+        run: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          sudo apt-get update
+          sudo apt-get install -y flatpak flatpak-builder
+          flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+      - name: Build
+        run: |
+          flatpak-builder --user --install-deps-from=flathub --repo=repo --force-clean --disable-rofiles-fuse \
+            build-flatpak flatpak/io.github.sincorchetes.Delta.yaml
+
+      - name: Bundle
+        run: |
+          flatpak build-bundle --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo \
+            repo delta.flatpak io.github.sincorchetes.Delta
+
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: delta-flatpak
+          path: delta.flatpak
+
+  release:
+    name: Attach the bundle to the release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          path: bundle
+          merge-multiple: true
+
+      - name: Upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          bundle=$(find bundle -name '*.flatpak' | head -n 1)
+          mv "$bundle" "delta-${TAG#v}.flatpak"
+          gh release upload "$TAG" "delta-${TAG#v}.flatpak" --clobber --repo "$GITHUB_REPOSITORY"
