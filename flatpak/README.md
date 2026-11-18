@@ -29,20 +29,20 @@ one of the Nix store is not.
 
 The runtime (`51`) is the one the manifest names: use the current stable GNOME runtime when publishing.
 
-## For Flathub
+## Releases
 
-- **Two manifests.** `io.github.sincorchetes.Delta.yaml` builds your working copy (`type: dir`) to try changes;
-  `io.github.sincorchetes.Delta.flathub.yaml` builds the tag of a release (`type: git`, with its commit) and is the one
-  submitted to Flathub, as `io.github.sincorchetes.Delta.yaml` next to `python3-borgbackup.json`. A new version changes the
-  `tag` and the `commit` there, and the release in the metainfo.
+The workflow `.github/workflows/flatpak.yml` builds this manifest on every change that goes into the Flatpak, and when a
+`vX.Y.Z` tag is pushed it attaches the bundle `delta-X.Y.Z.flatpak` to the GitHub Release. It is not published on Flathub
+(its policy does not accept AI-assisted manifests, and it asks for a stable project), so it does not update by itself.
+
 - **Offline sources.** `python3-borgbackup.json` was made with
   [flatpak-pip-generator](https://github.com/flatpak/flatpak-builder-tools/tree/master/pip)
   (`--output python3-borgbackup pkgconfig setuptools-scm borgbackup`): pinned sources and hashes, no network. The
   OpenSSL, lz4 and zstd that BorgBackup builds against come from the SDK. Regenerate it when BorgBackup changes.
 - **Checks.** `flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest <manifest>` and `... repo <repo>`.
-  On a local build the repository check reports the screenshots as not mirrored: Flathub mirrors them itself.
+  On a local build the repository check reports the screenshots as not mirrored: only Flathub mirrors them.
 - **Permissions.** `--filesystem=home` is wide, because a backup program has to read what it backs up and
-  write what it restores. Flathub will ask why: the answer is this paragraph.
+  write what it restores.
 
 ## Right-click in Files
 

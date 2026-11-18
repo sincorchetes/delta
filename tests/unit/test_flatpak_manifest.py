@@ -86,11 +86,3 @@ def test_borg_comes_from_pinned_sources_so_that_the_build_needs_no_network():
 
     assert "--share=network" not in TEXT and "--share=network" not in module
     assert module.count('"type": "file"') == module.count('"sha256"') > 0
-
-
-def test_the_manifest_that_builds_a_release_uses_the_same_runtime_and_permissions():
-    release = (ROOT / "flatpak" / f"{APP_ID}.flathub.yaml").read_text(encoding="utf-8")
-
-    assert f"runtime-version: {top_level('runtime-version')}\n" in release
-    assert finish_args(release) == FINISH_ARGS
-    assert re.search(r"^\s+commit: [0-9a-f]{40}$", release, re.M)

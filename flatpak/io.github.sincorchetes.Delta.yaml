@@ -2,8 +2,7 @@
 # need the computer outside the sandbox: no «Browse as a folder» (a FUSE mount inside the sandbox is not
 # seen by the file manager) and no Nautilus extension (Nautilus loads its extensions from the host).
 #
-# This is the manifest for building and testing here. To publish on Flathub the Python modules must come
-# from pinned, offline sources (see flatpak/README.md) and the runtime must be the current stable one.
+# Builds the working copy, offline (see flatpak/README.md); CI uses it to build the bundle of each release.
 app-id: io.github.sincorchetes.Delta
 runtime: org.gnome.Platform
 runtime-version: '51'
