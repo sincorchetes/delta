@@ -29,14 +29,18 @@ one of the Nix store is not.
 
 The runtime (`50`) is the one the manifest names: use the current stable GNOME runtime when publishing.
 
-## What this manifest is not yet
+## For Flathub
 
-- **Offline sources.** `python3-borgbackup` installs from PyPI with the network on, which only works for
-  your own builds. Flathub builds offline: generate a module with pinned sources and hashes with
-  [flatpak-pip-generator](https://github.com/flatpak/flatpak-builder-tools/tree/master/pip) and put it in
-  the manifest instead. BorgBackup also builds C code: if the build asks for a library the SDK does not
-  have (lz4, xxhash, zstd, acl), add it as a module before it.
-- **Tested.** It has not been built yet: the first `flatpak-builder` run is likely to ask for an adjustment.
+- **Two manifests.** `io.github.sincorchetes.Delta.yaml` builds your working copy (`type: dir`) to try changes;
+  `io.github.sincorchetes.Delta.flathub.yaml` builds the tag of a release (`type: git`, with its commit) and is the one
+  submitted to Flathub, as `io.github.sincorchetes.Delta.yaml` next to `python3-borgbackup.json`. A new version changes the
+  `tag` and the `commit` there, and the release in the metainfo.
+- **Offline sources.** `python3-borgbackup.json` was made with
+  [flatpak-pip-generator](https://github.com/flatpak/flatpak-builder-tools/tree/master/pip)
+  (`--output python3-borgbackup pkgconfig setuptools-scm borgbackup`): pinned sources and hashes, no network. The
+  OpenSSL, lz4 and zstd that BorgBackup builds against come from the SDK. Regenerate it when BorgBackup changes.
+- **Checks.** `flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest <manifest>` and `... repo <repo>`.
+  On a local build the repository check reports the screenshots as not mirrored: Flathub mirrors them itself.
 - **Permissions.** `--filesystem=home` is wide, because a backup program has to read what it backs up and
   write what it restores. Flathub will ask why: the answer is this paragraph.
 
