@@ -13,11 +13,32 @@ permissions:
   contents: read
 
 jobs:
+  # A change in website/ runs only the pipeline of the website; anything else runs the tests and not the website.
+  # A job that is skipped counts as passed for the required checks.
+  changes:
+    name: what changed
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.areas.outputs.code }}
+      web: ${{ steps.areas.outputs.web }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - id: areas
+        env:
+          BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD: ${{ github.sha }}
+        run: sh scripts/ci/changed_areas.sh "$BASE" "$HEAD" >> "$GITHUB_OUTPUT"
+
   # The same environment developers use (devenv), so "works on my machine" is the CI.
   # The packages for each distribution are built by OBS, and `distros.yml` checks Delta on the system libraries
   # of each one (it does not block a pull request).
   devenv:
     name: devenv (tests, quality, Sonar)
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     env:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -73,10 +94,11 @@ jobs:
             -Dsonar.exclusions=po/**,data/**,nix/**
             -Dsonar.sourceEncoding=UTF-8
 
-  # The website is built only after the tests and the mutation tests have passed, and published only from main.
+  # The website is built when website/ changes, and published only from main.
   web:
     name: website (build and check)
-    needs: devenv
+    needs: changes
+    if: needs.changes.outputs.web == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
