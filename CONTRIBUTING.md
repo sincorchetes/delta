@@ -59,9 +59,26 @@ A release is one more pull request. It changes the version in `meson.build`, `pa
 release in the changelog. `tests/unit/test_packaging.py` fails if they disagree. Once it is merged, tag `main` as `vX.Y.Z`
 (for example `v0.1.0`, with no dot after the `v`).
 
-The checksum of the `PKGBUILD` is the one thing that cannot be in that pull request: it is the sum of the tarball that GitHub makes
-from the tag, so it is set after tagging (`updpkgsums` in `packaging/arch/`) in a pull request of its own, and then the package is
-pushed to the AUR.
+Pushing the tag does most of the rest:
+
+- `flatpak.yml` builds the Flatpak, makes the GitHub Release with the notes of that version in `CHANGELOG.md`, and attaches the
+  bundle.
+- `release.yml` publishes the package to the AUR: the real checksum of the tarball of the tag (the `PKGBUILD` keeps `SKIP`, since
+  the sum only exists once the tag does) and `.SRCINFO`. Run it by hand (*Actions → Publish packages → Run workflow*) with a tag
+  and *dry run* on to check a publication without pushing anything.
+- The openSUSE Build Service is published by hand: see `packaging/obs/README.md`.
+
+### What the maintainer sets up once
+
+The AUR credentials are in a GitHub environment named `release` (*Settings → Environments*), limited to `main` and the tags `v*`:
+
+| Name | Kind | What |
+|---|---|---|
+| `AUR_SSH_PRIVATE_KEY` | secret | A key made only for this, whose public half is in the AUR account. |
+| `AUR_GIT_NAME`, `AUR_GIT_EMAIL` | variables | The author of the commits in the AUR. |
+
+The host keys of the AUR are in `scripts/ci/aur_known_hosts` (`ssh-keyscan aur.archlinux.org`, checked against the fingerprints in
+the Arch wiki before committing), so the workflow never trusts a key it was not given.
 
 ## Reporting problems
 

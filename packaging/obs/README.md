@@ -44,15 +44,16 @@ because the source package that OBS makes this way is in format 1.0.
 
 ```sh
 git clone --depth 1 --branch vX.Y.Z https://github.com/sincorchetes/delta.git source
-osc checkout home:sincorchetes:delta
-cd home:sincorchetes:delta
-osc mkpac delta-backup                 # only the first time
-cd delta-backup
+osc checkout home:sincorchetes:delta delta-backup      # the package that already exists in OBS
+cd home:sincorchetes:delta/delta-backup
 cp ../../source/packaging/rpm/delta-backup.spec ../../source/packaging/obs/_service ../../source/packaging/obs/delta-backup.dsc .
 tar --owner=0 --group=0 --exclude=debian/source -czf debian.tar.gz -C ../../source debian
-osc add delta-backup.spec _service delta-backup.dsc debian.tar.gz     # only the first time
+osc status                             # the four files, with M
 osc commit -m "Delta X.Y.Z"
 ```
+
+Do not use `osc mkpac` or `osc add` for an update: they make a new local package, and `osc commit` then fails with `package
+'delta-backup' already exists`. (`mkpac` and `add` are only for creating the package the first time.)
 
 If the tarball does not show up after the commit, run `osc service remoterun`. To follow the builds:
 
