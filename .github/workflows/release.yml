@@ -31,13 +31,19 @@ jobs:
     environment: release
     container: docker.io/library/archlinux:base
     steps:
+      # The scripts and the pinned host keys: those of the workflow that runs (main, or the tag itself).
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # What is published: the tree of the tag, which by hand can be an older one than the scripts.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ inputs.tag || github.ref_name }}
+          path: tag
 
       - name: Publish
         env:
           AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           AUR_GIT_NAME: ${{ vars.AUR_GIT_NAME }}
           AUR_GIT_EMAIL: ${{ vars.AUR_GIT_EMAIL }}
+          SOURCE_DIR: ${{ github.workspace }}/tag
         run: sh scripts/ci/publish_aur.sh "$TAG"
