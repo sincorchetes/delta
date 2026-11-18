@@ -3,6 +3,13 @@
 All notable changes to Delta are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **A backup folder inside what you back up** (for example `~/Backups` with your home folder as the source) is no longer copied
+  into itself: the repository is always skipped.
+
 ## [0.1.1] - 2026-11-18
 
 No change to the program: packaging and documentation.

@@ -41,7 +41,7 @@
     <item>
       <title><gui>Skip these</gui></title>
       <p>Folders (<gui style="button">Add folder…</gui>) or single files (<gui style="button">Add file…</gui>) that are not backed up.
-      The cache and the trash are always skipped. You cannot skip everything you back up.</p>
+      The cache, the trash and the backup folder itself are always skipped. You cannot skip everything you back up.</p>
     </item>
   </terms>
 </page>

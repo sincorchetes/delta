@@ -50,7 +50,25 @@ def test_new_jobs_have_unique_ids():
     service = BackupService(FakeEngine(), REPO, ("/home",), ("*.tmp",))
     first, second = service.new_job(), service.new_job()
     assert first.id != second.id
-    assert first.excludes == ("*.tmp",)
+    assert first.excludes[0] == "*.tmp"
+
+
+def test_a_job_never_includes_the_repository_itself_so_a_destination_inside_the_sources_is_not_copied():
+    service = BackupService(FakeEngine(), REPO, ("/home",), ("*.tmp",))
+
+    assert service.new_job().excludes == ("*.tmp", "pp:/r")
+
+
+def test_the_excluded_repository_path_is_normalized():
+    service = BackupService(FakeEngine(), Repository("/home/u//backups/./repo/"), ("/home/u",))
+
+    assert service.new_job().excludes == ("pp:/home/u/backups/repo",)
+
+
+def test_a_job_without_a_repository_excludes_only_what_was_asked():
+    service = BackupService(FakeEngine(), None, ("/home",), ("*.tmp",))
+
+    assert service.new_job().excludes == ("*.tmp",)
 
 
 def test_prune_applies_policy():
