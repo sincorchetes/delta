@@ -51,23 +51,30 @@ jobs:
           path: delta.flatpak
 
   release:
-    name: Attach the bundle to the release
+    name: Make the release and attach the bundle
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           path: bundle
           merge-multiple: true
 
-      - name: Upload
+      - name: Release and upload
         env:
           GH_TOKEN: ${{ github.token }}
           TAG: ${{ github.ref_name }}
         run: |
+          version="${TAG#v}"
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            sh scripts/ci/release_notes.sh "$version" > notes.md
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --verify-tag --title "Delta $version" --notes-file notes.md
+          fi
           bundle=$(find bundle -name '*.flatpak' | head -n 1)
-          mv "$bundle" "delta-${TAG#v}.flatpak"
-          gh release upload "$TAG" "delta-${TAG#v}.flatpak" --clobber --repo "$GITHUB_REPOSITORY"
+          mv "$bundle" "delta-$version.flatpak"
+          gh release upload "$TAG" "delta-$version.flatpak" --clobber --repo "$GITHUB_REPOSITORY"

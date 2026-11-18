@@ -1,0 +1,61 @@
+name: Publish packages
+
+# When a version tag is pushed, publishes the package to the AUR and to the openSUSE Build Service. The GitHub Release and
+# the Flatpak bundle are made by flatpak.yml. The credentials are secrets of the `release` environment.
+# By hand (Run workflow) it checks everything but the last step: the push to the AUR and the commit to OBS.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: The tag to publish (for example v0.1.1)
+        required: true
+      dry_run:
+        description: Do everything but the push to the AUR and the commit to OBS
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+env:
+  TAG: ${{ inputs.tag || github.ref_name }}
+  DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
+
+jobs:
+  aur:
+    name: Publish to the AUR
+    runs-on: ubuntu-latest
+    environment: release
+    container: docker.io/library/archlinux:base
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+
+      - name: Publish
+        env:
+          AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          AUR_GIT_NAME: ${{ vars.AUR_GIT_NAME }}
+          AUR_GIT_EMAIL: ${{ vars.AUR_GIT_EMAIL }}
+        run: sh scripts/ci/publish_aur.sh "$TAG"
+
+  obs:
+    name: Publish to OBS
+    runs-on: ubuntu-latest
+    environment: release
+    container: registry.opensuse.org/opensuse/tumbleweed:latest
+    steps:
+      - name: Git, for the checkout
+        run: zypper --non-interactive install --no-recommends git tar gzip
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+
+      - name: Publish
+        env:
+          OBS_USER: ${{ vars.OBS_USER }}
+          OBS_SSH_PRIVATE_KEY: ${{ secrets.OBS_SSH_PRIVATE_KEY }}
+        run: sh scripts/ci/publish_obs.sh "$TAG"

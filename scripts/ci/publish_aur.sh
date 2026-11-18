@@ -1,0 +1,53 @@
+#!/bin/sh
+# Publishes the PKGBUILD of a tag to the AUR: the real checksum, .SRCINFO, a commit and the push.
+# Runs as root in an Arch Linux container (it creates the user that makepkg needs).
+# Usage: publish_aur.sh vX.Y.Z
+# Environment: AUR_SSH_PRIVATE_KEY (required), AUR_GIT_NAME, AUR_GIT_EMAIL, DRY_RUN=1 (everything but the push).
+set -eu
+
+tag=${1:?usage: publish_aur.sh vX.Y.Z}
+version=${tag#v}
+here=$(cd "$(dirname "$0")/../.." && pwd)
+known_hosts=$here/scripts/ci/aur_known_hosts
+work=/work/aur
+
+fail() { echo "publish_aur.sh: $*" >&2; exit 1; }
+
+grep -q "^pkgver=$version\$" "$here/packaging/arch/PKGBUILD" || fail "pkgver of the PKGBUILD is not $version"
+[ -s "$known_hosts" ] || fail "scripts/ci/aur_known_hosts is empty: the host keys of the AUR have to be pinned there"
+[ -n "${AUR_SSH_PRIVATE_KEY:-}" ] || fail "AUR_SSH_PRIVATE_KEY is not set"
+
+pacman -Sy --noconfirm --needed pacman-contrib base-devel git openssh >/dev/null
+
+install -d -m 700 /root/.ssh
+printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > /root/.ssh/aur
+chmod 600 /root/.ssh/aur
+cp "$known_hosts" /root/.ssh/known_hosts
+export GIT_SSH_COMMAND="ssh -i /root/.ssh/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+
+git clone ssh://aur@aur.archlinux.org/delta-backup.git "$work"
+cp "$here/packaging/arch/PKGBUILD" "$work/PKGBUILD"
+
+useradd -m builder
+chown -R builder "$work"
+su builder -c "cd $work && updpkgsums && makepkg --printsrcinfo > .SRCINFO"
+chown -R root "$work"
+
+cd "$work"
+git config --global --add safe.directory "$work"
+if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+    echo "The AUR already has $version"
+    exit 0
+fi
+
+git config user.name "${AUR_GIT_NAME:?AUR_GIT_NAME is not set}"
+git config user.email "${AUR_GIT_EMAIL:?AUR_GIT_EMAIL is not set}"
+git add PKGBUILD .SRCINFO
+git commit -q -m "Update to $version"
+git show --stat HEAD
+
+if [ "${DRY_RUN:-0}" = 1 ]; then
+    echo "Dry run: not pushed"
+    exit 0
+fi
+git push origin HEAD:master
