@@ -1,0 +1,39 @@
+---
+title: Preferences
+description: Change when Delta backs up, how long it keeps copies, and what it copies.
+---
+
+import Shot from '../../components/Shot.astro';
+
+Open **Preferences** from the main menu of the Delta window.
+
+<Shot name="preferences" alt="The Preferences dialog with the sections Destination, Schedule, Keep old backups, Folders to back up and Skip these." />
+
+## Destination
+
+**Backups are kept in** shows where your copies live. It reads **Not set up yet** until you finish the assistant.
+
+## Schedule
+
+In **Back up automatically**, choose how often: **Every hour**, **Every day**, **Every week** or **Custom**.
+A custom schedule is a systemd `OnCalendar` expression. If one was set outside Delta, Preferences says so and
+keeps it until you choose one of the options.
+
+## Keep old backups
+
+Older backups are removed to save space. Pick how much history to keep:
+
+| Option | History kept |
+|---|---|
+| **Short** | Every hour for half a day and every day for a week. |
+| **Standard** | Every hour for a day, every day for a week, every week for a month and every month for a year. |
+| **Long** | Every hour for a day, every day for two weeks, every week for three months and every month for three years. |
+
+## Folders to back up
+
+Add folders with **Add folder…** to copy only those. **Leave the list empty to back up your whole personal folder.**
+
+## Skip these
+
+Add folders (**Add folder…**) or single files (**Add file…**) that are not backed up, nor is anything inside them. **The cache and the trash are always skipped.**
+You cannot skip everything you back up: Delta refuses with *That would skip everything you back up.*

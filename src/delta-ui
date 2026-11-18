@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+"""Delta GTK application entry point (installed in bindir)."""
+
+from delta.ui.application import main
+
+if __name__ == "__main__":
+    raise SystemExit(main())

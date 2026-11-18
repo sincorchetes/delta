@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" style="task" id="browse-folder">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Browse a backup as a folder</title>
+  <desc>Open a whole backup in Files, read only, and copy out what you need.</desc>
+
+  <p>In the <gui>Previous versions</gui> window, <gui style="button">Browse as a folder</gui> opens the backup you chose as an
+  ordinary, read-only folder in <app>Files</app>. You can open its files with any application, see thumbnails and
+  copy out whatever you need. When you are done, choose <gui style="button">Close the folder</gui>.</p>
+
+  <note style="important">
+    <title>A backup cannot be made while one is open</title>
+    <p>Opening a backup stops the backup that is running, and Delta resumes it when you close the folder. A scheduled backup
+    waits and you are told: <gui>Backup postponed</gui>. The main window says <gui>A backup is open as a folder</gui>.</p>
+  </note>
+
+  <section id="closing">
+    <title>When the folder closes</title>
+    <p>You do not have to remember to close it. Delta closes it when:</p>
+    <list>
+      <item><p>you choose <gui style="button">Close the folder</gui> or close the <gui>Previous versions</gui> window;</p></item>
+      <item><p>the computer suspends or the screen locks;</p></item>
+      <item><p>nothing has used it for two to three minutes: no open file, no window showing it. A long copy keeps its file open,
+      so it is never cut short.</p></item>
+    </list>
+    <p>A <app>Files</app> window left on a folder that has just closed shows an error. Close it.</p>
+  </section>
+
+  <note style="warning">
+    <title>Not in the Flatpak version</title>
+    <p>This is only in the native install. A Flatpak cannot make a folder that <app>Files</app> can see, so
+    the button is not shown. Everything else works the same.</p>
+  </note>
+</page>

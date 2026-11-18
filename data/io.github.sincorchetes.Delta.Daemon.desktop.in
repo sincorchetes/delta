@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Delta
+Comment=Delta backup service
+Exec=@libexecdir@/delta-daemon
+Icon=io.github.sincorchetes.Delta
+NoDisplay=true
+Terminal=false
+Categories=Utility;

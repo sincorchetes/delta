@@ -1,0 +1,142 @@
+---
+title: Instalar Delta
+description: Qué necesita Delta y cómo instalarlo hoy.
+---
+
+import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Qué necesitas
+
+- **GNOME 46 o posterior** (libadwaita 1.5, GTK 4.10) y **Python 3.12 o posterior**.
+- **BorgBackup**, el programa que guarda las copias.
+- **Un llavero**, como GNOME Keyring, para guardar la contraseña de tus copias.
+- **nautilus-python**, para que Archivos muestre **Restaurar versión anterior…**. Delta funciona sin él, pero solo desde su propia ventana.
+- Una **sesión de usuario de systemd**, que ejecuta las copias programadas. Todo escritorio GNOME de una distribución común la tiene.
+
+<Aside type="note" title="Dónde está Delta hoy">
+Delta aún no está en los repositorios de ninguna distribución. Los paquetes para Fedora, Rocky Linux y AlmaLinux,
+openSUSE, Debian, Ubuntu y Arch están escritos y se compilan sin problemas; los repositorios que permitirán a tu gestor de
+paquetes instalarlos y actualizarlos, y un Flatpak, están previstos para la versión 1.0. Hasta entonces, compila el paquete
+de tu distribución, usa Nix o compila desde el código fuente.
+</Aside>
+
+## Compilar el paquete de tu distribución
+
+Cada paquete se llama `delta-backup` e instala los mismos archivos que la compilación desde el código fuente, con las
+dependencias propias de tu distribución. Primero, descarga el código:
+
+```sh
+git clone https://github.com/sincorchetes/delta.git && cd delta
+```
+
+<Tabs>
+  <TabItem label="Fedora, Rocky, Alma">
+    En Rocky Linux y AlmaLinux 10, activa antes EPEL y CRB: `sudo dnf install epel-release && sudo dnf config-manager --set-enabled crb`.
+
+    ```sh
+    sudo dnf builddep packaging/rpm/delta-backup.spec
+    mkdir -p ~/rpmbuild/SOURCES
+    git archive --format=tar.gz --prefix=delta-0.1.0/ -o ~/rpmbuild/SOURCES/delta-0.1.0.tar.gz HEAD
+    rpmbuild -ba packaging/rpm/delta-backup.spec
+    sudo dnf install ~/rpmbuild/RPMS/noarch/delta-backup-*.rpm
+    ```
+  </TabItem>
+  <TabItem label="openSUSE">
+    ```sh
+    sudo zypper install rpm-build $(rpmspec -q --buildrequires packaging/rpm/delta-backup.spec)
+    mkdir -p ~/rpmbuild/SOURCES
+    git archive --format=tar.gz --prefix=delta-0.1.0/ -o ~/rpmbuild/SOURCES/delta-0.1.0.tar.gz HEAD
+    rpmbuild -ba packaging/rpm/delta-backup.spec
+    sudo zypper install ~/rpmbuild/RPMS/noarch/delta-backup-*.rpm
+    ```
+  </TabItem>
+  <TabItem label="Debian, Ubuntu">
+    ```sh
+    sudo apt install build-essential devscripts equivs
+    sudo mk-build-deps -ir -t "apt-get -y" debian/control
+    dpkg-buildpackage -us -uc -b
+    sudo apt install ../delta-backup_*_all.deb
+    ```
+  </TabItem>
+  <TabItem label="Arch Linux">
+    ```sh
+    cd packaging/arch
+    makepkg -si
+    ```
+  </TabItem>
+</Tabs>
+
+Después, cierra la sesión y vuelve a entrar, para que Archivos cargue la extensión y tu sesión encuentre el servicio de Delta.
+
+## Instalar con Nix y Home Manager
+
+<Steps>
+
+1. Añade Delta como entrada de tu flake e importa su módulo:
+
+   ```nix
+   {
+     inputs.delta.url = "github:sincorchetes/delta";
+
+     # En tu configuración de Home Manager:
+     imports = [ inputs.delta.homeManagerModules.default ];
+     services.delta.enable = true;
+   }
+   ```
+
+2. Aplica tu configuración (`home-manager switch`).
+3. Instala **nautilus-python** en todo el sistema. Home Manager no puede hacerlo por ti.
+4. Cierra la sesión y vuelve a entrar para que Archivos cargue la extensión.
+
+</Steps>
+
+## Compilar desde el código fuente
+
+<Steps>
+
+1. Instala las herramientas y bibliotecas: Meson, Ninja, GLib, GTK 4, libadwaita, PyGObject, libsecret y BorgBackup.
+2. Compila e instala:
+
+   ```sh
+   meson setup build --prefix=$HOME/.local
+   meson compile -C build
+   meson install -C build
+   ```
+
+3. Cierra la sesión y vuelve a entrar.
+
+</Steps>
+
+## Comprueba que funciona
+
+Abre **Delta** desde la vista de Actividades. Si la ventana te pide configurar las copias, está listo:
+sigue con [tu primera copia](../first-backup/).
+
+<Aside type="caution" title="El Flatpak no tendrá la vista como carpeta">
+El Flatpak previsto tiene la ventana de Delta con versiones, vista previa, explorador de carpetas y restauración. No puede ofrecer
+**Examinar como carpeta**, porque Archivos se ejecuta fuera del sandbox y no ve una carpeta montada dentro de él.
+Consulta [Cómo funciona Delta](../how-it-works/#dos-formas-de-instalarlo).
+</Aside>
+
+## Clic derecho en Archivos con el Flatpak
+
+Archivos carga sus extensiones desde tu equipo, nunca desde un Flatpak, así que el Flatpak no puede añadir por sí solo
+**Restaurar versión anterior…** al menú del clic derecho. Si lo quieres, instala un pequeño archivo junto a Archivos. No necesita el resto
+de Delta: abre el Flatpak.
+
+1. Instala **nautilus-python** desde tu distribución. Por ejemplo, `sudo dnf install nautilus-python` en Fedora,
+   `sudo pacman -S python-nautilus` en Arch, `sudo apt install python3-nautilus` en Debian y Ubuntu.
+2. Pon la extensión donde Archivos la busca y reinicia Archivos:
+
+   ```sh
+   mkdir -p ~/.local/share/nautilus-python/extensions
+   curl -fsSL -o ~/.local/share/nautilus-python/extensions/delta_extension.py \
+     https://raw.githubusercontent.com/sincorchetes/delta/main/src/nautilus/delta_extension.py
+   nautilus -q
+   ```
+
+<Aside type="note">
+La entrada sale en inglés, porque las traducciones se quedan dentro del Flatpak. La columna **Copia** y los emblemas dependen de ajustes
+que el Flatpak también guarda dentro de su sandbox, así que pueden ser menos precisos que en la instalación nativa. La entrada en sí,
+que es la que abre la ventana **Versiones anteriores**, funciona igual.
+</Aside>

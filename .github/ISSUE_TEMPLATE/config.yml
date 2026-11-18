@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security problem
+    url: https://github.com/sincorchetes/delta/security/advisories/new
+    about: Please do not use a public issue for a vulnerability. This form is private.
+  - name: Read the documentation
+    url: https://delta.sincorchetes.tech
+    about: Installation, your first backup, restoring files and troubleshooting.

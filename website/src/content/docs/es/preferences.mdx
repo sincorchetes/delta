@@ -1,0 +1,39 @@
+---
+title: Preferencias
+description: Cambia cuándo copia Delta, cuánto tiempo conserva las copias y qué copia.
+---
+
+import Shot from '../../../components/Shot.astro';
+
+Abre **Preferencias** desde el menú principal de la ventana de Delta.
+
+<Shot name="preferences" alt="El diálogo de Preferencias con las secciones Destino, Horario, Conservar copias antiguas, Carpetas de las que hacer copia y Omitir estos." />
+
+## Destino
+
+**Las copias se guardan en** muestra dónde están tus copias. Dice **Aún sin configurar** hasta que termines el asistente.
+
+## Horario
+
+En **Copiar automáticamente**, elige con qué frecuencia: **Cada hora**, **Cada día**, **Cada semana** o **Personalizada**.
+Un horario personalizado es una expresión `OnCalendar` de systemd. Si uno se definió fuera de Delta, Preferencias lo indica
+y lo mantiene hasta que elijas una de las opciones.
+
+## Conservar copias antiguas
+
+Las copias más antiguas se eliminan para ahorrar espacio. Elige cuánto historial conservar:
+
+| Opción | Historial que se conserva |
+|---|---|
+| **Corta** | Una por hora durante medio día y una al día durante una semana. |
+| **Estándar** | Una por hora durante un día, una al día durante una semana, una por semana durante un mes y una al mes durante un año. |
+| **Larga** | Una por hora durante un día, una al día durante dos semanas, una por semana durante tres meses y una al mes durante tres años. |
+
+## Carpetas de las que hacer copia
+
+Añade carpetas con **Añadir carpeta…** para copiar solo esas. **Deja la lista vacía para copiar toda tu carpeta personal.**
+
+## Omitir estos
+
+Añade carpetas (**Añadir carpeta…**) o archivos sueltos (**Añadir archivo…**) que no se copian, ni nada de lo que contienen. **La caché y la papelera siempre se omiten.**
+No puedes omitir todo lo que copias: Delta lo rechaza con *Eso omitiría todo lo que copias.*

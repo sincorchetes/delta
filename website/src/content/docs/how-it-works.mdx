@@ -1,0 +1,44 @@
+---
+title: How Delta works
+description: What happens behind the window, and why there are two ways to install it.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Backups
+
+Delta uses **BorgBackup**. The first copy takes the longest; later ones store **only what changed**, and identical data is stored once.
+Each copy is a **snapshot**: a full picture of your files at one moment, which is what lets you open any old version.
+Everything is encrypted and checked for integrity.
+
+A background service starts the copy on a **systemd user timer**, so Delta does not need to be open.
+If a copy is interrupted, Delta resumes it automatically.
+
+## What is kept
+
+As time passes, Delta removes old copies on the schedule you picked in [Preferences](../preferences/#keep-old-backups).
+
+## Where backups live
+
+Only **on your computer**: a folder or a drive you connect. Delta has no cloud and no network destination, so there
+are no accounts or hosts to manage.
+
+## Two ways to install it
+
+| | Native | Flatpak (planned) |
+|---|---|---|
+| Delta window, versions, preview, restore | Yes | Yes |
+| **Restore Previous Version…** in Files | Yes | Only with the [optional extension](../install/#right-click-in-files-with-the-flatpak) |
+| **Browse as a folder** | Yes | No |
+| Scheduled backups | systemd user timer | Delta's own timer, started at login through the Background portal |
+
+**Browse as a folder** needs a FUSE mount that Files can see. Files runs outside the Flatpak sandbox and cannot see one made inside it,
+and allowing it would need broad device access. That is why Delta does not offer it there.
+
+Files also loads its extensions from the computer, not from a Flatpak, which is why the right-click entry needs one small file
+installed outside the sandbox.
+
+<Aside type="note">
+For what Delta is made of, how it is tested and why it uses BorgBackup, see the [technical specifications](../technical/).
+The documentation of the project's internals is in the repository, in `docs/`: the architecture, the D-Bus API and the security model.
+</Aside>

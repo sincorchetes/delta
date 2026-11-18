@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="preferences">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Choose when and what to back up</title>
+  <desc>The schedule, how long to keep old backups, and which folders to copy or skip.</desc>
+
+  <p>Open <gui style="menu">Main menu</gui> ▸ <gui style="menuitem">Preferences</gui> (<keyseq><key>Ctrl</key><key>,</key></keyseq>).</p>
+
+  <terms>
+    <item>
+      <title><gui>Destination</gui></title>
+      <p>Where your backups are kept. It reads <gui>Not set up yet</gui> until you finish the assistant.</p>
+    </item>
+    <item>
+      <title><gui>Schedule</gui></title>
+      <p>In <gui>Back up automatically</gui> choose <gui>Every hour</gui>, <gui>Every day</gui>, <gui>Every week</gui> or
+      <gui>Custom</gui> (a systemd <code>OnCalendar</code> expression).</p>
+    </item>
+    <item>
+      <title><gui>Keep old backups</gui></title>
+      <p>Older backups are removed to save space. <gui>Short</gui> keeps every hour for half a day and every day for a week.
+      <gui>Standard</gui> adds every week for a month and every month for a year. <gui>Long</gui> keeps every day for two weeks,
+      every week for three months and every month for three years.</p>
+    </item>
+    <item>
+      <title><gui>Folders to back up</gui></title>
+      <p>Add folders with <gui style="button">Add folder…</gui> to copy only those. Leave the list empty to back up your whole
+      personal folder.</p>
+    </item>
+    <item>
+      <title><gui>Skip these</gui></title>
+      <p>Folders (<gui style="button">Add folder…</gui>) or single files (<gui style="button">Add file…</gui>) that are not backed up.
+      The cache and the trash are always skipped. You cannot skip everything you back up.</p>
+    </item>
+  </terms>
+</page>

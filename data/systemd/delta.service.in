@@ -1,0 +1,8 @@
+[Unit]
+Description=Delta backup daemon
+
+[Service]
+Type=dbus
+BusName=io.github.sincorchetes.Delta.Service1
+Environment=DELTA_LOCALEDIR=@localedir@
+ExecStart=@libexecdir@/delta-daemon

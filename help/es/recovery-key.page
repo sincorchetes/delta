@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="recovery-key">
+  <info>
+    <link type="guide" xref="index#get-started"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Tu clave de recuperación y tu contraseña</title>
+  <desc>Por qué necesitas la clave de recuperación y cómo usar tus copias tras reinstalar.</desc>
+
+  <p>Tus copias están cifradas. Delta guarda su contraseña en el llavero de tu escritorio y la usa por sí solo, así que nunca
+  tienes que escribirla.</p>
+
+  <note style="warning">
+    <title>Guarda la clave de recuperación lejos de este equipo</title>
+    <p>Si pierdes el acceso a tu llavero (un equipo nuevo, una reinstalación, un perfil dañado), la contraseña se va con él.
+    La clave de recuperación que te dio el asistente es entonces la única forma de leer tus copias. Una clave guardada solo en el
+    disco que falla no protege nada: imprímela, o guárdala en un gestor de contraseñas o en una memoria USB en otro sitio.</p>
+  </note>
+
+  <steps>
+    <title>Usa tus copias tras reinstalar</title>
+    <item><p>Instala Delta y ábrelo.</p></item>
+    <item><p>En el asistente, elige la carpeta o la unidad que contiene tus copias.</p></item>
+    <item><p>Delta encuentra el repositorio existente: escribe la clave de recuperación (o tu contraseña) en
+    <gui>Contraseña del repositorio</gui> y pulsa <gui style="button">Usar este repositorio</gui>. No se borra nada de lo que contiene.</p></item>
+  </steps>
+
+  <p>Delta nunca guarda la contraseña en un archivo de texto, en la configuración ni en una línea de comandos. Nunca envía tus copias a
+  ninguna parte, y nunca sobrescribe tus archivos al restaurar.</p>
+</page>

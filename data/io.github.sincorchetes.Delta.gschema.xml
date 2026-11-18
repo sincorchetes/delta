@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="delta">
+  <schema id="io.github.sincorchetes.Delta" path="/io/github/sincorchetes/Delta/">
+    <key name="repository-location" type="s">
+      <default>''</default>
+      <summary>Borg repository location</summary>
+      <description>Local path of the Borg repository. Empty means not configured yet.</description>
+    </key>
+    <key name="backup-sources" type="as">
+      <default>[]</default>
+      <summary>Folders to back up</summary>
+      <description>Absolute paths of the folders to back up. Empty means the whole home folder.</description>
+    </key>
+    <key name="excluded-paths" type="as">
+      <default>[]</default>
+      <summary>Files and folders to skip</summary>
+      <description>Absolute paths that are not backed up, with everything inside them. Added to the built-in exclusions (cache and trash).</description>
+    </key>
+    <key name="schedule" type="s">
+      <default>'hourly'</default>
+      <summary>Backup schedule</summary>
+      <description>systemd OnCalendar expression used by the delta.timer drop-in.</description>
+    </key>
+    <key name="keep-hourly" type="i">
+      <default>24</default>
+      <summary>Hourly snapshots to keep</summary>
+      <description>Retention policy passed to borg prune (--keep-hourly).</description>
+    </key>
+    <key name="keep-daily" type="i">
+      <default>7</default>
+      <summary>Daily snapshots to keep</summary>
+      <description>Retention policy passed to borg prune (--keep-daily).</description>
+    </key>
+    <key name="keep-weekly" type="i">
+      <default>4</default>
+      <summary>Weekly snapshots to keep</summary>
+      <description>Retention policy passed to borg prune (--keep-weekly).</description>
+    </key>
+    <key name="keep-monthly" type="i">
+      <default>12</default>
+      <summary>Monthly snapshots to keep</summary>
+      <description>Retention policy passed to borg prune (--keep-monthly).</description>
+    </key>
+  </schema>
+</schemalist>

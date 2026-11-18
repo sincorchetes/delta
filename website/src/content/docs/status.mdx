@@ -1,0 +1,32 @@
+---
+title: The Delta window
+description: What the main window tells you and what each message means.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Shot from '../../components/Shot.astro';
+
+Open **Delta** from the Activities overview. It always answers one question: are my files protected?
+
+<Shot name="status" alt="The Delta window with “Your files are protected”, the last and next backup times and a “Back up now” button." />
+
+When everything is fine you see **Your files are protected** and a line such as
+*Last backup: 5 minutes ago. Next backup: in 30 minutes.* **Back up now** starts a copy straight away.
+
+## Messages
+
+| You see | What it means | What to do |
+|---|---|---|
+| **Backups are not set up** | There is no destination yet. | Choose **Set up backups**. |
+| **Backing up…** | A copy is running. You can keep working. | Nothing. |
+| **A backup is open as a folder** | You opened a copy with **Browse as a folder**. The next copy waits. | Close the folder; the copy starts by itself. |
+| **The backup repository is locked** | A copy did not finish cleanly, or something else is using the repository. | See [Troubleshooting](../troubleshooting/#the-backup-repository-is-locked). |
+| **The last backup failed** | The last copy stopped with an error. | Choose **Try again**, then see [Troubleshooting](../troubleshooting/). |
+| **The backup service is not available** | Delta could not start its background service. | See [Troubleshooting](../troubleshooting/). |
+
+<Aside type="note">
+Delta also tells you with a notification: **Backup in progress**, **Backup complete**,
+**Backup complete with warnings**, **Backup interrupted** (Delta resumes it automatically), **Backup postponed** and **Backup failed**.
+</Aside>
+
+The history button, **Backup history**, opens [the list of your backups](../history/). The main menu has **Preferences**.

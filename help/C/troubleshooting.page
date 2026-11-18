@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="troubleshooting">
+  <info>
+    <link type="guide" xref="index#problems"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Troubleshooting</title>
+  <desc>What to do when a backup fails or Delta does not respond.</desc>
+
+  <section id="locked">
+    <title>The backup repository is locked</title>
+    <p>A backup that was interrupted can leave the repository locked. Choose <gui style="button">Unlock…</gui>.</p>
+    <note style="warning">
+      <p>Continue only if no backup is running right now, on this computer or on any other that uses this repository. Unlocking a
+      repository that is in use can damage your backups. Delta never does it by itself.</p>
+    </note>
+  </section>
+
+  <section id="failed">
+    <title>The last backup failed</title>
+    <p>Choose <gui style="button">Try again</gui>. If it fails again, the message says why. The usual causes:</p>
+    <list>
+      <item><p><em>The passphrase for this repository is not in the keyring.</em> Open the keyring, or use your recovery key as
+      in <link xref="recovery-key"/>.</p></item>
+      <item><p><em>Timed out waiting for the keyring. Is it locked?</em> Unlock it (log in again) and try again.</p></item>
+      <item><p><em>The keyring service is not available.</em> Start your keyring, for example GNOME Keyring, in your session.</p></item>
+      <item><p><em>The backup destination could not be created.</em> Check that the folder or drive is connected and that you can write to it.</p></item>
+    </list>
+  </section>
+
+  <section id="service">
+    <title>The backup service is not available</title>
+    <p>Log out and back in. If it persists, run <cmd>journalctl --user -u delta</cmd> and look for the cause.</p>
+  </section>
+
+  <section id="gone">
+    <title>That backup no longer exists</title>
+    <p>A newer backup may have replaced it. Reopen the window to see the current ones.</p>
+  </section>
+
+  <section id="schedule">
+    <title>Nothing happens on a schedule</title>
+    <p>Check that <gui>Back up automatically</gui> in <gui style="menuitem">Preferences</gui> has the schedule you want, and that your
+    systemd user session is running.</p>
+  </section>
+</page>

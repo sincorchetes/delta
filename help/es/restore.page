@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" style="task" id="restore">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Restaura una versión anterior de un archivo o carpeta</title>
+  <desc>Encuentra una versión antigua en Archivos, mírala y recupérala sin perder nada.</desc>
+
+  <steps>
+    <item>
+      <p>En <app>Archivos</app>, pulsa con el botón derecho sobre el archivo o carpeta y elige
+      <gui style="menuitem">Restaurar versión anterior…</gui>.</p>
+    </item>
+    <item>
+      <p>La ventana <gui>Versiones anteriores</gui> enumera cada versión distinta, la más reciente primero, con cuándo se copió y su
+      tamaño. Las copias idénticas se muestran una sola vez.</p>
+    </item>
+    <item>
+      <p>Selecciona una versión para verla. Las imágenes, el texto, el vídeo y el audio se muestran en la ventana. Un archivo
+      grande pregunta antes: pulsa <gui style="button">Mostrar vista previa</gui>. Cualquier otro tipo se abre con su propia
+      aplicación con <gui style="button">Abrir</gui>.</p>
+    </item>
+    <item>
+      <p>Elige cómo recuperarla:</p>
+      <list>
+        <item><p><gui style="button">Restaurar como copia</gui> deja la versión antigua junto al original, con un nombre como
+        <file>informe (restaurado 2026-11-16).odt</file>. No se sobrescribe nada.</p></item>
+        <item><p><gui style="button">Sustituir la versión actual…</gui> pone la versión antigua en lugar de la actual. Delta
+        pregunta antes y conserva la actual a su lado, renombrada con la fecha y la hora. Si algo falla, el original vuelve a
+        su sitio.</p></item>
+      </list>
+    </item>
+  </steps>
+
+  <note style="tip">
+    <p>Si la ventana dice <em>No hay versiones anteriores</em>, el elemento aún no está en ninguna copia.</p>
+  </note>
+
+  <section id="folders">
+    <title>Carpetas</title>
+    <p>Para una carpeta, la ventana muestra lo que contenía en la versión que elegiste. Abre subcarpetas para moverte;
+    <gui style="button">Atrás</gui> sube un nivel.</p>
+    <list>
+      <item><p><gui>Buscar por nombre</gui> encuentra un archivo a cualquier profundidad dentro de la carpeta.</p></item>
+      <item><p>El filtro tiene <gui>Todo</gui>, <gui>Cambiado</gui> (todo lo que difiere de tu disco ahora) y
+      <gui>Eliminado</gui>. Cada fila dice <gui>Modificado</gui>, <gui>Cambiado dentro</gui>, <gui>Sin cambios</gui> o
+      <gui>Eliminado</gui>.</p></item>
+      <item><p><gui style="button">Seleccionar varios elementos</gui> permite restaurar muchos a la vez.</p></item>
+      <item><p><gui style="button">Restaurar eliminados…</gui> recupera todo lo que se eliminó de la carpeta desde esa versión.
+      No se toca nada de lo que existe hoy.</p></item>
+      <item><p><gui>Mostrar en Archivos</gui> abre la ubicación original.</p></item>
+    </list>
+  </section>
+
+  <section id="keys">
+    <title>Teclado</title>
+    <list>
+      <item><p><keyseq><key>Ctrl</key><key>F</key></keyseq>: ir al cuadro de búsqueda.</p></item>
+      <item><p><keyseq><key>Alt</key><key>←</key></keyseq>: subir una carpeta, o volver de un archivo a la lista.</p></item>
+      <item><p><keyseq><key>Ctrl</key><key>↓</key></keyseq> y <keyseq><key>Ctrl</key><key>↑</key></keyseq>:
+      la versión anterior y la siguiente.</p></item>
+      <item><p><key>Esc</key>: borrar la búsqueda o salir del modo de selección.</p></item>
+    </list>
+  </section>
+</page>

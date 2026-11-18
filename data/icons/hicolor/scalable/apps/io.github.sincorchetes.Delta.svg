@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Delta: a clock hand turning back (the arrow) around the delta sign (the change between two versions). -->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="face" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#78aeed"/>
+      <stop offset="1" stop-color="#1c71d8"/>
+    </linearGradient>
+  </defs>
+  <rect x="10" y="12" width="108" height="108" rx="26" fill="#000000" opacity="0.18"/>
+  <rect x="10" y="8" width="108" height="108" rx="26" fill="url(#face)"/>
+  <path d="M64 26a38 38 0 1 0 38 38" fill="none" stroke="#ffffff" stroke-width="9" stroke-linecap="round"/>
+  <path d="M102 46L91 64H113Z" fill="#ffffff"/>
+  <path d="M64 46l16 30H48Z" fill="none" stroke="#ffffff" stroke-width="7" stroke-linejoin="round"/>
+</svg>

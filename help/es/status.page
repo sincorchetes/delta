@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="status">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Comprueba que tus archivos están protegidos</title>
+  <desc>Qué te dicen la ventana principal y las notificaciones.</desc>
+
+  <p>Abre <app>Delta</app> desde la vista de Actividades. Responde a una pregunta: ¿están protegidos mis archivos?
+  Cuando todo va bien dice <gui>Tus archivos están protegidos</gui>, cuándo se hizo la última copia y cuándo toca la siguiente.
+  <gui style="button">Copiar ahora</gui> empieza una copia al instante. El botón <gui style="button">Historial de copias</gui>
+  enumera tus copias, y <gui style="menu">Menú principal</gui> tiene <gui style="menuitem">Preferencias</gui> y
+  <gui style="menuitem">Acerca de Delta</gui>.</p>
+
+  <table frame="all" rules="rows">
+    <thead>
+      <tr><td><p>Ves</p></td><td><p>Significa</p></td></tr>
+    </thead>
+    <tbody>
+      <tr><td><p><gui>Las copias no están configuradas</gui></p></td><td><p>Aún no hay destino. Pulsa <gui style="button">Configurar copias</gui>.</p></td></tr>
+      <tr><td><p><gui>Copiando…</gui></p></td><td><p>Hay una copia en marcha. Puedes seguir trabajando.</p></td></tr>
+      <tr><td><p><gui>Hay una copia abierta como carpeta</gui></p></td><td><p>Abriste una copia con <link xref="browse-folder"/>. La próxima copia espera a que la cierres.</p></td></tr>
+      <tr><td><p><gui>El repositorio de copias está bloqueado</gui></p></td><td><p>Consulta <link xref="troubleshooting#locked"/>.</p></td></tr>
+      <tr><td><p><gui>La última copia falló</gui></p></td><td><p>Pulsa <gui style="button">Reintentar</gui> y consulta <link xref="troubleshooting"/>.</p></td></tr>
+      <tr><td><p><gui>El servicio de copias no está disponible</gui></p></td><td><p>Consulta <link xref="troubleshooting#service"/>.</p></td></tr>
+    </tbody>
+  </table>
+
+  <p>Delta también envía notificaciones: <gui>Copia de seguridad en curso</gui>, <gui>Copia de seguridad completada</gui>,
+  <gui>Copia completada con avisos</gui>, <gui>Copia de seguridad interrumpida</gui> (Delta la reanuda sola),
+  <gui>Copia aplazada</gui> y <gui>Error en la copia de seguridad</gui>.</p>
+</page>

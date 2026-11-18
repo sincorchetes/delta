@@ -1,0 +1,74 @@
+---
+title: Restaurar un archivo o carpeta
+description: Encuentra una versión antigua en Archivos, mírala y recupérala sin perder nada.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+import Shot from '../../../components/Shot.astro';
+
+## Restaurar una versión de un archivo
+
+<Steps>
+
+1. En **Archivos**, haz clic derecho en el archivo o la carpeta y elige **Restaurar versión anterior…**.
+
+2. La ventana **Versiones anteriores** lista cada versión distinta, de la más reciente a la más antigua, con cuándo se copió y su tamaño
+   (*Copiado ayer · 14 kB*). Las copias idénticas se muestran una sola vez.
+
+   <Shot name="versions" alt="La ventana Versiones anteriores: a la izquierda una lista de versiones de un documento y a la derecha la vista previa de la seleccionada." />
+
+3. Selecciona una versión para verla. Las imágenes, el texto, el vídeo y el audio se muestran en la propia ventana.
+   Un archivo grande pregunta antes: elige **Mostrar vista previa**. Un archivo de otro tipo se abre con su propia aplicación con **Abrir**.
+
+4. Elige cómo recuperarla:
+
+   - **Restaurar como copia** deja la versión antigua **junto al original**, con un nombre como `informe (restaurado 2026-11-16).odt`. No se sobrescribe nada.
+   - **Sustituir la versión actual…** pone la versión antigua en lugar de la actual. Delta pregunta antes y **conserva la actual a su lado**,
+     con la fecha y la hora de hoy en el nombre, como `informe (antes de restaurar 2026-11-16 10-30-00).odt`. Si algo falla, devuelve el original a su sitio.
+
+</Steps>
+
+<Aside type="note">
+**No hay versiones anteriores** significa que este elemento aún no está en ninguna copia. Si se eliminó una copia desde que abriste la ventana, Delta te lo dice
+y te pide que la vuelvas a abrir para ver las actuales.
+</Aside>
+
+## Ver en Archivos qué está copiado
+
+Archivos muestra una columna **Copia** (*Indica si el archivo está en la última copia*) que dice **En la última copia** o **Cambiado desde la última copia**,
+y un emblema en los archivos con cambios que aún no están copiados.
+
+## Recorrer una carpeta en el tiempo
+
+Para una carpeta, la ventana muestra lo que contenía en la versión que elegiste. Abre subcarpetas para moverte;
+**Atrás** (o <kbd>Alt</kbd>+<kbd>←</kbd>) sube un nivel.
+
+<Shot name="folder" alt="La vista de carpeta de una copia con los filtros Todo, Cambiado y Eliminado y un cuadro de búsqueda." />
+
+- **Buscar por nombre** encuentra un archivo a cualquier profundidad bajo la carpeta. Muestra las primeras coincidencias; escribe más del nombre para acotarlas.
+- **Filtrar por cambios** tiene tres opciones: **Todo**, **Cambiado** (todo lo de debajo de la carpeta que difiere de tu disco ahora) y **Eliminado**.
+  Cada fila dice **Modificado**, **Cambiado dentro**, **Sin cambios** o **Eliminado**, comparado con lo que tienes hoy.
+- **Seleccionar varios elementos** te deja restaurar muchos a la vez: por ejemplo **Restaurar 3 como copias** o **Sustituir 3 versiones actuales…**.
+- **Restaurar eliminados…** vuelve a poner todo lo de la carpeta que se eliminó desde esa versión. No se toca nada de lo que existe hoy,
+  y las carpetas que faltan se vuelven a crear, siempre dentro de tu carpeta personal.
+- **Mostrar en Archivos** abre la ubicación original.
+
+## Examinar una copia como carpeta
+
+**Examinar como carpeta** abre una copia entera, de solo lectura, como una carpeta normal en Archivos. Elige **Cerrar la carpeta** cuando termines.
+Mientras hay una abierta, Delta aplaza la próxima copia: **Copia aplazada**. Se cierra sola cuando el equipo se suspende o se bloquea,
+o cuando dejas de usarla.
+
+<Aside type="caution">
+Esta vista solo existe en la instalación nativa. El Flatpak no la tiene.
+</Aside>
+
+## Teclado
+
+| Teclas | Qué hace |
+|---|---|
+| <kbd>Ctrl</kbd>+<kbd>F</kbd> | Ir al cuadro de búsqueda |
+| <kbd>Alt</kbd>+<kbd>←</kbd> | Subir una carpeta, o volver de un archivo a la lista |
+| <kbd>Ctrl</kbd>+<kbd>↓</kbd> | La siguiente versión más antigua |
+| <kbd>Ctrl</kbd>+<kbd>↑</kbd> | La siguiente versión más reciente |
+| <kbd>Esc</kbd> | Borrar la búsqueda, o salir de la selección |

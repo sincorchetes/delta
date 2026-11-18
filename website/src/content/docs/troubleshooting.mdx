@@ -1,0 +1,43 @@
+---
+title: Troubleshooting
+description: What to do when Delta shows an error.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## The backup repository is locked
+
+*A backup did not finish cleanly, or something else is using the repository.*
+
+A copy that was interrupted can leave the repository locked. Choose **Unlock…**.
+
+<Aside type="caution" title="Only if nothing is backing up">
+Continue only if no backup is running right now, **on this computer or on any other that uses this repository**.
+Unlocking one that is in use can damage your backups. Delta never does it by itself.
+</Aside>
+
+## The last backup failed
+
+Choose **Try again**. If it fails again, the message tells you why. The most common causes:
+
+- **The passphrase for this repository is not in the keyring.** Open the keyring, or use your recovery key as described in [Recovery key and passphrase](../recovery-key/).
+- **Timed out waiting for the keyring. Is it locked?** Unlock it (log in again) and try again.
+- **The keyring service is not available.** Start your keyring, for example GNOME Keyring, in your session.
+- **The backup destination could not be created.** Check that the folder or the drive is connected and that you can write to it.
+
+## The backup service is not available
+
+*Delta could not start its background service.* Log out and back in. If it persists, run `journalctl --user -u delta`
+and look for the cause.
+
+## A backup is open as a folder
+
+The next copy waits until you choose **Close the folder**. Delta closes it for you when the computer suspends or locks.
+
+## That backup no longer exists
+
+A newer backup may have replaced it. **Reopen the window** to see the current ones.
+
+## Nothing happens on a schedule
+
+Check that **Back up automatically** in **Preferences** is set to the schedule you want, and that your systemd user session is running.

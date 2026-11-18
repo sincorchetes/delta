@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest something Delta could do
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do?
+      description: Describe the problem first, not the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like Delta to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What do you do today instead?
+      description: Another way you tried, or another tool that does it.
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: Which install is it for?
+      description: Some things only make sense natively (they need FUSE or `systemd`) and not in a Flatpak.
+      multiple: true
+      options:
+        - Native package
+        - Flatpak
+        - Nix or Home Manager
+        - Any

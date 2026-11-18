@@ -1,0 +1,4 @@
+[D-BUS Service]
+Name=io.github.sincorchetes.Delta.Service1
+Exec=@libexecdir@/delta-daemon
+@systemd_service@

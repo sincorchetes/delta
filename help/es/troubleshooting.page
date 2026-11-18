@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="troubleshooting">
+  <info>
+    <link type="guide" xref="index#problems"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Solución de problemas</title>
+  <desc>Qué hacer cuando una copia falla o Delta no responde.</desc>
+
+  <section id="locked">
+    <title>El repositorio de copias está bloqueado</title>
+    <p>Una copia interrumpida puede dejar el repositorio bloqueado. Pulsa <gui style="button">Desbloquear…</gui>.</p>
+    <note style="warning">
+      <p>Continúa solo si no hay ninguna copia en marcha ahora mismo, ni en este equipo ni en otro que use este repositorio.
+      Desbloquear un repositorio que se está usando puede dañar tus copias. Delta nunca lo hace por sí solo.</p>
+    </note>
+  </section>
+
+  <section id="failed">
+    <title>La última copia falló</title>
+    <p>Pulsa <gui style="button">Reintentar</gui>. Si vuelve a fallar, el mensaje dice por qué. Las causas habituales:</p>
+    <list>
+      <item><p><em>La contraseña de este repositorio no está en el llavero.</em> Abre el llavero, o usa tu clave de recuperación como
+      en <link xref="recovery-key"/>.</p></item>
+      <item><p><em>Se agotó el tiempo esperando al llavero. ¿Está bloqueado?</em> Desbloquéalo (vuelve a iniciar sesión) e inténtalo de nuevo.</p></item>
+      <item><p><em>El servicio del llavero no está disponible.</em> Inicia tu llavero, por ejemplo GNOME Keyring, en tu sesión.</p></item>
+      <item><p><em>No se pudo crear el destino de las copias.</em> Comprueba que la carpeta o la unidad está conectada y que puedes escribir en ella.</p></item>
+    </list>
+  </section>
+
+  <section id="service">
+    <title>El servicio de copias no está disponible</title>
+    <p>Cierra la sesión y vuelve a iniciarla. Si persiste, ejecuta <cmd>journalctl --user -u delta</cmd> y busca la causa.</p>
+  </section>
+
+  <section id="gone">
+    <title>Esa copia ya no existe</title>
+    <p>Puede que otra más reciente la haya sustituido. Vuelve a abrir la ventana para ver las actuales.</p>
+  </section>
+
+  <section id="schedule">
+    <title>No pasa nada con el horario</title>
+    <p>Comprueba que <gui>Copiar automáticamente</gui> en <gui style="menuitem">Preferencias</gui> tiene el horario que quieres y que tu
+    sesión de usuario de systemd está en marcha.</p>
+  </section>
+</page>

@@ -1,0 +1,1308 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the delta package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: delta\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-11-17 09:27+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:6
+msgid "Borg repository location"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:7
+msgid "Local path of the Borg repository. Empty means not configured yet."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:11 src/delta/ui/preferences_dialog.py:120
+msgid "Folders to back up"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:12
+msgid ""
+"Absolute paths of the folders to back up. Empty means the whole home folder."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:16
+msgid "Files and folders to skip"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:17
+msgid ""
+"Absolute paths that are not backed up, with everything inside them. Added to "
+"the built-in exclusions (cache and trash)."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:21
+msgid "Backup schedule"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:22
+msgid "systemd OnCalendar expression used by the delta.timer drop-in."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:26
+msgid "Hourly snapshots to keep"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:27
+msgid "Retention policy passed to borg prune (--keep-hourly)."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:31
+msgid "Daily snapshots to keep"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:32
+msgid "Retention policy passed to borg prune (--keep-daily)."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:36
+msgid "Weekly snapshots to keep"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:37
+msgid "Retention policy passed to borg prune (--keep-weekly)."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:41
+msgid "Monthly snapshots to keep"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.gschema.xml:42
+msgid "Retention policy passed to borg prune (--keep-monthly)."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.desktop.in:3 data/io.github.sincorchetes.Delta.metainfo.xml.in:7
+#: src/delta/ui/about.py:26 src/delta/ui/window.py:27
+msgid "Delta"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.desktop.in:4
+msgid "Back up and restore your files"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:8
+msgid "Time travel for your files"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:14
+msgid ""
+"Delta keeps backups of your files, one after another, and lets you look at "
+"any of them. Restore a document you changed by mistake, get back a folder "
+"you deleted, or browse an old backup as if it were a folder."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:15
+msgid ""
+"Backups are made automatically, are encrypted and stay on this computer, in "
+"a folder or on a connected drive. Delta never sends them anywhere."
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:17
+msgid ""
+"Restore an earlier version from the file manager, with a preview, without "
+"overwriting anything"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:18
+msgid "See what changed or was deleted since a version, and put it all back"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:19
+msgid "Open a whole backup as a read-only folder"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:20
+msgid "Incremental and deduplicated backups, made by BorgBackup"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:35
+msgid "The main window says whether your files are protected"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:39
+msgid "Previous versions of a file, with a preview"
+msgstr ""
+
+#: data/io.github.sincorchetes.Delta.metainfo.xml.in:43
+msgid "What a folder held, with what changed or was deleted"
+msgstr ""
+
+#: src/delta/infrastructure/libsecret_store.py:39
+msgid "Timed out waiting for the keyring. Is it locked?"
+msgstr ""
+
+#: src/delta/infrastructure/libsecret_store.py:42
+msgid "The keyring service is not available."
+msgstr ""
+
+#: src/delta/infrastructure/libsecret_store.py:63
+#, python-brace-format
+msgid "Delta backup passphrase for {repository}"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:27
+msgid "Backup in progress"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:27 src/delta/ui/status.py:126
+msgid "Delta is backing up your files."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:29
+msgid "Backup complete"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:29
+msgid "Your files are safely backed up."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:31
+msgid "Some files could not be backed up."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:32
+msgid "Backup complete with warnings"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:35
+msgid "Backup interrupted"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:36
+msgid "Delta will resume it automatically."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:41
+msgid "Backup postponed"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:42 src/delta/daemon/service.py:165
+msgid ""
+"A backup is open as a folder. The new copy will start when you close it."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:46
+msgid "The backup destination could not be created."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:47
+msgid "Could not set up backups"
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:48
+msgid "The backup could not be completed."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:49
+msgid "Backup failed"
+msgstr ""
+
+#: src/delta/infrastructure/borg_runner.py:84
+#, python-brace-format
+msgid "cannot create {folder}: {reason}"
+msgstr ""
+
+#: src/delta/infrastructure/borg_runner.py:172
+#: src/delta/infrastructure/borg_runner.py:180
+#: src/delta/infrastructure/borg_mounter.py:60
+#, python-brace-format
+msgid "cannot run {program}: {reason}"
+msgstr ""
+
+#: src/delta/infrastructure/borg_runner.py:185
+msgid "stopped on request"
+msgstr ""
+
+#. a development override supplies it
+#. Without this, borg would try to ask on a terminal that does not exist.
+#: src/delta/infrastructure/borg_runner.py:254
+msgid "The passphrase for this repository is not in the keyring."
+msgstr ""
+
+#: src/delta/infrastructure/borg_parsing.py:38
+#: src/delta/infrastructure/borg_parsing.py:64
+#: src/delta/infrastructure/borg_parsing.py:92
+#: src/delta/infrastructure/borg_parsing.py:121
+#: src/delta/infrastructure/borg_parsing.py:145
+#, python-brace-format
+msgid "unexpected borg list output: {error}"
+msgstr ""
+
+#: src/delta/domain/paths.py:12
+#, python-brace-format
+msgid "source must be inside {base}"
+msgstr ""
+
+#: src/delta/domain/paths.py:13
+#, python-brace-format
+msgid "target must be inside {base}"
+msgstr ""
+
+#: src/delta/domain/paths.py:14
+#, python-brace-format
+msgid "path must be inside {base}"
+msgstr ""
+
+#: src/delta/domain/paths.py:20
+msgid "source must be an absolute path"
+msgstr ""
+
+#: src/delta/domain/paths.py:21
+msgid "target must be an absolute path"
+msgstr ""
+
+#: src/delta/domain/paths.py:22
+msgid "path must be an absolute path"
+msgstr ""
+
+#: src/delta/domain/paths.py:28
+msgid "source must not contain '..'"
+msgstr ""
+
+#: src/delta/domain/paths.py:29
+msgid "target must not contain '..'"
+msgstr ""
+
+#: src/delta/domain/paths.py:30
+msgid "path must not contain '..'"
+msgstr ""
+
+#: src/delta/domain/repository.py:21
+msgid "repository location must not be empty"
+msgstr ""
+
+#: src/delta/domain/repository.py:23
+msgid "repository location must be an absolute path"
+msgstr ""
+
+#: src/delta/domain/backup_job.py:43
+msgid "a backup job needs at least one source"
+msgstr ""
+
+#: src/delta/daemon/service.py:161
+msgid "backups are not available"
+msgstr ""
+
+#: src/delta/daemon/service.py:178 src/delta/daemon/browse_controller.py:87
+msgid "browsing backups is not available"
+msgstr ""
+
+#: src/delta/daemon/service.py:217
+msgid "repository setup is not available"
+msgstr ""
+
+#: src/delta/daemon/service.py:223
+msgid "An existing repository needs its passphrase."
+msgstr ""
+
+#: src/delta/daemon/service.py:251
+msgid "unlocking is not available"
+msgstr ""
+
+#: src/delta/daemon/service.py:256
+msgid "No backup repository is set up."
+msgstr ""
+
+#: src/delta/daemon/job_calls.py:29
+msgid "another job is already running"
+msgstr ""
+
+#: src/delta/daemon/job_calls.py:36 src/delta/daemon/job_calls.py:55
+#: src/delta/daemon/job_calls.py:74
+msgid "restore is not available"
+msgstr ""
+
+#: src/delta/daemon/job_calls.py:92
+msgid "previews are not available"
+msgstr ""
+
+#: src/delta/daemon/query_calls.py:34
+msgid "versions are not available"
+msgstr ""
+
+#: src/delta/application/browse_service.py:31
+#: src/delta/application/preview_service.py:50
+#: src/delta/application/backup_service.py:35
+#: src/delta/application/restore_service.py:78
+#: src/delta/application/restore_service.py:93
+#: src/delta/application/restore_service.py:131
+msgid "no repository configured"
+msgstr ""
+
+#: src/delta/application/browse_service.py:36
+#, python-brace-format
+msgid "cannot prepare the folder: {reason}"
+msgstr ""
+
+#: src/delta/application/snapshots.py:18
+msgid ""
+"That backup no longer exists: a newer one may have replaced it. Reopen the "
+"window to see the current ones."
+msgstr ""
+
+#: src/delta/infrastructure/borg_mounter.py:54
+msgid "a snapshot is already open"
+msgstr ""
+
+#: src/delta/infrastructure/borg_mounter.py:93
+msgid "the snapshot did not open in time"
+msgstr ""
+
+#: src/delta/infrastructure/borg_mounter.py:107
+msgid "the snapshot could not be closed"
+msgstr ""
+
+#: src/delta/infrastructure/session_events.py:54
+msgid "Closing the open backup"
+msgstr ""
+
+#: src/delta/application/preview_service.py:56
+#, python-brace-format
+msgid "cannot prepare a preview: {reason}"
+msgstr ""
+
+#: src/delta/daemon/backup_task.py:44
+msgid "interrupted; it will be resumed"
+msgstr ""
+
+#: src/delta/daemon/backup_task.py:57
+#, python-brace-format
+msgid "backup done, prune failed: {error}"
+msgstr ""
+
+#: src/delta/application/restore_service.py:80
+msgid "target must be an existing directory"
+msgstr ""
+
+#: src/delta/application/restore_service.py:107
+#, python-brace-format
+msgid "cannot restore into {folder}: {reason}"
+msgstr ""
+
+#: src/delta/application/restore_service.py:140
+#, python-brace-format
+msgid "cannot restore: {reason}"
+msgstr ""
+
+#: src/delta/application/restore_service.py:180
+#, python-brace-format
+msgid "cannot recreate {folder}: {reason}"
+msgstr ""
+
+#: src/delta/application/restore_service.py:193
+#, python-brace-format
+msgid "{name} (restored {date})"
+msgstr ""
+
+#: src/delta/application/restore_service.py:203
+#, python-brace-format
+msgid "{name} (before restore {date})"
+msgstr ""
+
+#: src/delta/ui/history.py:31
+#, python-brace-format
+msgid "{n} backup"
+msgid_plural "{n} backups"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/path_list.py:38 src/delta/ui/wizard_pages.py:25
+msgid "Add folder…"
+msgstr ""
+
+#: src/delta/ui/path_list.py:42
+msgid "Add file…"
+msgstr ""
+
+#: src/delta/ui/path_list.py:83 src/delta/ui/wizard_pages.py:47
+msgid "Remove"
+msgstr ""
+
+#: src/delta/ui/path_list.py:84 src/delta/ui/wizard_pages.py:48
+#, python-brace-format
+msgid "Remove {name}"
+msgstr ""
+
+#: src/delta/ui/preferences.py:35
+msgid "Every hour"
+msgstr ""
+
+#: src/delta/ui/preferences.py:35
+msgid "Every day"
+msgstr ""
+
+#: src/delta/ui/preferences.py:35
+msgid "Every week"
+msgstr ""
+
+#: src/delta/ui/preferences.py:42 src/delta/ui/preferences.py:76
+msgid "Custom"
+msgstr ""
+
+#: src/delta/ui/preferences.py:53
+msgid "Short"
+msgstr ""
+
+#: src/delta/ui/preferences.py:54
+msgid "Every hour for half a day and every day for a week."
+msgstr ""
+
+#: src/delta/ui/preferences.py:58
+msgid "Standard"
+msgstr ""
+
+#: src/delta/ui/preferences.py:59
+msgid ""
+"Every hour for a day, every day for a week, every week for a month and every "
+"month for a year."
+msgstr ""
+
+#: src/delta/ui/preferences.py:63
+msgid "Long"
+msgstr ""
+
+#: src/delta/ui/preferences.py:64
+msgid ""
+"Every hour for a day, every day for two weeks, every week for three months "
+"and every month for three years."
+msgstr ""
+
+#: src/delta/ui/preferences.py:88
+msgid "Set outside Delta; choose one of the options to replace it."
+msgstr ""
+
+#: src/delta/ui/preferences.py:109
+msgid "That would skip everything you back up."
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:34 src/delta/ui/window.py:50
+msgid "Preferences"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:47 src/delta/ui/wizard.py:193
+msgid "Destination"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:50
+msgid "Backups are kept in"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:51
+msgid "Not set up yet"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:58
+msgid "Schedule"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:60
+msgid "Back up automatically"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:70
+msgid "Keep old backups"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:71
+msgid "Older backups are removed to save space. Pick how much history to keep."
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:121 src/delta/ui/wizard_pages.py:20
+msgid "Leave the list empty to back up your whole personal folder."
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:122 src/delta/ui/wizard.py:194
+#: src/delta/ui/wizard_pages.py:40
+msgid "Your personal folder"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:132
+msgid "Skip these"
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:133
+msgid ""
+"They are not backed up, nor is anything inside them. The cache and the trash "
+"are always skipped."
+msgstr ""
+
+#: src/delta/ui/preferences_dialog.py:134
+msgid "Nothing else is skipped"
+msgstr ""
+
+#: src/delta/ui/history_window.py:46 src/delta/ui/window.py:45
+msgid "Backup history"
+msgstr ""
+
+#: src/delta/ui/history_window.py:50
+msgid "Date"
+msgstr ""
+
+#: src/delta/ui/history_window.py:51
+msgid "Age"
+msgstr ""
+
+#: src/delta/ui/history_window.py:52
+msgid "Name"
+msgstr ""
+
+#: src/delta/ui/history_window.py:75 src/delta/ui/versions_window.py:102
+msgid "Could not read the backups"
+msgstr ""
+
+#: src/delta/ui/history_window.py:79 src/delta/ui/status.py:166
+msgid "No backups yet"
+msgstr ""
+
+#: src/delta/ui/application.py:43
+msgid "Show the previous versions of a file"
+msgstr ""
+
+#: src/delta/ui/versions.py:33
+#, python-brace-format
+msgid "{n} bytes"
+msgstr ""
+
+#: src/delta/ui/versions.py:49
+#, python-brace-format
+msgid "Backed up {when} · {size}"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:31 src/delta/ui/versions_window.py:42
+msgid "Previous versions"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:45 src/delta/ui/versions_window.py:161
+#: src/delta/ui/folder_row.py:72
+msgid "Restore as a copy"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:48 src/delta/ui/versions_window.py:163
+msgid "Replace the current version…"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:50 src/delta/ui/version_preview.py:63
+#: src/delta/ui/version_preview.py:109
+msgid "Open"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:56 src/delta/ui/wizard_window.py:46
+msgid "Back"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:106
+msgid "No earlier versions"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:106
+msgid "This item is not in any backup yet."
+msgstr ""
+
+#: src/delta/ui/versions_window.py:161
+#, python-brace-format
+msgid "Restore {n} as copies"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:163
+#, python-brace-format
+msgid "Replace {n} current versions…"
+msgstr ""
+
+#: src/delta/ui/versions_window.py:248
+msgid "Show in Files"
+msgstr ""
+
+#: src/delta/ui/version_preview.py:62
+msgid "A folder: open this version to browse what it held."
+msgstr ""
+
+#: src/delta/ui/version_preview.py:69
+msgid "Large file"
+msgstr ""
+
+#: src/delta/ui/version_preview.py:70
+#, python-brace-format
+msgid "This version is {size}. It has to be unpacked before it can be shown."
+msgstr ""
+
+#: src/delta/ui/version_preview.py:71
+msgid "Show preview"
+msgstr ""
+
+#: src/delta/ui/version_preview.py:109
+msgid "This kind of file opens in its own application."
+msgstr ""
+
+#: src/delta/ui/version_preview.py:136
+msgid "It could not be opened."
+msgstr ""
+
+#: src/delta/ui/version_preview.py:140
+msgid "Could not show this version"
+msgstr ""
+
+#: src/delta/ui/version_preview.py:193
+msgid "No application could open this version."
+msgstr ""
+
+#. while the controls are being reset, their signals mean nothing
+#. the pause before a search is sent
+#: src/delta/ui/folder_browser.py:60
+msgid "Search by name"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:62
+msgid "All"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:62
+msgid "Changed"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:62 src/delta/ui/folder_listing.py:158
+msgid "Deleted"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:62
+msgid "Filter by change"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:63
+msgid "Show everything below this folder that changed since this version"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:65
+msgid "Select several items"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:67
+msgid "Restore deleted…"
+msgstr ""
+
+#: src/delta/ui/folder_browser.py:68
+msgid "Put back everything in this folder that was deleted since this version"
+msgstr ""
+
+#: src/delta/ui/browse_folder.py:35 src/delta/ui/browse_folder.py:48
+msgid "Browse as a folder"
+msgstr ""
+
+#: src/delta/ui/browse_folder.py:49
+msgid "Preparing the backup…"
+msgstr ""
+
+#: src/delta/ui/browse_folder.py:50
+msgid "Close the folder"
+msgstr ""
+
+#: src/delta/ui/browse_folder.py:51
+msgid "Closing…"
+msgstr ""
+
+#: src/delta/ui/browse_folder.py:87
+msgid "The backup folder was closed."
+msgstr ""
+
+#: src/delta/ui/a11y.py:29
+msgid "Loading…"
+msgstr ""
+
+#: src/delta/ui/about.py:32
+msgid "File time travel for GNOME, powered by BorgBackup."
+msgstr ""
+
+#: src/delta/ui/about.py:36
+msgid "translator-credits"
+msgstr ""
+
+#: src/delta/ui/about.py:38
+msgid "Source code"
+msgstr ""
+
+#: src/delta/ui/about.py:39
+msgid "Co-author"
+msgstr ""
+
+#: src/delta/ui/preview_pane.py:106
+#, python-brace-format
+msgid "Preview of {name}"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:135
+#, python-brace-format
+msgid "{size} · {when}"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:149
+msgid "Nothing found"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:149
+msgid "No name here has what you typed."
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:151
+msgid "Nothing to show"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:151
+msgid "Nothing in this folder changed in the way you chose."
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:152
+msgid "This folder was empty"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:159
+msgid "Modified"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:160
+msgid "Changed inside"
+msgstr ""
+
+#: src/delta/ui/folder_listing.py:161
+msgid "Unchanged"
+msgstr ""
+
+#: src/nautilus/delta_extension.py:195
+msgid "Restore Previous Version…"
+msgstr ""
+
+#: src/nautilus/delta_extension.py:221
+msgid "Backup"
+msgstr ""
+
+#: src/nautilus/delta_extension.py:222
+msgid "Whether the file is in the latest backup"
+msgstr ""
+
+#: src/nautilus/delta_extension.py:245
+msgid "In the latest backup"
+msgstr ""
+
+#: src/nautilus/delta_extension.py:245
+msgid "Changed since the last backup"
+msgstr ""
+
+#: src/delta/ui/status.py:67
+msgid "just now"
+msgstr ""
+
+#: src/delta/ui/status.py:70
+#, python-brace-format
+msgid "{n} minute ago"
+msgid_plural "{n} minutes ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/status.py:73
+#, python-brace-format
+msgid "{n} hour ago"
+msgid_plural "{n} hours ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/status.py:75
+#, python-brace-format
+msgid "{n} day ago"
+msgid_plural "{n} days ago"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/status.py:82
+msgid "in a moment"
+msgstr ""
+
+#: src/delta/ui/status.py:85
+#, python-brace-format
+msgid "in {n} minute"
+msgid_plural "in {n} minutes"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/status.py:88
+#, python-brace-format
+msgid "in {n} hour"
+msgid_plural "in {n} hours"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/status.py:90
+#, python-brace-format
+msgid "in {n} day"
+msgid_plural "in {n} days"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/status.py:95
+msgid "every hour"
+msgstr ""
+
+#: src/delta/ui/status.py:97
+msgid "every day"
+msgstr ""
+
+#: src/delta/ui/status.py:99
+msgid "every week"
+msgstr ""
+
+#: src/delta/ui/status.py:100
+#, python-brace-format
+msgid "on the schedule “{expression}”"
+msgstr ""
+
+#: src/delta/ui/status.py:105
+msgid "Back up now"
+msgstr ""
+
+#: src/delta/ui/status.py:109
+msgid "The backup service is not available"
+msgstr ""
+
+#: src/delta/ui/status.py:110
+msgid "Delta could not start its background service."
+msgstr ""
+
+#: src/delta/ui/status.py:116
+msgid "Backups are not set up"
+msgstr ""
+
+#: src/delta/ui/status.py:117
+msgid "Choose where to keep your backups to get started."
+msgstr ""
+
+#: src/delta/ui/status.py:120 src/delta/ui/wizard_window.py:23
+msgid "Set up backups"
+msgstr ""
+
+#: src/delta/ui/status.py:125
+msgid "Backing up…"
+msgstr ""
+
+#: src/delta/ui/status.py:134
+msgid "A backup is open as a folder"
+msgstr ""
+
+#: src/delta/ui/status.py:135
+msgid "The next copy starts when you close it."
+msgstr ""
+
+#: src/delta/ui/status.py:143
+msgid "The backup repository is locked"
+msgstr ""
+
+#: src/delta/ui/status.py:144
+msgid ""
+"A backup did not finish cleanly, or something else is using the repository."
+msgstr ""
+
+#: src/delta/ui/status.py:147
+msgid "Unlock…"
+msgstr ""
+
+#: src/delta/ui/status.py:152
+msgid "The last backup failed"
+msgstr ""
+
+#: src/delta/ui/status.py:156
+msgid "Try again"
+msgstr ""
+
+#: src/delta/ui/status.py:161
+#, python-brace-format
+msgid "The first backup runs {when}."
+msgstr ""
+
+#: src/delta/ui/status.py:163
+#, python-brace-format
+msgid "The first backup runs {schedule}."
+msgstr ""
+
+#: src/delta/ui/status.py:170
+#, python-brace-format
+msgid "Last backup: {when}. Next backup: {next}."
+msgstr ""
+
+#: src/delta/ui/status.py:172
+#, python-brace-format
+msgid "Last backup: {when}. Backups run {schedule}."
+msgstr ""
+
+#: src/delta/ui/status.py:175
+msgid "Your files are protected"
+msgstr ""
+
+#: src/delta/ui/window.py:51
+msgid "Help"
+msgstr ""
+
+#: src/delta/ui/window.py:52
+msgid "About Delta"
+msgstr ""
+
+#: src/delta/ui/window.py:54
+msgid "Main menu"
+msgstr ""
+
+#: src/delta/ui/window.py:123
+msgid "Unlock the repository?"
+msgstr ""
+
+#: src/delta/ui/window.py:125
+msgid ""
+"Only continue if no backup is running right now, on this computer or on any "
+"other that uses this repository. Unlocking one that is in use can damage "
+"your backups."
+msgstr ""
+
+#: src/delta/ui/window.py:129 src/delta/ui/restore_deleted.py:30
+#: src/delta/ui/restore_deleted.py:68
+msgid "Cancel"
+msgstr ""
+
+#: src/delta/ui/window.py:130
+msgid "Unlock"
+msgstr ""
+
+#: src/delta/ui/wizard.py:65
+msgid "Choose where to keep your backups."
+msgstr ""
+
+#: src/delta/ui/wizard.py:68
+msgid "Enter a full folder path, for example ~/Backups."
+msgstr ""
+
+#: src/delta/ui/wizard.py:70
+msgid "Choose a folder, not the whole disk."
+msgstr ""
+
+#: src/delta/ui/wizard.py:73
+msgid "That path is a file, not a folder."
+msgstr ""
+
+#: src/delta/ui/wizard.py:75
+msgid "That folder is not empty. Choose a new or empty folder."
+msgstr ""
+
+#: src/delta/ui/wizard.py:87
+#, python-brace-format
+msgid "“{folder}” is not a full path."
+msgstr ""
+
+#: src/delta/ui/wizard.py:91
+#, python-brace-format
+msgid "“{folder}” does not exist."
+msgstr ""
+
+#: src/delta/ui/wizard.py:93
+#, python-brace-format
+msgid "“{folder}” is a file, not a folder."
+msgstr ""
+
+#: src/delta/ui/wizard.py:106
+#, python-brace-format
+msgid "Use at least {n} characters."
+msgstr ""
+
+#: src/delta/ui/wizard.py:108
+msgid "The two passphrases do not match."
+msgstr ""
+
+#: src/delta/ui/wizard.py:152
+msgid "Save your recovery key, or confirm that you accept the risk."
+msgstr ""
+
+#: src/delta/ui/wizard.py:188
+msgid "Recovery key, saved by you"
+msgstr ""
+
+#: src/delta/ui/wizard.py:190
+msgid "Your own passphrase"
+msgstr ""
+
+#: src/delta/ui/wizard.py:194
+msgid "Folders"
+msgstr ""
+
+#: src/delta/ui/wizard.py:195
+msgid "Protection"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:19
+msgid "What should be backed up?"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:40
+msgid "Everything in your home folder"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:54
+msgid "Choose a folder to back up"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:72
+msgid "Your recovery key"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:74
+msgid ""
+"Delta protects your backups with a key kept in your keyring. If you ever "
+"lose access to it, this recovery key is the only way to read them. Keep it "
+"somewhere safe, away from this computer."
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:85
+msgid "Copy"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:87
+msgid "Save to a file…"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:94
+msgid "I have saved my recovery key"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:95
+msgid "Or I accept that I could lose access to my backups without it."
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:103
+msgid "Use my own passphrase instead"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:104
+msgid "You will need it to restore your files, so do not lose it."
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:107
+msgid "Passphrase"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:108
+msgid "Repeat the passphrase"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:122
+msgid "Save your recovery key"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:160
+msgid "Ready to go"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:161
+msgid ""
+"Delta will create your backup destination and start protecting your files."
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:168
+msgid "Use the existing repository"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:170
+msgid ""
+"There is already a backup repository there. Enter its passphrase to keep "
+"using it; nothing in it will be erased."
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:175
+msgid "Repository passphrase"
+msgstr ""
+
+#: src/delta/ui/wizard_pages.py:178
+msgid "Use this repository"
+msgstr ""
+
+#. the label says it
+#: src/delta/ui/wizard_pages.py:190
+msgid "Setting up your backups…"
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:21
+msgid "Where should backups go?"
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:22
+msgid "Pick a folder or a drive on this computer."
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:24
+msgid "Folder"
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:27
+msgid "Choose…"
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:36
+msgid "Connected drives"
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:37
+msgid "Removable drives. Backups go in a folder called “delta-backups”."
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:49
+msgid "Use"
+msgstr ""
+
+#: src/delta/ui/wizard_destination.py:59
+msgid "Choose a folder for your backups"
+msgstr ""
+
+#: src/delta/ui/wizard_window.py:77
+msgid "Create backups"
+msgstr ""
+
+#: src/delta/ui/wizard_window.py:77
+msgid "Next"
+msgstr ""
+
+#: src/delta/ui/folder_data.py:38
+msgid "Could not read this folder"
+msgstr ""
+
+#: src/delta/ui/folder_data.py:42
+msgid "The search failed"
+msgstr ""
+
+#: src/delta/ui/folder_data.py:52
+msgid "Could not compare with the disk"
+msgstr ""
+
+#: src/delta/ui/folder_row.py:27
+#, python-brace-format
+msgid "Showing the first {n} matches"
+msgstr ""
+
+#: src/delta/ui/folder_row.py:28
+msgid "Type more of the name to narrow them down."
+msgstr ""
+
+#: src/delta/ui/folder_row.py:49
+#, python-brace-format
+msgid "Select {name}"
+msgstr ""
+
+#. Once restored in this window the row says so, whatever it was before: otherwise a click that
+#. worked looks like a click that did nothing, and the user presses it again.
+#: src/delta/ui/folder_row.py:57
+msgid "Restored"
+msgstr ""
+
+#: src/delta/ui/folder_row.py:68
+msgid "The same as the current one: nothing to restore"
+msgstr ""
+
+#: src/delta/ui/folder_row.py:70
+msgid "Put it back"
+msgstr ""
+
+#: src/delta/ui/folder_row.py:77
+#, python-brace-format
+msgid "{action}: {name}"
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:51
+#, python-brace-format
+msgid ""
+"{n} item ({size}) that was in this folder in this version and is gone now "
+"will be put back where it was. Nothing that exists now is touched."
+msgid_plural ""
+"{n} items ({size}) that were in this folder in this version and are gone now "
+"will be put back where they were. Nothing that exists now is touched."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/restore_batch.py:60 src/delta/ui/restore_batch.py:73
+msgid "It could not be restored."
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:62
+#, python-brace-format
+msgid "Restored {n} item"
+msgid_plural "Restored {n} items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/delta/ui/restore_batch.py:63
+msgid "Nothing needed restoring."
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:71
+#, python-brace-format
+msgid "Restored {name}"
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:71
+#, python-brace-format
+msgid "Restored as {name}"
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:72
+#, python-brace-format
+msgid "Restored {n} items"
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:75
+#, python-brace-format
+msgid "None could be restored: {reason}"
+msgstr ""
+
+#: src/delta/ui/restore_batch.py:76
+#, python-brace-format
+msgid "{done} restored, {failed} not: {reason}"
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:24
+#, python-brace-format
+msgid "Replace {n} current versions?"
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:25
+msgid ""
+"The versions you chose take their place. The current ones are kept next to "
+"them, renamed with today's date and time."
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:27
+msgid "Replace the current version?"
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:28
+msgid ""
+"The version you chose takes its place. The current one is kept next to it, "
+"renamed with today's date and time."
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:31
+msgid "Replace"
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:64
+msgid "Nothing was deleted from this folder since this version."
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:67
+msgid "Restore everything deleted?"
+msgstr ""
+
+#: src/delta/ui/restore_deleted.py:69
+msgid "Restore"
+msgstr ""

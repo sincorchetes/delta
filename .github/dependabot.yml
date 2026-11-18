@@ -1,0 +1,28 @@
+version: 2
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
+
+  # Reads pyproject.toml and uv.lock. After merging, keep nix/python.nix in step with uv.lock.
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      python:
+        update-types: [minor, patch]
+
+  # The website: website/package.json and website/bun.lock.
+  - package-ecosystem: bun
+    directory: /website
+    schedule:
+      interval: weekly
+    groups:
+      web:
+        update-types: [minor, patch]

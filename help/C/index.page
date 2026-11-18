@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="guide" style="ui-guide" id="index">
+  <info>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Delta Help</title>
+  <title type="link" role="trail">Delta</title>
+  <title type="link">Delta Help</title>
+  <desc>Go back to any earlier version of your files. Backups stay on this computer.</desc>
+
+  <p>Delta keeps backups of your files, one after another, and lets you look at any of them: restore a document
+  you changed by mistake, get back a folder you deleted, or browse an old backup as if it were a folder.</p>
+
+  <section id="get-started" style="2column">
+    <title>Get started</title>
+  </section>
+
+  <section id="use" style="2column">
+    <title>Everyday use</title>
+  </section>
+
+  <section id="problems">
+    <title>If something goes wrong</title>
+  </section>
+</page>

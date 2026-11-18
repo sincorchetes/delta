@@ -1,0 +1,8 @@
+<services>
+  <!-- The source of the tag the version names; the spec and the debian/ files are uploaded next to it. -->
+  <service name="download_url">
+    <param name="protocol">https</param>
+    <param name="host">github.com</param>
+    <param name="path">/sincorchetes/delta/archive/v0.1.0/delta-0.1.0.tar.gz</param>
+  </service>
+</services>
