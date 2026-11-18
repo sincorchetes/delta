@@ -2,7 +2,7 @@
 %global appid io.github.sincorchetes.Delta
 
 Name:           delta-backup
-Version:        0.1.0
+Version:        0.1.1
 Release:        1%{?dist}
 Summary:        Time travel for your files in GNOME, with BorgBackup
 License:        GPL-3.0-or-later
@@ -100,5 +100,8 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_userunitdir}/delta.timer
 
 %changelog
+* Wed Nov 18 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.1.1-1
+- No change to the code: packaging and documentation
+
 * Tue Nov 17 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.1.0-1
 - First package

@@ -60,7 +60,12 @@
   </supports>
 
   <releases>
-    <release version="0.1.0" date="2026-11-17">
+    <release version="0.1.1" date="2026-11-18">
+      <description>
+        <p>Packaging and documentation: a Flatpak bundle and the repositories for each distribution. No change to the program.</p>
+      </description>
+    </release>
+    <release version="0.1.0" date="2026-11-18">
       <description>
         <p>First release.</p>
       </description>
