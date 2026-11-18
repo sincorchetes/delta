@@ -1,4 +1,3 @@
-self:
 { config, lib, pkgs, ... }:
 
 let
@@ -11,8 +10,8 @@ in
 
     package = lib.mkOption {
       type = lib.types.package;
-      default = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
-      defaultText = lib.literalExpression "delta.packages.\${system}.default";
+      default = pkgs.callPackage ./package.nix { };
+      defaultText = lib.literalExpression "pkgs.callPackage ./package.nix { }";
       description = "The Delta package to install.";
     };
   };
