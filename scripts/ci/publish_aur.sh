@@ -25,8 +25,11 @@ pacman -Sy --noconfirm --needed pacman-contrib base-devel git openssh >/dev/null
 install -d -m 700 /root/.ssh
 printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > /root/.ssh/aur
 chmod 600 /root/.ssh/aur
+ssh-keygen -y -f /root/.ssh/aur > /root/.ssh/aur.pub </dev/null ||
+    fail "AUR_SSH_PRIVATE_KEY is not a usable private key: it needs its BEGIN and END lines whole, and no passphrase"
+echo "The key of the CI is $(ssh-keygen -lf /root/.ssh/aur.pub): it has to be one of the fingerprints in the AUR account"
 cp "$known_hosts" /root/.ssh/known_hosts
-export GIT_SSH_COMMAND="ssh -i /root/.ssh/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+export GIT_SSH_COMMAND="ssh -i /root/.ssh/aur -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes"
 
 git clone ssh://aur@aur.archlinux.org/delta-backup.git "$work"
 cp "$source_dir/packaging/arch/PKGBUILD" "$work/PKGBUILD"
@@ -38,14 +41,16 @@ chown -R root "$work"
 
 cd "$work"
 git config --global --add safe.directory "$work"
-if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
-    echo "The AUR already has $version"
+
+# Only the two files of the package count: updpkgsums leaves the tarball it downloaded beside them.
+git add PKGBUILD .SRCINFO
+if git diff --cached --quiet; then
+    echo "The AUR already has this PKGBUILD for $version"
     exit 0
 fi
 
 git config user.name "${AUR_GIT_NAME:?AUR_GIT_NAME is not set}"
 git config user.email "${AUR_GIT_EMAIL:?AUR_GIT_EMAIL is not set}"
-git add PKGBUILD .SRCINFO
 git commit -q -m "Update to $version"
 git show --stat HEAD
 
