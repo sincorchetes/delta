@@ -2,18 +2,21 @@
 # Publishes the PKGBUILD of a tag to the AUR: the real checksum, .SRCINFO, a commit and the push.
 # Runs as root in an Arch Linux container (it creates the user that makepkg needs).
 # Usage: publish_aur.sh vX.Y.Z
-# Environment: AUR_SSH_PRIVATE_KEY (required), AUR_GIT_NAME, AUR_GIT_EMAIL, DRY_RUN=1 (everything but the push).
+# Environment: AUR_SSH_PRIVATE_KEY (required), AUR_GIT_NAME, AUR_GIT_EMAIL, DRY_RUN=1 (everything but the push),
+# SOURCE_DIR (a checkout of the tag; by default the one this script is in). The pinned host keys always come from
+# this script's own checkout, so an old tag cannot bring its own.
 set -eu
 
 tag=${1:?usage: publish_aur.sh vX.Y.Z}
 version=${tag#v}
 here=$(cd "$(dirname "$0")/../.." && pwd)
+source_dir=${SOURCE_DIR:-$here}
 known_hosts=$here/scripts/ci/aur_known_hosts
 work=/work/aur
 
 fail() { echo "publish_aur.sh: $*" >&2; exit 1; }
 
-grep -q "^pkgver=$version\$" "$here/packaging/arch/PKGBUILD" || fail "pkgver of the PKGBUILD is not $version"
+grep -q "^pkgver=$version\$" "$source_dir/packaging/arch/PKGBUILD" || fail "pkgver of the PKGBUILD is not $version"
 [ -s "$known_hosts" ] || fail "scripts/ci/aur_known_hosts is empty: the host keys of the AUR have to be pinned there"
 [ -n "${AUR_SSH_PRIVATE_KEY:-}" ] || fail "AUR_SSH_PRIVATE_KEY is not set"
 
@@ -26,7 +29,7 @@ cp "$known_hosts" /root/.ssh/known_hosts
 export GIT_SSH_COMMAND="ssh -i /root/.ssh/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
 
 git clone ssh://aur@aur.archlinux.org/delta-backup.git "$work"
-cp "$here/packaging/arch/PKGBUILD" "$work/PKGBUILD"
+cp "$source_dir/packaging/arch/PKGBUILD" "$work/PKGBUILD"
 
 useradd -m builder
 chown -R builder "$work"
