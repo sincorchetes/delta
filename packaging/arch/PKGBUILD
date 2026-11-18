@@ -14,7 +14,7 @@ optdepends=(
   'yelp: the help (F1)'
 )
 source=("delta-$pkgver.tar.gz::https://github.com/sincorchetes/delta/archive/v$pkgver.tar.gz")
-sha256sums=('SKIP') # replaced with the real sum once the v$pkgver tag exists
+sha256sums=('886d3a2252dd1f28031853f705653d05ca2fa29758783e0271999f90b61ca1a7') # of the tarball of the tag v$pkgver; `updpkgsums` after tagging a new version
 
 build() {
   arch-meson "delta-$pkgver" build
