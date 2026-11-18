@@ -32,7 +32,8 @@ La calidad de Delta se mide, no se afirma. Cada cifra de abajo sale de una orden
   puede distinguir**, porque no cambia nada que el programa pueda observar.
 - **Comprobaciones del propio proyecto.** Cada texto visible está traducido, las páginas de ayuda son válidas y sus enlaces existen, la versión de cada paquete coincide con la de la compilación,
   el Flatpak no pide más permisos de los acordados, y se validan el AppStream y las entradas de escritorio.
-- **Siete distribuciones en integración continua**, y los paquetes se construyen e instalan en contenedores limpios en Fedora, Rocky Linux, openSUSE, Debian, Ubuntu y Arch.
+- **Las librerías de cada distribución.** Una vez por semana, y siempre que se pida, Delta se compila y se ejecutan sus pruebas en Fedora, Arch, openSUSE, AlmaLinux, Rocky Linux, Ubuntu y Debian
+  con los paquetes que trae cada una y su propio Python, que es lo que recibe quien instala su paquete; y se construye el paquete de Nix. Además, los paquetes se construyen e instalan en contenedores limpios en Fedora, Rocky Linux, openSUSE, Debian, Ubuntu y Arch.
 
 ## Por qué BorgBackup
 

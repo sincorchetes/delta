@@ -182,12 +182,15 @@ Tasks, in order:
 2. 🚧 Accessibility: the audit and the fixes are done (`ui/a11y.py`: names for icon-only controls, check boxes and spinners,
    decorative icons hidden, alternative text for the preview, no dimmed text on data). Still to try with Orca and keyboard only
    in a real session.
-3. 🚧 CI per distribution (2026-11-17): a matrix of containers (Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10, Rocky 10,
-   Ubuntu 24.04, Debian 13) with the packages of each family (`scripts/ci/install-deps.sh`), a check of the minimum base and of the
-   interface classes Delta calls (`scripts/ci/check_base.py`), a build, the `.desktop`/AppStream validators and the tests.
-   Only Fedora is required; the others report until they have run clean once (`experimental: false` in `ci.yml`). Pending: see
-   the first real result and adjust. The pipeline also runs the mutation tests (`scripts/ci/check_mutants.sh`), builds and
-   checks the website, publishes it from `main`, and runs CodeQL.
+3. 🚧 CI (2026-11-17, reworked 2026-11-18). The pipeline (`ci.yml`) runs the tests in devenv, the mutation tests
+   (`scripts/ci/check_mutants.sh`), and builds, checks and publishes the website from `main`; CodeQL runs in its own workflow. The
+   first real run showed that the environment sync failed from scratch (the project's build backend, `poetry-core`, was not in a new
+   virtualenv), which `scripts/sync-venv.sh` now avoids. The distributions are checked apart (`distros.yml`, by hand and weekly; it
+   does not block a pull request): Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10, Rocky 10, Ubuntu 24.04 and Debian 13, each
+   with the packages it ships and its own Python, with no uv and nothing from PyPI (`scripts/ci/install-deps.sh`), a check of the
+   minimum base and of the interface classes Delta calls (`scripts/ci/check_base.py`), a build, the `.desktop`/AppStream validators
+   and the tests; plus a build of the Nix flake. Pending: see the first result of that workflow and adjust (the package names in
+   `install-deps.sh` were written from memory).
 4. 🚧 Flatpak: a manifest, window only, scheduling without systemd. Decision (2026-11-17, the user): **a background daemon**
    that schedules with a timer of its own. Done: `domain/recurrence.py` (when a schedule fires: hourly/daily/weekly/monthly… and
    `[days] *-*-* HH:MM`, without systemd), `infrastructure/timer_scheduler.py` (the same `Scheduler` port: it looks at the clock

@@ -3,7 +3,7 @@
 It asks for the versions and, more to the point, for the interface classes Delta really uses: a distribution
 can carry a version number and still lack what the code calls. Prints a table and exits 1 if anything is missing.
 
-    uv run python scripts/ci/check_base.py
+    python3 scripts/ci/check_base.py
 """
 
 import shutil

@@ -1,0 +1,76 @@
+name: Distributions
+
+# Delta on the system libraries of each distribution, and on Nix: the packages the distribution ships (`python3-gobject`,
+# GTK, libadwaita, BorgBackup) with its own Python. No uv and nothing from PyPI: it is what a user of its package gets.
+#
+# It is a check, not a gate: it does not block a pull request. Run it by hand from the Actions tab, or wait for the weekly run
+# (a failure of the weekly run reaches your e-mail). Flatpak is another story: it brings its own runtime.
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "43 5 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  distros:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Fedora", image: "fedora:latest" }
+          - { name: "Arch Linux", image: "archlinux:latest" }
+          - { name: "openSUSE Tumbleweed", image: "opensuse/tumbleweed:latest" }
+          - { name: "AlmaLinux 10", image: "almalinux:10" }
+          - { name: "Rocky Linux 10", image: "rockylinux/rockylinux:10" }
+          - { name: "Ubuntu 24.04", image: "ubuntu:24.04" }
+          - { name: "Debian 13", image: "debian:trixie" }
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the distribution's packages
+        run: sh scripts/ci/install-deps.sh
+
+      - name: The minimum base is there (versions and the interface classes Delta calls)
+        run: python3 scripts/ci/check_base.py
+
+      - name: Build
+        run: |
+          meson setup build
+          meson compile -C build
+
+      - name: Validate GSettings schema
+        run: glib-compile-schemas --strict --dry-run data
+
+      - name: Validate the desktop entry and the AppStream metadata
+        run: meson test -C build
+
+      - name: Tests
+        # Widget tests need a display: without Xvfb they are left out and the log says so.
+        run: |
+          if command -v xvfb-run > /dev/null; then
+            xvfb-run -a python3 -m pytest -q
+          else
+            echo "::warning::no xvfb-run on this distribution: the GTK widget tests were not run"
+            python3 -m pytest -q --ignore=tests/gtk
+          fi
+
+  # The flake builds Delta with the libraries of nixpkgs, the "system" libraries of Nix.
+  nix:
+    name: Nix (flake)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cachix/install-nix-action@v31
+
+      - name: Build the package
+        run: nix build --print-build-logs
+
+      - name: Check the flake
+        run: nix flake check --print-build-logs

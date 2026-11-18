@@ -21,7 +21,7 @@ Flatpak was built and tried on Fedora.
 Do it after the first CI run, so that the names of the checks exist.
 
 - [ ] **Ruleset for `main`:** target the default branch; require a pull request (0 approvals, squash only); require the checks
-      `devenv (tests, quality, Sonar)`, `Fedora` and `website (build and check)` and an up-to-date branch; require linear history;
+      `devenv (tests, quality, Sonar)` and `website (build and check)` and an up-to-date branch; require linear history;
       block deletions and force pushes. Add *Require code scanning results* once CodeQL has run.
 - [ ] **Ruleset for the tags `v*`:** restrict updates and deletions and block force pushes; bypass for the repository admin role.
 - [ ] **Settings:** description, website and topics; squash merging only and delete branches after merging; workflow permissions
@@ -37,16 +37,28 @@ Do it after the first CI run, so that the names of the checks exist.
 
 - [ ] `ruff` with the version from devenv's nixpkgs (it was only tried with a newer ruff from another project).
 - [ ] The mutation step ends with `surviving mutants: 1 (allowed: 1)`.
-- [ ] The seven distribution jobs: set `experimental: false` in `ci.yml` for each one that passes.
+- [ ] `devenv` passes from scratch now that `scripts/sync-venv.sh` installs the build tools before the project.
+- [ ] Run the **Distributions** workflow by hand (*Actions → Distributions → Run workflow*): the seven distributions and the Nix
+      flake, each with its own libraries. The package names in `scripts/ci/install-deps.sh` were written from memory; fix
+      what the first run reports.
+- [ ] Dependabot opened a pull request that bumps `typescript` from 5 to 7 (a major version) in `website/`: do not merge it
+      blindly (`astro check` may not support it); close it, or ignore major versions of `typescript` in `dependabot.yml`.
 - [ ] CodeQL: the version of the actions (`@v4` was written from memory) and the checks `CodeQL (python)` and `CodeQL (actions)`.
-- [ ] Dependabot accepts the `bun` ecosystem (*Insights → Dependency graph → Dependabot*); if not, use `npm` on `website/`.
+- [x] Dependabot accepts the `bun` ecosystem (it opened a pull request for `website/`).
 - [ ] The two issue forms show up under *Issues → New issue*.
 - [ ] The website is deployed from `main`.
 
 ## 4. Release channels (after the tag)
 
-- [ ] **OBS:** an account, a project and `packaging/obs/_service`; check the builds for Fedora, Rocky/Alma, openSUSE, Debian and
-      Ubuntu.
+- [x] **OBS, the project:** `home:sincorchetes:delta` exists, with the repositories `Fedora_43`, `Fedora_44`,
+      `openSUSE_Tumbleweed`, `RockyLinux_10` and `AlmaLinux_10` (see `packaging/obs/README.md`). In the project's *Meta* tab,
+      rename the repository still called `EL_10` to `RockyLinux_10`.
+- [ ] **OBS, the package:** after the tag, upload `delta-backup.spec` and `_service` and check that the five repositories build.
+- [ ] **OBS, Rocky and Alma:** install the package from each repository in a clean Rocky 10 and a clean AlmaLinux 10 container
+      (the build environments were not tried yet; if something is `unresolvable`, the missing path goes in the repository's
+      paths).
+- [ ] **OBS, Debian and Ubuntu:** a second phase: add the repositories and package the `debian/` files for OBS.
+- [ ] Update the installation page of the website with the real repository URLs, once the builds pass.
 - [ ] **AUR:** publish `delta-backup` from `packaging/arch/PKGBUILD`.
 - [ ] **Flathub:** the Python modules from pinned sources without network access (`flatpak-pip-generator`); see
       `flatpak/README.md`.
