@@ -50,16 +50,15 @@ Do it after the first CI run, so that the names of the checks exist.
 
 ## 4. Release channels (after the tag)
 
-- [x] **OBS, the project:** `home:sincorchetes:delta` exists, with the repositories `Fedora_43`, `Fedora_44`,
-      `openSUSE_Tumbleweed`, `RockyLinux_10` and `AlmaLinux_10` (see `packaging/obs/README.md`). In the project's *Meta* tab,
-      rename the repository still called `EL_10` to `RockyLinux_10`.
-- [ ] **OBS, the package:** after the tag, upload `delta-backup.spec` and `_service` and check that the five repositories build.
-- [ ] **OBS, Rocky and Alma:** install the package from each repository in a clean Rocky 10 and a clean AlmaLinux 10 container
-      (the build environments were not tried yet; if something is `unresolvable`, the missing path goes in the repository's
-      paths).
-- [ ] **OBS, Debian and Ubuntu:** a second phase: add the repositories and package the `debian/` files for OBS.
-- [ ] Update the installation page of the website with the real repository URLs, once the builds pass.
-- [ ] **AUR:** publish `delta-backup` from `packaging/arch/PKGBUILD`.
+- [x] **OBS:** `home:sincorchetes:delta` builds `delta-backup` 0.1.0 for Fedora 43 and 44, openSUSE Tumbleweed, Rocky 10
+      (`x86_64`), AlmaLinux 10, Debian 13 and Ubuntu 26.04 and 26.10, and each one installs from its repository in a clean
+      container (see `packaging/obs/README.md`).
+- [ ] **OBS, Ubuntu 24.04:** its repository built but was never published, so it was left out. Try it again later.
+- [x] **AUR:** `delta-backup` is published, and builds, installs and imports in a clean Arch container.
+- [ ] **AUR, next version:** in `packaging/arch/PKGBUILD` the optional dependency is `python-nautilus`; the real name in Arch is
+      `nautilus-python`.
+- [ ] **Flatpak:** it builds and runs on Fedora (`flatpak/`), but it is not published anywhere. Decide how: a bundle attached to the
+      GitHub Release (quick, no automatic updates), a repository of its own, or Flathub (the standard, with a review).
 - [ ] **Flathub:** the Python modules from pinned sources without network access (`flatpak-pip-generator`); see
       `flatpak/README.md`.
 

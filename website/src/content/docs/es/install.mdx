@@ -14,16 +14,70 @@ import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 - Una **sesión de usuario de systemd**, que ejecuta las copias programadas. Todo escritorio GNOME de una distribución común la tiene.
 
 <Aside type="note" title="Dónde está Delta hoy">
-Delta aún no está en los repositorios de ninguna distribución. Los paquetes para Fedora, Rocky Linux y AlmaLinux,
-openSUSE, Debian, Ubuntu y Arch están escritos y se compilan sin problemas; los repositorios que permitirán a tu gestor de
-paquetes instalarlos y actualizarlos, y un Flatpak, están previstos para la versión 1.0. Hasta entonces, compila el paquete
-de tu distribución, usa Nix o compila desde el código fuente.
+Delta se publica en un **repositorio para cada distribución**, construido por el openSUSE Build Service: lo añades una vez
+y tu gestor de paquetes instala Delta y lo mantiene actualizado. Fedora (43 y 44), Rocky Linux 10, AlmaLinux 10, openSUSE
+Tumbleweed, Debian 13 y Ubuntu (26.04 y 26.10) tienen el suyo, y Arch Linux tiene el AUR. Para cualquier otra distribución,
+o versión, compila el paquete tú, usa Nix o compila desde el código fuente. Un Flatpak está previsto para la versión 1.0.
 </Aside>
 
-## Compilar el paquete de tu distribución
+## Instalar desde el repositorio
 
-Cada paquete se llama `delta-backup` e instala los mismos archivos que la compilación desde el código fuente, con las
-dependencias propias de tu distribución. Primero, descarga el código:
+Añade una vez el repositorio de tu distribución e instala **`delta-backup`**. Los paquetes están firmados: tu gestor de
+paquetes te pide que confíes en la clave la primera vez. El paquete trae lo que Delta necesita (BorgBackup, el llavero y los
+enlaces de Python) como dependencias propias.
+
+<Tabs>
+  <TabItem label="Fedora">
+    ```sh
+    sudo dnf config-manager addrepo --from-repofile=https://download.opensuse.org/repositories/home:/sincorchetes:/delta/Fedora_44/home:sincorchetes:delta.repo
+    sudo dnf install delta-backup
+    ```
+    En Fedora 43, usa `Fedora_43` en la dirección.
+  </TabItem>
+  <TabItem label="Rocky, AlmaLinux">
+    BorgBackup viene de EPEL, así que actívalo antes. En AlmaLinux, usa `AlmaLinux_10` en la dirección en lugar de `RockyLinux_10`.
+
+    ```sh
+    sudo dnf install epel-release
+    sudo dnf config-manager --add-repo https://download.opensuse.org/repositories/home:/sincorchetes:/delta/RockyLinux_10/home:sincorchetes:delta.repo
+    sudo dnf install delta-backup
+    ```
+  </TabItem>
+  <TabItem label="openSUSE Tumbleweed">
+    ```sh
+    sudo zypper addrepo https://download.opensuse.org/repositories/home:/sincorchetes:/delta/openSUSE_Tumbleweed/home:sincorchetes:delta.repo
+    sudo zypper refresh
+    sudo zypper install delta-backup
+    ```
+  </TabItem>
+  <TabItem label="Debian, Ubuntu">
+    El repositorio está firmado con una clave que se añade primero. Esto es para Debian 13. En Ubuntu, usa `xUbuntu_26.04` o
+    `xUbuntu_26.10` en las dos direcciones en lugar de `Debian_13`.
+
+    ```sh
+    sudo apt install curl gnupg ca-certificates
+    sudo install -d /etc/apt/keyrings
+    curl -fsSL https://download.opensuse.org/repositories/home:/sincorchetes:/delta/Debian_13/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/delta.gpg
+    echo "deb [signed-by=/etc/apt/keyrings/delta.gpg] https://download.opensuse.org/repositories/home:/sincorchetes:/delta/Debian_13/ /" | sudo tee /etc/apt/sources.list.d/delta.list
+    sudo apt update
+    sudo apt install delta-backup
+    ```
+  </TabItem>
+  <TabItem label="Arch Linux">
+    Desde el AUR, con tu ayudante del AUR:
+
+    ```sh
+    yay -S delta-backup
+    ```
+  </TabItem>
+</Tabs>
+
+Después, cierra la sesión y vuelve a entrar, para que Archivos cargue la extensión y tu sesión encuentre el servicio de Delta.
+
+## Compilar el paquete tú mismo
+
+Donde no hay repositorio (por ejemplo, Ubuntu 24.04, u otra versión o distribución), o si prefieres compilarlo, cada paquete se llama `delta-backup` e
+instala los mismos archivos que la compilación desde el código fuente, con las dependencias propias de tu distribución. Primero, descarga el código:
 
 ```sh
 git clone https://github.com/sincorchetes/delta.git && cd delta
@@ -125,7 +179,7 @@ Archivos carga sus extensiones desde tu equipo, nunca desde un Flatpak, así que
 de Delta: abre el Flatpak.
 
 1. Instala **nautilus-python** desde tu distribución. Por ejemplo, `sudo dnf install nautilus-python` en Fedora,
-   `sudo pacman -S python-nautilus` en Arch, `sudo apt install python3-nautilus` en Debian y Ubuntu.
+   `sudo pacman -S nautilus-python` en Arch, `sudo apt install python3-nautilus` en Debian y Ubuntu.
 2. Pon la extensión donde Archivos la busca y reinicia Archivos:
 
    ```sh
