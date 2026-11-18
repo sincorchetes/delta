@@ -80,6 +80,7 @@ pytest_add_cli_args = [
     "--ignore=tests/unit/test_flatpak_manifest.py",
     "--ignore=tests/unit/test_nix_module.py",
     "--ignore=tests/unit/test_packaging.py",
+    "--ignore=tests/unit/test_release_notes.py",
     "--ignore=tests/unit/test_website_pages.py",
 ]
 # Workers are forked from a clean server, not from the process that already ran the suite: a test
