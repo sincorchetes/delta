@@ -26,3 +26,8 @@ updates:
     groups:
       web:
         update-types: [minor, patch]
+    ignore:
+      # `astro check` does not support TypeScript 7 yet (it asks for 6 or older): a new major of it
+      # broke the build of the website, so it stays on 5 until Astro catches up.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
