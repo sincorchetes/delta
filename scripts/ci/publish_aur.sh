@@ -25,8 +25,11 @@ pacman -Sy --noconfirm --needed pacman-contrib base-devel git openssh >/dev/null
 install -d -m 700 /root/.ssh
 printf '%s\n' "$AUR_SSH_PRIVATE_KEY" > /root/.ssh/aur
 chmod 600 /root/.ssh/aur
+ssh-keygen -y -f /root/.ssh/aur > /root/.ssh/aur.pub </dev/null ||
+    fail "AUR_SSH_PRIVATE_KEY is not a usable private key: it needs its BEGIN and END lines whole, and no passphrase"
+echo "The key of the CI is $(ssh-keygen -lf /root/.ssh/aur.pub): it has to be one of the fingerprints in the AUR account"
 cp "$known_hosts" /root/.ssh/known_hosts
-export GIT_SSH_COMMAND="ssh -i /root/.ssh/aur -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes"
+export GIT_SSH_COMMAND="ssh -i /root/.ssh/aur -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes"
 
 git clone ssh://aur@aur.archlinux.org/delta-backup.git "$work"
 cp "$source_dir/packaging/arch/PKGBUILD" "$work/PKGBUILD"
