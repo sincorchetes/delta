@@ -26,10 +26,21 @@ def test_every_package_names_the_version_of_the_build():
         "debian": first(r"^delta-backup \(([^-]+)-\d+\)", read("debian/changelog")),
         "arch": first(r"^pkgver=(\S+)", read("packaging/arch/PKGBUILD")),
         "obs": first(r"/archive/v([^/]+)/delta-", read("packaging/obs/_service")),
+        "obs dsc": first(r"^Version: ([^-]+)-\d+$", read("packaging/obs/delta-backup.dsc")),
+        "obs dsc tarball": first(r"^DEBTRANSFORM-TAR: delta-(\S+)\.tar\.gz$", read("packaging/obs/delta-backup.dsc")),
         "changelog": first(r"^## \[(\d+\.\d+\.\d+)\]", read("CHANGELOG.md")),
     }
 
     assert versions == dict.fromkeys(versions, MESON_VERSION)
+
+
+def test_the_dsc_for_obs_asks_for_the_same_build_dependencies_as_debian_control():
+    control = read("debian/control").split("Package:", 1)[0]
+    block = first(r"^Build-Depends:\n((?: .+\n)+)", control)
+    in_control = {line.strip().rstrip(",") for line in block.splitlines()}
+    in_dsc = {part.strip() for part in first(r"^Build-Depends: (.+)$", read("packaging/obs/delta-backup.dsc")).split(",")}
+
+    assert in_dsc == in_control
 
 
 def test_every_package_has_the_same_name():

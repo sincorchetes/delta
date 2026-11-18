@@ -55,7 +55,7 @@ ruff check src tests scripts
 ## A new version
 
 A release is one more pull request. It changes the version in `meson.build`, `packaging/rpm/delta-backup.spec` (and its
-`%changelog`), `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/_service` and `CHANGELOG.md`, and sets the date of the
+`%changelog`), `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/_service`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md`, and sets the date of the
 release in the changelog. `tests/unit/test_packaging.py` fails if they disagree. Once it is merged, tag `main` as `vX.Y.Z`
 (for example `v0.1.0`, with no dot after the `v`).
 
