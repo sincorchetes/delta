@@ -41,7 +41,7 @@
     <item>
       <title><gui>Omitir estos</gui></title>
       <p>Carpetas (<gui style="button">Añadir carpeta…</gui>) o archivos sueltos (<gui style="button">Añadir archivo…</gui>) que no se
-      copian. La caché y la papelera siempre se omiten. No puedes omitir todo lo que copias.</p>
+      copian. La caché, la papelera y la propia carpeta de las copias siempre se omiten. No puedes omitir todo lo que copias.</p>
     </item>
   </terms>
 </page>

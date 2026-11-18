@@ -1,5 +1,6 @@
 """Use case: run a backup job and track its outcome."""
 
+import os
 import uuid
 from collections.abc import Callable
 
@@ -25,7 +26,9 @@ class BackupService:
         self._excludes = excludes
 
     def new_job(self) -> BackupJob:
-        return BackupJob(uuid.uuid4().hex, self._sources, self._excludes)
+        """The repository is never part of what it holds: a destination inside the sources would copy itself."""
+        own = () if self._repo is None else (f"pp:{os.path.normpath(self._repo.location)}",)
+        return BackupJob(uuid.uuid4().hex, self._sources, self._excludes + own)
 
     def run(
         self, job: BackupJob, on_progress: Callable[[ProgressEvent], None] | None = None

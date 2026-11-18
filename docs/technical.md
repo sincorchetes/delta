@@ -82,7 +82,7 @@ deduplicate and encrypt. Borg was chosen **for what Delta needs**, and each poin
    or `failed`; an invalid transition is an error.
 3. **The command.** `borg create --json --stats --progress --log-json --checkpoint-interval=300 --exclude … REPO::BACKUP SOURCES`.
    The sources are the chosen folders or, if there are none, `$HOME`. If the user chose folders and none is valid, the backup
-   **fails**: it never widens to all of `$HOME`. By default it excludes `~/.cache` and the trash.
+   **fails**: it never widens to all of `$HOME`. It always skips `~/.cache`, the trash and the backup repository itself (a destination inside what you back up is never copied into itself).
 4. **The key.** The repository password lives in libsecret and reaches Borg through a pipe (fd 3), only to the child process;
    never through argv, the environment or the disk.
 5. **Retention.** After each backup, `borg prune` with a grandfather-father-son policy: 24 hourly, 7 daily, 4 weekly and

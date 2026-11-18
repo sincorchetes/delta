@@ -59,7 +59,7 @@ deduplican y cifran. Delta usa Borg **por lo que necesita**, y cada motivo se pu
 
 1. **La programación.** Cada hora por defecto, un temporizador de usuario de `systemd` le pide una copia al servicio de Delta. Si el equipo estaba apagado a la hora debida, se hace una al arrancar, como hace `Persistent=true`. En el Flatpak, lo hace el temporizador propio de Delta.
 2. **Un trabajo a la vez.** Una copia pasa por unos pocos estados: pendiente, en curso y, después, correcta, correcta con avisos, interrumpida o fallida. No se permite nada más.
-3. **Qué se copia.** Las carpetas que elegiste o, si no elegiste ninguna, tu carpeta personal, salvo `~/.cache` y la papelera. Si elegiste carpetas y ninguna es válida, la copia falla: nunca crece por sí sola a toda tu carpeta personal.
+3. **Qué se copia.** Las carpetas que elegiste o, si no elegiste ninguna, tu carpeta personal, salvo `~/.cache`, la papelera y la propia carpeta de las copias (un destino dentro de tu carpeta personal nunca se copia a sí mismo). Si elegiste carpetas y ninguna es válida, la copia falla: nunca crece por sí sola a toda tu carpeta personal.
 4. **La clave.** La contraseña del repositorio se queda en tu llavero y llega a Borg por una tubería privada que solo puede leer su proceso.
 5. **Qué se conserva.** Tras cada copia, las antiguas se eliminan con una regla abuelo-padre-hijo: por defecto 24 por hora, 7 por día, 4 por semana y 12 por mes. Delta rechaza una regla que no conservaría nada.
 6. **Si se interrumpe.** Un archivo marcador anota que hay una copia en curso. Si el servicio arranca y lo encuentra, la copia se reanuda.

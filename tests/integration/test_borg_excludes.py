@@ -4,6 +4,7 @@ import shutil
 
 import pytest
 
+from delta.application.backup_service import BackupService
 from delta.daemon.composition import resolve_excludes
 from delta.domain.backup_job import BackupJob
 from delta.domain.repository import Repository
@@ -63,6 +64,26 @@ def test_wildcard_characters_in_a_name_exclude_only_that_name(world):
     files = backed_up(runner, repo, root, tmp_path, [root / "[1]", root / "*"])
 
     assert files == {"1/f", "star/f"}
+
+
+def test_a_repository_inside_the_sources_is_not_copied_into_itself(tmp_path):
+    runner = BorgRunner(env={"BORG_PASSPHRASE": "x", "BORG_BASE_DIR": str(tmp_path / "borg-home")})
+    home = tmp_path / "home"
+    (home / "Backups").mkdir(parents=True)
+    repo = Repository(str(home / "Backups" / "repo"))
+    runner.init(repo)
+    (home / "notes.txt").write_text("keep")
+    (home / "Backups" / "readme.txt").write_text("keep: beside the repository, not inside it")
+
+    job = BackupService(runner, repo, (str(home),)).new_job()
+    name = runner.create(repo, job, "snap")
+
+    dest = tmp_path / "out"
+    dest.mkdir()
+    runner.extract(repo, name, (str(home),), str(dest))
+    base = dest / str(home).lstrip("/")
+    files = {p.relative_to(base).as_posix() for p in base.rglob("*") if p.is_file()}
+    assert files == {"notes.txt", "Backups/readme.txt"}
 
 
 def test_an_excluded_single_file_is_skipped(world):
