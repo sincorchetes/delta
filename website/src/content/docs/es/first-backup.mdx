@@ -1,0 +1,57 @@
+---
+title: Tu primera copia
+description: Elige dónde guardar las copias, qué copiar y guarda tu clave de recuperación.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+import Shot from '../../../components/Shot.astro';
+
+La primera vez que abres Delta dice **Las copias no están configuradas**. Elige **Configurar copias** y el
+asistente te guía por cuatro páginas breves con **Siguiente** y **Atrás**. No se crea nada hasta que eliges **Crear copias** en la última.
+
+<Steps>
+
+1. **¿Dónde deben guardarse las copias?**
+
+   Elige una carpeta o una unidad de este equipo.
+
+   - **Carpeta**: elige **Elegir…** y selecciona una carpeta **nueva o vacía**.
+   - **Unidades conectadas**: las unidades extraíbles aparecen aquí. Las copias irán a una carpeta llamada `delta-backups` en la unidad que elijas.
+
+   <Shot name="wizard-destination" alt="La primera página del asistente, «¿Dónde deben guardarse las copias?», con una fila Carpeta y una lista de unidades conectadas." />
+
+   Delta te avisa enseguida si la ruta no es completa, no existe, es un archivo, es un disco entero o es una carpeta que no está vacía.
+
+2. **¿Qué se debe copiar?**
+
+   Por defecto, **Todo lo que hay en tu carpeta personal**. Para elegir, añade carpetas con **Elige una carpeta de la que hacer copia**.
+   Añade las carpetas que te importan y deja fuera el resto.
+
+3. **Tu clave de recuperación**
+
+   Delta protege tus copias con una clave guardada en tu llavero. Si alguna vez pierdes el acceso a él,
+   esta clave de recuperación es la única forma de leerlas.
+
+   <Shot name="wizard-recovery" alt="La página del asistente «Tu clave de recuperación», con la clave, los botones Copiar y «Guardar en un fichero…» y el interruptor de confirmación." />
+
+   Usa **Guardar en un fichero…** y guarda el archivo en un lugar seguro, **lejos de este equipo**. No puedes terminar hasta que
+   elijas **He guardado mi clave de recuperación**, o asumas el riesgo con **O acepto que podría perder el acceso a mis copias sin ella.**
+   **Copiar** por sí solo no cuenta como guardarla.
+
+   ¿Prefieres tu propia contraseña? Elige **Usar mi propia contraseña**, escríbela dos veces (tiene una longitud mínima) y no la pierdas.
+
+4. **Todo listo**
+
+   Delta crea el destino y empieza a proteger tus archivos. **Configurando tus copias…** puede tardar un momento.
+
+</Steps>
+
+## Usar una copia que ya tienes
+
+Si la carpeta que elegiste ya contiene una copia de Delta (tras reinstalar, por ejemplo), el asistente ofrece
+**Usar el repositorio existente**. Escribe su contraseña y elige **Usar este repositorio**. **No se borra nada de lo que contiene.**
+
+<Aside type="tip">
+La primera copia se hace según el horario que elegiste, o al momento con **Copiar ahora**. Después,
+[la ventana de estado](../status/) te dice cuándo se hicieron la última y la próxima.
+</Aside>

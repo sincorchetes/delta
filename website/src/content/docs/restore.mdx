@@ -1,0 +1,74 @@
+---
+title: Restore a file or folder
+description: Find an old version in Files, preview it, and put it back without losing anything.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+import Shot from '../../components/Shot.astro';
+
+## Restore a version of a file
+
+<Steps>
+
+1. In **Files**, right-click the file or folder and choose **Restore Previous Version…**.
+
+2. The **Previous versions** window lists every distinct version, newest first, each with when it was backed up and its size
+   (*Backed up yesterday · 14 kB*). Identical copies are shown once.
+
+   <Shot name="versions" alt="The Previous versions window: a list of versions of a document on the left and a preview of the selected one on the right." />
+
+3. Select a version to preview it. Images, text, video and audio show right in the window.
+   A big file asks first: choose **Show preview**. A file of another kind opens in its own application with **Open**.
+
+4. Choose how to bring it back:
+
+   - **Restore as a copy** puts the old version **next to the original**, named like `report (restored 2026-11-16).odt`. Nothing is overwritten.
+   - **Replace the current version…** puts the old version in place of the current one. Delta asks first, and **keeps the current one next to it**,
+     renamed with today's date and time, like `report (before restore 2026-11-16 10-30-00).odt`. If something fails, it puts the original back.
+
+</Steps>
+
+<Aside type="note">
+**No earlier versions** means this item is not in any backup yet. If a backup was removed since you opened the window, Delta tells you
+and asks you to reopen it to see the current ones.
+</Aside>
+
+## See in Files what is backed up
+
+Files gets a **Backup** column (*Whether the file is in the latest backup*) that reads **In the latest backup** or **Changed since the last backup**,
+and an emblem on files with changes that are not backed up yet.
+
+## Browse a folder in time
+
+For a folder, the window shows what it held in the version you chose. Open subfolders to move around;
+**Back** (or <kbd>Alt</kbd>+<kbd>←</kbd>) goes up.
+
+<Shot name="folder" alt="The folder view of a backup with the filters All, Changed and Deleted and a search box." />
+
+- **Search by name** finds a file at any depth below the folder. It shows the first matches; type more to narrow them down.
+- **Filter by change** has three options: **All**, **Changed** (everything below the folder that differs from your disk now) and **Deleted**.
+  Each row says **Modified**, **Changed inside**, **Unchanged** or **Deleted**, compared with what you have today.
+- **Select several items** lets you restore many at once: for example **Restore 3 as copies** or **Replace 3 current versions…**.
+- **Restore deleted…** puts back everything in the folder that was deleted since that version. Nothing that exists today is touched,
+  and folders that are gone are made again, always inside your home folder.
+- **Show in Files** opens the original location.
+
+## Browse a backup as a folder
+
+**Browse as a folder** opens a whole backup, read-only, as a normal folder in Files. Choose **Close the folder** when you are done.
+While one is open, Delta pauses the next backup: **Backup postponed**. It closes by itself when the computer suspends or locks,
+or when you stop using it.
+
+<Aside type="caution">
+This view is only in the native install. The Flatpak does not have it.
+</Aside>
+
+## Keyboard
+
+| Keys | What it does |
+|---|---|
+| <kbd>Ctrl</kbd>+<kbd>F</kbd> | Go to the search box |
+| <kbd>Alt</kbd>+<kbd>←</kbd> | Up one folder, or back from a file to the list |
+| <kbd>Ctrl</kbd>+<kbd>↓</kbd> | The next older version |
+| <kbd>Ctrl</kbd>+<kbd>↑</kbd> | The next newer version |
+| <kbd>Esc</kbd> | Clear the search, or leave selection mode |

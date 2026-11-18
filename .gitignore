@@ -1,0 +1,20 @@
+build/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+mutants/
+.coverage*
+coverage.xml
+.mesonpy-*
+.devenv/
+.venv/
+devenv.local.nix
+result
+result-*
+.vscode
+.claude
+build-flatpak/
+.flatpak-builder/
+
+# Clave de recuperación que genera Delta al crear una copia: nunca va al repositorio
+delta-recovery-key*.txt

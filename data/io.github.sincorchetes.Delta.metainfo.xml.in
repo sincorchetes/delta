@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.sincorchetes.Delta</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <name>Delta</name>
+  <summary>Time travel for your files</summary>
+  <developer id="tech.sincorchetes">
+    <name>Álvaro Castillo</name>
+  </developer>
+
+  <description>
+    <p>Delta keeps backups of your files, one after another, and lets you look at any of them. Restore a document you changed by mistake, get back a folder you deleted, or browse an old backup as if it were a folder.</p>
+    <p>Backups are made automatically, are encrypted and stay on this computer, in a folder or on a connected drive. Delta never sends them anywhere.</p>
+    <ul>
+      <li>Restore an earlier version from the file manager, with a preview, without overwriting anything</li>
+      <li>See what changed or was deleted since a version, and put it all back</li>
+      <li>Open a whole backup as a read-only folder</li>
+      <li>Incremental and deduplicated backups, made by BorgBackup</li>
+    </ul>
+  </description>
+
+  <categories>
+    <category>Utility</category>
+  </categories>
+
+  <launchable type="desktop-id">io.github.sincorchetes.Delta.desktop</launchable>
+  <icon type="stock">io.github.sincorchetes.Delta</icon>
+
+  <url type="homepage">https://delta.sincorchetes.tech</url>
+  <url type="help">https://delta.sincorchetes.tech</url>
+  <url type="bugtracker">https://github.com/sincorchetes/delta/issues</url>
+  <url type="vcs-browser">https://github.com/sincorchetes/delta</url>
+
+  <screenshots>
+    <screenshot type="default">
+      <image type="source">https://raw.githubusercontent.com/sincorchetes/delta/main/website/src/assets/screenshots/status-en-light.png</image>
+      <caption>The main window says whether your files are protected</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://raw.githubusercontent.com/sincorchetes/delta/main/website/src/assets/screenshots/versions-en-light.png</image>
+      <caption>Previous versions of a file, with a preview</caption>
+    </screenshot>
+    <screenshot>
+      <image type="source">https://raw.githubusercontent.com/sincorchetes/delta/main/website/src/assets/screenshots/folder-en-light.png</image>
+      <caption>What a folder held, with what changed or was deleted</caption>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1"/>
+
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <supports>
+    <control>keyboard</control>
+    <control>pointing</control>
+    <control>touch</control>
+  </supports>
+
+  <releases>
+    <release version="0.1.0" date="2026-11-17">
+      <description>
+        <p>First release.</p>
+      </description>
+    </release>
+  </releases>
+</component>

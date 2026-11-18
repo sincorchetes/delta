@@ -1,0 +1,10 @@
+[Unit]
+Description=Delta scheduled backups
+
+[Timer]
+OnCalendar=hourly
+Persistent=true
+Unit=delta-backup.service
+
+[Install]
+WantedBy=timers.target

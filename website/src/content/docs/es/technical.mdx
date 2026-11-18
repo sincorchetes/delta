@@ -1,0 +1,83 @@
+---
+title: Especificaciones técnicas
+description: De qué está hecho Delta, cómo se prueba, por qué usa BorgBackup y cómo funciona una copia.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## De un vistazo
+
+| | |
+|---|---|
+| Motor de copias | BorgBackup 1.4 o posterior, ejecutado como programa aparte |
+| Hecho con | Python 3.12 o posterior, PyGObject, GTK 4.10+, libadwaita 1.5+ (GNOME 46 o posterior) |
+| Diseño | Arquitectura limpia en cuatro capas, archivos de unas 300 líneas como máximo |
+| Servicio | Un servicio D-Bus de la sesión de usuario, sin privilegios extra |
+| Programación | Un temporizador de usuario de `systemd` (nativo) o el temporizador propio de Delta (Flatpak) |
+| Secretos | El llavero de tu escritorio; llegan a Borg por una tubería privada, nunca en un archivo ni en una línea de órdenes |
+| Dónde viven las copias | Solo en tu equipo: una carpeta o una unidad conectada |
+| Idiomas | Inglés y español |
+| Licencia | GPL-3.0 o posterior |
+
+## Cómo se prueba
+
+La calidad de Delta se mide, no se afirma. Cada cifra de abajo sale de una orden que puedes ejecutar tú, y se tomaron el 18 de noviembre de 2026.
+
+- **Pruebas automáticas.** Más de 1 200 funciones de prueba en 113 archivos: unas 900 unitarias, 112 de integración y 211 de las ventanas.
+  Las de integración usan **BorgBackup de verdad** sobre un repositorio temporal. Las de las ventanas corren en una pantalla virtual y nunca muestran nada en la tuya.
+- **100 % de cobertura de líneas y ramas**, exigido. No hay código excluido del recuento: lo que no se puede probar se simplifica en lugar de esconderlo.
+- **Pruebas de mutación.** Una prueba de mutación cambia el código a propósito (un `>` pasa a `>=`, se altera un mensaje) y comprueba que alguna prueba falla.
+  Si ninguna lo hace, esa prueba no vigilaba de verdad el código. Cubren la lógica que decide qué se restaura, qué se conserva, qué se rechaza y qué se lee:
+  **2 028 cambios probados, 2 020 detectados, 7 que hicieron que el programa girara sin fin (también cuentan como detectados) y 1 que ninguna prueba
+  puede distinguir**, porque no cambia nada que el programa pueda observar.
+- **Comprobaciones del propio proyecto.** Cada texto visible está traducido, las páginas de ayuda son válidas y sus enlaces existen, la versión de cada paquete coincide con la de la compilación,
+  el Flatpak no pide más permisos de los acordados, y se validan el AppStream y las entradas de escritorio.
+- **Siete distribuciones en integración continua**, y los paquetes se construyen e instalan en contenedores limpios en Fedora, Rocky Linux, openSUSE, Debian, Ubuntu y Arch.
+
+## Por qué BorgBackup
+
+Aquí no hay una comparación medida de Borg con otras herramientas, y esta página no finge que la haya: otras herramientas modernas de copia también
+deduplican y cifran. Delta usa Borg **por lo que necesita**, y cada motivo se puede comprobar en el código:
+
+1. **Cada copia es una instantánea completa en la que se puede mirar por ruta.** Preguntar «¿qué versiones tiene este archivo?» no desempaqueta nada. Es la base de la ventana *Versiones anteriores*.
+2. **Copias incrementales con deduplicación.** Después de la primera, solo se guarda lo que cambió, y los datos idénticos se guardan una vez, incluso entre archivos distintos. Eso hace práctica una copia cada hora.
+3. **Cifrado autenticado desde el principio.** El repositorio está siempre cifrado, incluso en tu propio disco, y Borg verifica todo lo que lee.
+4. **Una salida que un programa puede leer.** El progreso y los resultados llegan como datos estructurados, no como texto que haya que interpretar.
+5. **Una copia se puede abrir como una carpeta** (**Examinar como carpeta**).
+6. **Puntos de control.** Borg guarda su avance cada cinco minutos, así que una copia interrumpida pierde, como mucho, aproximadamente eso.
+7. **Un repositorio es solo una carpeta.** Sin servidor, cuenta ni credenciales.
+8. **Ya está en tu distribución.** Fedora, Rocky Linux (a través de EPEL), openSUSE, Debian, Ubuntu y Arch lo ofrecen, así que Delta no lleva el suyo dentro.
+
+<Aside type="note" title="Límites que Delta acepta">
+- Un repositorio tiene un único bloqueo. Mientras una copia está abierta como carpeta, una copia de seguridad no puede escribir, así que Delta pausa o aplaza la copia y nunca deja una carpeta montada detrás.
+- Listar las versiones de un archivo le pregunta a Borg una vez por cada instantánea, y es más lento cuantas más copias guardes.
+- Delta usa Borg 1.x. Borg 2 cambia la forma de manejarlo, y se revisará antes de cualquier migración.
+</Aside>
+
+## Cómo funciona una copia
+
+1. **La programación.** Cada hora por defecto, un temporizador de usuario de `systemd` le pide una copia al servicio de Delta. Si el equipo estaba apagado a la hora debida, se hace una al arrancar, como hace `Persistent=true`. En el Flatpak, lo hace el temporizador propio de Delta.
+2. **Un trabajo a la vez.** Una copia pasa por unos pocos estados: pendiente, en curso y, después, correcta, correcta con avisos, interrumpida o fallida. No se permite nada más.
+3. **Qué se copia.** Las carpetas que elegiste o, si no elegiste ninguna, tu carpeta personal, salvo `~/.cache` y la papelera. Si elegiste carpetas y ninguna es válida, la copia falla: nunca crece por sí sola a toda tu carpeta personal.
+4. **La clave.** La contraseña del repositorio se queda en tu llavero y llega a Borg por una tubería privada que solo puede leer su proceso.
+5. **Qué se conserva.** Tras cada copia, las antiguas se eliminan con una regla abuelo-padre-hijo: por defecto 24 por hora, 7 por día, 4 por semana y 12 por mes. Delta rechaza una regla que no conservaría nada.
+6. **Si se interrumpe.** Un archivo marcador anota que hay una copia en curso. Si el servicio arranca y lo encuentra, la copia se reanuda.
+7. **Un aviso.** GNOME te cuenta el resultado; un error de Borg se acorta a 300 caracteres.
+
+### Restaurar
+
+- **Versiones y vista previa.** La versión que miras se desempaqueta en una carpeta privada de solo lectura que se vacía al cerrar la ventana.
+- **Restaurar como copia** es lo predeterminado y deja la versión antigua junto al original con otro nombre. **Sustituir** aparta primero la actual y la devuelve a su sitio si algo falla.
+  Las rutas se comprueban: deben estar dentro de tu carpeta personal una vez resueltos los enlaces.
+- **Examinar como carpeta** monta la copia con FUSE (solo en la instalación nativa), pausa la copia mientras está abierta, y la desmonta cuando la cierras, suspendes o bloqueas el equipo, o la dejas sin usar.
+
+## Cómo está organizado
+
+`ui → application → domain ← infrastructure`. El dominio es puro: sin archivos, ventanas ni D-Bus. Los casos de uso hablan con **puertos** (el motor de copias, el almacén de secretos, el programador)
+y los adaptadores de Borg, el llavero y `systemd` se enchufan en los bordes. La ventana y la extensión de Archivos solo hablan con el servicio por D-Bus.
+Por eso el Flatpak pudo cambiar `systemd` por su propio temporizador sin tocar el resto.
+
+<Aside type="tip">
+El diseño completo, el contrato D-Bus y el modelo de amenazas están en el repositorio, en
+[`docs/`](https://github.com/sincorchetes/delta/tree/main/docs): `plan.md`, `dbus-api.md`, `security.md` y `technical.md`.
+</Aside>

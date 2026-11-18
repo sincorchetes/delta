@@ -1,0 +1,32 @@
+---
+title: Clave de recuperación y contraseña
+description: Cómo se protegen tus copias y qué hacer si pierdes el acceso a ellas.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Tus copias están **cifradas**. Delta guarda su contraseña en el llavero de tu escritorio y la usa por sí solo,
+así que nunca la escribes.
+
+## Por qué necesitas la clave de recuperación
+
+Si pierdes el acceso al llavero (un equipo nuevo, una reinstalación, un perfil dañado), la contraseña se va con él.
+La **clave de recuperación** que te dio el asistente es entonces **la única forma de leer tus copias**.
+
+<Aside type="danger" title="Guárdala lejos de este equipo">
+Una clave de recuperación guardada solo en el disco que falla, o en el equipo que pierdes, no protege nada.
+Imprímela, o guárdala en un gestor de contraseñas o en una memoria USB en otro sitio.
+</Aside>
+
+## Usar tus copias tras una reinstalación
+
+1. Instala Delta y ábrelo.
+2. En el asistente, elige la carpeta o la unidad que contiene tus copias.
+3. Delta encuentra el **repositorio existente**: escribe la clave de recuperación (o tu contraseña) en **Contraseña del repositorio**
+   y elige **Usar este repositorio**. No se borra nada de lo que contiene.
+
+## Lo que Delta nunca hace
+
+- Nunca guarda la contraseña en un archivo sin cifrar, en los ajustes ni en una línea de comandos.
+- Nunca envía tus copias a ningún sitio: se quedan en la carpeta o la unidad que elegiste.
+- Nunca sobrescribe tus archivos cuando restauras.

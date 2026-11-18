@@ -1,0 +1,34 @@
+---
+title: Delta
+description: Vuelve atrás en el tiempo con cualquier archivo o carpeta en GNOME. Las copias se quedan en tu equipo, cifradas, y restauras desde Archivos.
+template: splash
+hero:
+  tagline: Vuelve atrás en el tiempo con cualquier archivo o carpeta. Las copias se quedan en tu equipo, cifradas, y restauras desde Archivos.
+  actions:
+    - text: Instalar Delta
+      link: install/
+      icon: right-arrow
+    - text: Haz tu primera copia
+      link: first-backup/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Shot from '../../../components/Shot.astro';
+
+<Shot name="status" alt="La ventana de Delta con el mensaje «Tus archivos están protegidos», la hora de la última y la próxima copia y el botón «Copiar ahora»." />
+
+<CardGrid>
+  <Card title="Copia por sí sola" icon="rocket">
+    Elige una carpeta o una unidad una vez. Delta copia solo lo que cambió, con la frecuencia que quieras.
+  </Card>
+  <Card title="Restaura desde Archivos" icon="document">
+    Haz clic derecho en un archivo, elige **Restaurar versión anterior…**, mira cualquier versión antigua y recupérala.
+  </Card>
+  <Card title="Nunca sobrescribe" icon="approve-check">
+    Un archivo restaurado queda junto al original. Si lo sustituyes, el actual se conserva.
+  </Card>
+  <Card title="Privado de serie" icon="setting">
+    Las copias van cifradas y se guardan solo en este equipo. No se envía nada a ningún sitio.
+  </Card>
+</CardGrid>

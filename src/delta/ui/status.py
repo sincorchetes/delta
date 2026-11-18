@@ -1,0 +1,176 @@
+"""What the status window says, decided from the daemon's state. No GTK, no D-Bus."""
+
+from dataclasses import dataclass
+from datetime import datetime
+from enum import Enum
+
+from delta.domain.errors import is_lock_message
+from delta.i18n import _, ngettext
+
+
+class Health(str, Enum):
+    UNREACHABLE = "unreachable"
+    NOT_CONFIGURED = "not-configured"
+    RUNNING = "running"
+    BROWSING = "browsing"
+    FAILED = "failed"
+    LOCKED = "locked"
+    PENDING = "pending"
+    OK = "ok"
+
+
+class Action(Enum):
+    NONE = "none"  # no button
+    BACK_UP = "back-up"
+    SET_UP = "set-up"
+    UNLOCK = "unlock"  # always behind an explicit confirmation
+
+
+@dataclass(frozen=True)
+class DaemonSnapshot:
+    reachable: bool = True
+    status: str = "idle"
+    last_backup: int = 0
+    last_error: str = ""
+    repository: str = ""
+    schedule: str = "hourly"
+    next_backup: int = 0  # epoch seconds; 0 = unknown
+
+
+@dataclass(frozen=True)
+class StatusView:
+    health: Health
+    title: str
+    subtitle: str
+    icon_name: str
+    action: Action = Action.NONE
+    action_label: str = ""
+    action_enabled: bool = True
+
+    @property
+    def can_back_up_now(self) -> bool:
+        return self.action is Action.BACK_UP and self.action_enabled
+
+
+MAX_ERROR = 240
+
+
+def summarise(message: str) -> str:
+    """One readable paragraph: newlines collapsed, long engine output cut short."""
+    text = " ".join(message.split())
+    return text if len(text) <= MAX_ERROR else text[:MAX_ERROR].rstrip() + "…"
+
+
+def relative_time(epoch: int, now: datetime) -> str:
+    seconds = max(0, int(now.timestamp()) - epoch)
+    if seconds < 60:
+        return _("just now")
+    minutes = seconds // 60
+    if minutes < 60:
+        return ngettext("{n} minute ago", "{n} minutes ago", minutes).format(n=minutes)
+    hours = minutes // 60
+    if hours < 24:
+        return ngettext("{n} hour ago", "{n} hours ago", hours).format(n=hours)
+    days = hours // 24
+    return ngettext("{n} day ago", "{n} days ago", days).format(n=days)
+
+
+def until_time(epoch: int, now: datetime) -> str:
+    """How far away a future moment is; an overdue one reads as imminent."""
+    seconds = epoch - int(now.timestamp())
+    if seconds < 60:
+        return _("in a moment")
+    minutes = seconds // 60
+    if minutes < 60:
+        return ngettext("in {n} minute", "in {n} minutes", minutes).format(n=minutes)
+    hours = minutes // 60
+    if hours < 24:
+        return ngettext("in {n} hour", "in {n} hours", hours).format(n=hours)
+    days = hours // 24
+    return ngettext("in {n} day", "in {n} days", days).format(n=days)
+
+
+def describe_schedule(expression: str) -> str:
+    if expression == "hourly":
+        return _("every hour")
+    if expression == "daily":
+        return _("every day")
+    if expression == "weekly":
+        return _("every week")
+    return _("on the schedule “{expression}”").format(expression=expression)
+
+
+def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
+    schedule = describe_schedule(snapshot.schedule)
+    back_up = (Action.BACK_UP, _("Back up now"))
+    if not snapshot.reachable:
+        return StatusView(
+            Health.UNREACHABLE,
+            _("The backup service is not available"),
+            _("Delta could not start its background service."),
+            "dialog-warning-symbolic",
+        )
+    if not snapshot.repository:
+        return StatusView(
+            Health.NOT_CONFIGURED,
+            _("Backups are not set up"),
+            _("Choose where to keep your backups to get started."),
+            "drive-harddisk-symbolic",
+            Action.SET_UP,
+            _("Set up backups"),
+        )
+    if snapshot.status == "running":
+        return StatusView(
+            Health.RUNNING,
+            _("Backing up…"),
+            _("Delta is backing up your files."),
+            "view-refresh-symbolic",
+            *back_up,
+            action_enabled=False,
+        )
+    if snapshot.status == "browsing":
+        return StatusView(
+            Health.BROWSING,
+            _("A backup is open as a folder"),
+            _("The next copy starts when you close it."),
+            "folder-symbolic",
+            *back_up,
+            action_enabled=False,
+        )
+    if snapshot.last_error and is_lock_message(snapshot.last_error):
+        return StatusView(
+            Health.LOCKED,
+            _("The backup repository is locked"),
+            _("A backup did not finish cleanly, or something else is using the repository."),
+            "dialog-warning-symbolic",
+            Action.UNLOCK,
+            _("Unlock…"),
+        )
+    if snapshot.last_error:
+        return StatusView(
+            Health.FAILED,
+            _("The last backup failed"),
+            summarise(snapshot.last_error),
+            "dialog-error-symbolic",
+            Action.BACK_UP,
+            _("Try again"),
+        )
+    upcoming = until_time(snapshot.next_backup, now) if snapshot.next_backup else ""
+    if snapshot.last_backup == 0:
+        subtitle = (
+            _("The first backup runs {when}.").format(when=upcoming)
+            if upcoming
+            else _("The first backup runs {schedule}.").format(schedule=schedule)
+        )
+        return StatusView(
+            Health.PENDING, _("No backups yet"), subtitle, "appointment-soon-symbolic", *back_up
+        )
+    last = relative_time(snapshot.last_backup, now)
+    subtitle = (
+        _("Last backup: {when}. Next backup: {next}.").format(when=last, next=upcoming)
+        if upcoming
+        else _("Last backup: {when}. Backups run {schedule}.").format(when=last, schedule=schedule)
+    )
+    return StatusView(
+        Health.OK, _("Your files are protected"), subtitle, "object-select-symbolic", *back_up
+    )

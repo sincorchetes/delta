@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" style="task" id="first-backup">
+  <info>
+    <link type="guide" xref="index#get-started"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Configura tu primera copia</title>
+  <desc>Elige dónde van las copias, qué copiar y guarda tu clave de recuperación.</desc>
+
+  <p>La primera vez que abres Delta dice <gui>Las copias no están configuradas</gui>. Pulsa
+  <gui style="button">Configurar copias</gui>. El asistente tiene unas pocas páginas cortas, con
+  <gui style="button">Siguiente</gui> y <gui style="button">Atrás</gui>. No se crea nada hasta que pulses
+  <gui style="button">Crear copias</gui> en la última.</p>
+
+  <steps>
+    <item>
+      <title>¿Dónde van las copias?</title>
+      <p>Elige una <gui>Carpeta</gui> con <gui style="button">Elegir…</gui>, que debe ser nueva o estar vacía, o una de las
+      unidades conectadas. En una unidad, las copias van a una carpeta llamada <file>delta-backups</file>. Delta te avisa al
+      momento si el sitio no sirve: una ruta que no existe, un archivo, un disco entero o una carpeta que no está vacía.</p>
+    </item>
+    <item>
+      <title>¿Qué se copia?</title>
+      <p>Por defecto, <gui>Todo lo que hay en tu carpeta personal</gui>. Para elegir, añade carpetas con
+      <gui style="button">Elige una carpeta de la que hacer copia</gui>.</p>
+    </item>
+    <item>
+      <title>Guarda tu clave de recuperación</title>
+      <p>Las copias están cifradas. Usa <gui style="button">Guardar en un fichero…</gui> y guarda el archivo en un lugar seguro,
+      <em>lejos de este equipo</em>. No puedes terminar hasta que actives <gui>He guardado mi clave de recuperación</gui>.
+      <gui style="button">Copiar</gui> por sí solo no cuenta como guardarla. Si prefieres tu propia contraseña, activa
+      <gui>Usar mi propia contraseña</gui>.</p>
+      <p>Consulta <link xref="recovery-key"/>.</p>
+    </item>
+    <item>
+      <title>Crea las copias</title>
+      <p>Pulsa <gui style="button">Crear copias</gui>. Delta prepara el destino y empieza a proteger tus archivos.</p>
+    </item>
+  </steps>
+
+  <section id="existing">
+    <title>Usa una copia que ya tienes</title>
+    <p>Si la carpeta ya contiene una copia de Delta, por ejemplo tras reinstalar, el asistente ofrece
+    <gui>Usar el repositorio existente</gui>. Escribe su contraseña y pulsa
+    <gui style="button">Usar este repositorio</gui>. No se borra nada de lo que contiene.</p>
+  </section>
+</page>

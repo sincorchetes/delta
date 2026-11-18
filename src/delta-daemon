@@ -1,0 +1,7 @@
+#!/usr/bin/env python3
+"""Delta D-Bus daemon entry point (installed in libexecdir)."""
+
+from delta.daemon.main import main
+
+if __name__ == "__main__":
+    raise SystemExit(main())

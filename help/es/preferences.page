@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="preferences">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Elige cuándo y qué copiar</title>
+  <desc>El horario, cuánto tiempo conservar las copias antiguas y qué carpetas copiar u omitir.</desc>
+
+  <p>Abre <gui style="menu">Menú principal</gui> ▸ <gui style="menuitem">Preferencias</gui> (<keyseq><key>Ctrl</key><key>,</key></keyseq>).</p>
+
+  <terms>
+    <item>
+      <title><gui>Destino</gui></title>
+      <p>Dónde se guardan tus copias. Dice <gui>Aún sin configurar</gui> hasta que termines el asistente.</p>
+    </item>
+    <item>
+      <title><gui>Horario</gui></title>
+      <p>En <gui>Copiar automáticamente</gui> elige <gui>Cada hora</gui>, <gui>Cada día</gui>, <gui>Cada semana</gui> o
+      <gui>Personalizada</gui> (una expresión <code>OnCalendar</code> de systemd).</p>
+    </item>
+    <item>
+      <title><gui>Conservar copias antiguas</gui></title>
+      <p>Las copias más antiguas se eliminan para ahorrar espacio. <gui>Corta</gui> conserva una por hora durante medio día y una por día
+      durante una semana. <gui>Estándar</gui> añade una por semana durante un mes y una por mes durante un año. <gui>Larga</gui>
+      conserva una por día durante dos semanas, una por semana durante tres meses y una por mes durante tres años.</p>
+    </item>
+    <item>
+      <title><gui>Carpetas de las que hacer copia</gui></title>
+      <p>Añade carpetas con <gui style="button">Añadir carpeta…</gui> para copiar solo esas. Deja la lista vacía para copiar toda tu
+      carpeta personal.</p>
+    </item>
+    <item>
+      <title><gui>Omitir estos</gui></title>
+      <p>Carpetas (<gui style="button">Añadir carpeta…</gui>) o archivos sueltos (<gui style="button">Añadir archivo…</gui>) que no se
+      copian. La caché y la papelera siempre se omiten. No puedes omitir todo lo que copias.</p>
+    </item>
+  </terms>
+</page>

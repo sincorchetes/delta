@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="recovery-key">
+  <info>
+    <link type="guide" xref="index#get-started"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Your recovery key and passphrase</title>
+  <desc>Why you need the recovery key and how to use your backups after a reinstall.</desc>
+
+  <p>Your backups are encrypted. Delta keeps their passphrase in your desktop keyring and uses it by itself, so you never type it.</p>
+
+  <note style="warning">
+    <title>Keep the recovery key away from this computer</title>
+    <p>If you lose access to your keyring (a new computer, a reinstall, a damaged profile), the passphrase goes with it.
+    The recovery key the assistant gave you is then the only way to read your backups. A key kept only on the disk that fails
+    protects nothing: print it, or keep it in a password manager or on a USB drive somewhere else.</p>
+  </note>
+
+  <steps>
+    <title>Use your backups after a reinstall</title>
+    <item><p>Install Delta and open it.</p></item>
+    <item><p>In the assistant, choose the folder or drive that holds your backups.</p></item>
+    <item><p>Delta finds the existing repository: enter the recovery key (or your passphrase) as
+    <gui>Repository passphrase</gui> and choose <gui style="button">Use this repository</gui>. Nothing in it is erased.</p></item>
+  </steps>
+
+  <p>Delta never stores the passphrase in a plain file, in the settings or on a command line. It never sends your backups anywhere,
+  and it never overwrites your files when you restore.</p>
+</page>

@@ -1,0 +1,6 @@
+[Unit]
+Description=Delta scheduled backup trigger
+
+[Service]
+Type=oneshot
+ExecStart=@gdbus@ call --session --dest io.github.sincorchetes.Delta.Service1 --object-path /io/github/sincorchetes/Delta/Service1 --method io.github.sincorchetes.Delta.Service1.CreateBackup

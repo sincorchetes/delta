@@ -1,0 +1,20 @@
+/* GNOME blue (Adwaita palette) as the accent, in both themes; contrast checked against the page background. */
+:root {
+  --sl-color-accent-low: #d7e6fb;
+  --sl-color-accent: #1c71d8;
+  --sl-color-accent-high: #0b3d82;
+  --sl-font: 'Adwaita Sans', 'Cantarell', system-ui, sans-serif;
+}
+:root[data-theme='dark'] {
+  --sl-color-accent-low: #0e2a52;
+  --sl-color-accent: #78aeed;
+  --sl-color-accent-high: #c0d8f6;
+}
+.screenshot img {
+  border-radius: 12px;
+  border: 1px solid var(--sl-color-gray-5);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.18);
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

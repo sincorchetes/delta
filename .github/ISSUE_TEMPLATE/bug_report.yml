@@ -1,0 +1,72 @@
+name: Bug report
+description: Something does not work as it should
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. For a **security problem**, do not use this form: see the [security policy](https://github.com/sincorchetes/delta/security/policy).
+
+  - type: input
+    id: version
+    attributes:
+      label: Delta version
+      description: "From the About dialog (main menu → About Delta), or `rpm -q delta-backup` / `dpkg -s delta-backup`."
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      description: A Flatpak and a native install behave differently (for example, only the native one can browse a backup as a folder).
+      options:
+        - Native package (rpm, deb or Arch)
+        - Flatpak
+        - Nix or Home Manager
+        - Built from source
+    validations:
+      required: true
+
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution
+      placeholder: "Fedora 44, Ubuntu 24.04, Arch…"
+    validations:
+      required: true
+
+  - type: input
+    id: gnome
+    attributes:
+      label: GNOME version
+      description: "`gnome-shell --version`"
+      placeholder: "50.1"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect and what did you get? Screenshots help.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log
+      description: |
+        Native install: `journalctl --user -u delta.service --since "-1 hour"`
+        Flatpak: `journalctl --user --since "-1 hour" | grep -i delta`
+      render: shell
+
+  - type: checkboxes
+    id: secrets
+    attributes:
+      label: Before you send
+      options:
+        - label: I removed passwords, recovery keys and private paths from everything I pasted.
+          required: true

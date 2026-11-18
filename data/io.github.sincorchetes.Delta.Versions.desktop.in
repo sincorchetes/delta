@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Delta previous versions
+Comment=Opened from the file manager to restore an earlier version of a file
+Exec=env DELTA_LOCALEDIR=@localedir@ @bindir@/delta-ui --versions %f
+Icon=io.github.sincorchetes.Delta
+NoDisplay=true
+Terminal=false
+Categories=Utility;

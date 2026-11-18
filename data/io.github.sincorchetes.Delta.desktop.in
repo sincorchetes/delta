@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Delta
+Comment=Back up and restore your files
+Exec=env DELTA_LOCALEDIR=@localedir@ @bindir@/delta-ui
+Icon=io.github.sincorchetes.Delta
+Terminal=false
+StartupNotify=true
+Categories=GNOME;GTK;Utility;

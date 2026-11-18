@@ -1,0 +1,43 @@
+---
+title: Solución de problemas
+description: Qué hacer cuando Delta muestra un error.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## El repositorio de copias está bloqueado
+
+*Una copia no terminó bien, o algo más está usando el repositorio.*
+
+Una copia que se interrumpió puede dejar el repositorio bloqueado. Elige **Desbloquear…**.
+
+<Aside type="caution" title="Solo si no hay ninguna copia en marcha">
+Continúa solo si no hay ninguna copia en marcha ahora, **ni en este equipo ni en otro que use este repositorio**.
+Desbloquear uno que está en uso puede dañar tus copias. Delta nunca lo hace por sí solo.
+</Aside>
+
+## La última copia falló
+
+Elige **Reintentar**. Si vuelve a fallar, el mensaje te dice por qué. Las causas más comunes:
+
+- **La contraseña de este repositorio no está en el llavero.** Abre el llavero, o usa tu clave de recuperación como se explica en [Clave de recuperación y contraseña](../recovery-key/).
+- **Se agotó el tiempo esperando al llavero. ¿Está bloqueado?** Desbloquéalo (vuelve a iniciar sesión) e inténtalo de nuevo.
+- **El servicio del llavero no está disponible.** Inicia tu llavero, por ejemplo GNOME Keyring, en tu sesión.
+- **No se pudo crear el destino de las copias.** Comprueba que la carpeta o la unidad está conectada y que puedes escribir en ella.
+
+## El servicio de copias no está disponible
+
+*Delta no pudo iniciar su servicio en segundo plano.* Cierra la sesión y vuelve a entrar. Si persiste, ejecuta `journalctl --user -u delta`
+y busca la causa.
+
+## Hay una copia abierta como carpeta
+
+La próxima copia espera hasta que elijas **Cerrar la carpeta**. Delta la cierra por ti cuando el equipo se suspende o se bloquea.
+
+## Esa copia ya no existe
+
+Puede que otra más reciente la haya sustituido. **Vuelve a abrir la ventana** para ver las actuales.
+
+## No se hace nada según el horario
+
+Comprueba que **Copiar automáticamente** en **Preferencias** tiene el horario que quieres, y que tu sesión de usuario de systemd está en marcha.

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" id="status">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Check that your files are protected</title>
+  <desc>What the main window and the notifications tell you.</desc>
+
+  <p>Open <app>Delta</app> from the Activities overview. It answers one question: are my files protected?
+  When all is well it says <gui>Your files are protected</gui>, when the last backup was made and when the next one is due.
+  <gui style="button">Back up now</gui> starts a copy straight away. The <gui style="button">Backup history</gui> button
+  lists your backups, and <gui style="menu">Main menu</gui> has <gui style="menuitem">Preferences</gui> and
+  <gui style="menuitem">About Delta</gui>.</p>
+
+  <table frame="all" rules="rows">
+    <thead>
+      <tr><td><p>You see</p></td><td><p>It means</p></td></tr>
+    </thead>
+    <tbody>
+      <tr><td><p><gui>Backups are not set up</gui></p></td><td><p>There is no destination yet. Choose <gui style="button">Set up backups</gui>.</p></td></tr>
+      <tr><td><p><gui>Backing up…</gui></p></td><td><p>A copy is running. You can keep working.</p></td></tr>
+      <tr><td><p><gui>A backup is open as a folder</gui></p></td><td><p>You opened a backup with <link xref="browse-folder"/>. The next copy waits until you close it.</p></td></tr>
+      <tr><td><p><gui>The backup repository is locked</gui></p></td><td><p>See <link xref="troubleshooting#locked"/>.</p></td></tr>
+      <tr><td><p><gui>The last backup failed</gui></p></td><td><p>Choose <gui style="button">Try again</gui>, then see <link xref="troubleshooting"/>.</p></td></tr>
+      <tr><td><p><gui>The backup service is not available</gui></p></td><td><p>See <link xref="troubleshooting#service"/>.</p></td></tr>
+    </tbody>
+  </table>
+
+  <p>Delta also sends notifications: <gui>Backup in progress</gui>, <gui>Backup complete</gui>,
+  <gui>Backup complete with warnings</gui>, <gui>Backup interrupted</gui> (Delta resumes it by itself),
+  <gui>Backup postponed</gui> and <gui>Backup failed</gui>.</p>
+</page>

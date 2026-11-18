@@ -1,0 +1,166 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # The same environment developers use (devenv), so "works on my machine" is the CI.
+  devenv:
+    name: devenv (tests, quality, Sonar)
+    runs-on: ubuntu-latest
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # Sonar needs the history to attribute new code
+
+      - uses: cachix/install-nix-action@v31
+
+      - uses: cachix/cachix-action@v17
+        with:
+          name: devenv
+
+      - name: Install devenv
+        run: nix profile install nixpkgs#devenv
+
+      - name: Sync Python environment
+        run: devenv shell -- sh scripts/sync-venv.sh
+
+      - name: Lint (ruff)
+        run: devenv shell -- ruff check src tests scripts
+
+      - name: Build
+        run: devenv shell -- sh -c 'meson setup build && meson compile -C build'
+
+      - name: Validate GSettings schema
+        run: devenv shell -- glib-compile-schemas --strict --dry-run data
+
+      - name: Validate the desktop entry and the AppStream metadata
+        run: devenv shell -- meson test -C build
+
+      - name: Tests with coverage
+        run: devenv shell -- xvfb-run -a uv run pytest -q --cov --cov-report=xml --cov-report=term:skip-covered
+
+      - name: Mutation tests
+        # Changes the code on purpose and checks that some test notices; fails if more survive than the one equivalent.
+        run: devenv shell -- sh scripts/ci/check_mutants.sh
+
+      - name: SonarQube Cloud
+        # Secrets are not handed to pull requests from forks.
+        if: env.SONAR_TOKEN != ''
+        uses: SonarSource/sonarqube-scan-action@v8
+
+  # The minimum base (GNOME 46) on the distributions Delta is meant for, each with its own system packages.
+  # Fedora must pass; the others report until they have run clean once, so one distribution's packaging
+  # quirk does not hide the rest (set `experimental: false` as each one proves itself).
+  distros:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.image }}
+    continue-on-error: ${{ matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Fedora", image: "fedora:latest", experimental: false }
+          - { name: "Arch Linux", image: "archlinux:latest", experimental: true }
+          - { name: "openSUSE Tumbleweed", image: "opensuse/tumbleweed:latest", experimental: true }
+          - { name: "AlmaLinux 10", image: "almalinux:10", experimental: true }
+          - { name: "Rocky Linux 10", image: "rockylinux/rockylinux:10", experimental: true }
+          - { name: "Ubuntu 24.04", image: "ubuntu:24.04", experimental: true }
+          - { name: "Debian 13", image: "debian:trixie", experimental: true }
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the distribution's packages
+        run: sh scripts/ci/install-deps.sh
+
+      - name: Install uv
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Sync Python environment
+        run: sh scripts/sync-venv.sh
+
+      - name: The minimum base is there (versions and the interface classes Delta calls)
+        run: uv run python scripts/ci/check_base.py
+
+      - name: Build
+        run: |
+          meson setup build
+          meson compile -C build
+
+      - name: Validate GSettings schema
+        run: glib-compile-schemas --strict --dry-run data
+
+      - name: Validate the desktop entry and the AppStream metadata
+        run: meson test -C build
+
+      - name: Tests
+        # Widget tests need a display: without Xvfb they are left out and the log says so.
+        run: |
+          if command -v xvfb-run > /dev/null; then
+            xvfb-run -a uv run pytest -q
+          else
+            echo "::warning::no xvfb-run on this distribution: the GTK widget tests were not run"
+            uv run pytest -q --ignore=tests/gtk
+          fi
+
+  # The website is built only after the tests and the mutation tests have passed, and published only from main.
+  web:
+    name: website (build and check)
+    needs: devenv
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: oven-sh/setup-bun@v2
+
+      - run: bun install --frozen-lockfile
+
+      # Type-checks the content, then writes plain files to website/dist: GitHub Pages serves no code.
+      - run: bun run build
+
+      - name: Check what was built
+        # Both languages have the pages, and the domain file is there.
+        run: |
+          for page in install first-backup how-it-works technical; do
+            for folder in dist dist/es; do
+              test -s "$folder/$page/index.html" || { echo "::error::missing $folder/$page/"; exit 1; }
+            done
+          done
+          test -s dist/CNAME
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: website/dist
+
+  deploy:
+    name: publish the website
+    if: github.ref == 'refs/heads/main'
+    needs: web
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

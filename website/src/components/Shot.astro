@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  /** File name without language or theme: `status` → `status-en-light.png`, `status-es-dark.png`, … */
+  name: string;
+  /** Required: what the screenshot shows, for people who cannot see it. */
+  alt: string;
+  caption?: string;
+}
+
+const { name, alt, caption } = Astro.props;
+// Each language shows the interface in its own language: `status-es-dark.png`.
+const lang = Astro.currentLocale?.startsWith('es') ? 'es' : 'en';
+const files = import.meta.glob<{ default: ImageMetadata }>('../assets/screenshots/*.png', { eager: true });
+const pick = (theme: string) => {
+  const found = files[`../assets/screenshots/${name}-${lang}-${theme}.png`];
+  if (!found) throw new Error(`Missing screenshot ${name}-${lang}-${theme}.png: run scripts/make_screenshots.py`);
+  return found.default;
+};
+---
+
+<figure class="screenshot">
+  <Image src={pick('light')} alt={alt} class="only-light" widths={[480, 720, 960, 1440]} sizes="(min-width: 50rem) 720px, 100vw" />
+  <Image src={pick('dark')} alt={alt} class="only-dark" aria-hidden="true" widths={[480, 720, 960, 1440]} sizes="(min-width: 50rem) 720px, 100vw" />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+
+<style>
+  figure { margin: 1.5rem 0; }
+  img { max-width: 100%; height: auto; }
+  figcaption { margin-top: 0.5rem; font-size: var(--sl-text-sm); color: var(--sl-color-gray-3); }
+  .only-dark { display: none; }
+  :global(:root[data-theme='dark']) .only-light { display: none; }
+  :global(:root[data-theme='dark']) .only-dark { display: initial; }
+</style>

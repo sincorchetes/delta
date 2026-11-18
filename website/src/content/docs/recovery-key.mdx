@@ -1,0 +1,32 @@
+---
+title: Recovery key and passphrase
+description: How your backups are protected, and what to do if you lose access to them.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Your backups are **encrypted**. Delta keeps their passphrase in your desktop keyring and uses it on its own,
+so you never type it.
+
+## Why you need the recovery key
+
+If you lose access to your keyring (a new computer, a reinstall, a damaged profile), the passphrase goes with it.
+The **recovery key** that the assistant gave you is then **the only way to read your backups**.
+
+<Aside type="danger" title="Store it away from this computer">
+A recovery key kept only on the disk that fails, or on the computer you lose, protects nothing.
+Print it, or keep it in a password manager or on a USB drive somewhere else.
+</Aside>
+
+## Use your backups after a reinstall
+
+1. Install Delta and open it.
+2. In the assistant, choose the folder or drive that holds your backups.
+3. Delta finds the **existing repository**: enter the recovery key (or your passphrase) as **Repository passphrase**
+   and choose **Use this repository**. Nothing in it is erased.
+
+## What Delta never does
+
+- It never stores the passphrase in a plain file, in the settings or in a command line.
+- It never sends your backups anywhere: they stay in the folder or drive you chose.
+- It never overwrites your files when you restore.

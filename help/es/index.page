@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="guide" style="ui-guide" id="index">
+  <info>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Ayuda de Delta</title>
+  <title type="link" role="trail">Delta</title>
+  <title type="link">Ayuda de Delta</title>
+  <desc>Vuelve a cualquier versión anterior de tus archivos. Las copias se quedan en este equipo.</desc>
+
+  <p>Delta guarda copias de tus archivos, una tras otra, y te deja mirar cualquiera de ellas: restaurar un documento que
+  cambiaste por error, recuperar una carpeta que borraste o examinar una copia antigua como si fuera una carpeta.</p>
+
+  <section id="get-started" style="2column">
+    <title>Primeros pasos</title>
+  </section>
+
+  <section id="use" style="2column">
+    <title>Uso diario</title>
+  </section>
+
+  <section id="problems">
+    <title>Si algo falla</title>
+  </section>
+</page>

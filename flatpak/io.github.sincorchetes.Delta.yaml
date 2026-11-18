@@ -1,0 +1,64 @@
+# Delta as a Flatpak: the window (versions, preview, restore) and the backup daemon, without the parts that
+# need the computer outside the sandbox: no «Browse as a folder» (a FUSE mount inside the sandbox is not
+# seen by the file manager) and no Nautilus extension (Nautilus loads its extensions from the host).
+#
+# This is the manifest for building and testing here. To publish on Flathub the Python modules must come
+# from pinned, offline sources (see flatpak/README.md) and the runtime must be the current stable one.
+app-id: io.github.sincorchetes.Delta
+runtime: org.gnome.Platform
+runtime-version: '50' # GNOME 48 is out of support since 2026-03-24; use the newest one listed by `flatpak remote-ls --runtime flathub`
+sdk: org.gnome.Sdk
+command: delta-ui
+# The translations stay in the application, not in a separate locale extension: the optional Nautilus
+# extension (outside the sandbox) reads them from the application's own folder to translate its menu.
+separate-locales: false
+
+finish-args:
+  - --share=ipc
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --device=dri
+  # What is backed up, and where a version is put back: the home folder. A drive plugged in as the destination.
+  - --filesystem=home
+  - --filesystem=/run/media
+  # The daemon is started by the Background portal and by D-Bus, not by the desktop entry that sets this.
+  - --env=DELTA_LOCALEDIR=/app/share/locale
+  # The window and the daemon are two processes that must see the same settings. Without access to dconf a
+  # sandbox keeps GSettings in memory, one copy per process; a file in the app's own folder is shared.
+  - --env=GSETTINGS_BACKEND=keyfile
+
+modules:
+  - name: python3-borgbackup
+    buildsystem: simple
+    build-options:
+      build-args:
+        - --share=network # development builds only: Flathub builds are offline (flatpak/README.md)
+    build-commands:
+      - pip3 install --prefix=/app --no-cache-dir borgbackup
+
+  - name: delta
+    buildsystem: meson
+    config-opts:
+      - -Dsystemd_units=false
+      - -Dnautilus_extension=false
+    sources:
+      - type: dir
+        path: ..
+        # Only what meson installs. A working copy also holds the virtual environment, the website's
+        # dependencies and this build's own cache, which would be copied into the build (and into itself).
+        skip:
+          - .git
+          - .github
+          - .devenv
+          - .flatpak-builder
+          - build-flatpak
+          - build
+          - mutants
+          - website
+          - tests
+          - docs
+          - nix
+          - scripts
+    post-install:
+      # The Background portal starts the daemon with `flatpak run --command=delta-daemon`: a command of /app/bin.
+      - ln -sf ../libexec/delta-daemon /app/bin/delta-daemon

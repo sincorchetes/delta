@@ -1,0 +1,12 @@
+option(
+  'systemd_units',
+  type: 'boolean',
+  value: true,
+  description: 'Install the systemd user units that start the daemon and schedule backups (off in a Flatpak, which keeps its own time)',
+)
+option(
+  'nautilus_extension',
+  type: 'boolean',
+  value: true,
+  description: 'Install the Nautilus extension (off in a Flatpak: Nautilus runs outside the sandbox and loads extensions from the host)',
+)

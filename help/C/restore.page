@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" style="task" id="restore">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Restore an earlier version of a file or folder</title>
+  <desc>Find an old version in Files, preview it, and put it back without losing anything.</desc>
+
+  <steps>
+    <item>
+      <p>In <app>Files</app>, right-click the file or folder and choose <gui style="menuitem">Restore Previous Version…</gui>.</p>
+    </item>
+    <item>
+      <p>The <gui>Previous versions</gui> window lists every different version, newest first, with when it was backed up and
+      its size. Identical copies are shown once.</p>
+    </item>
+    <item>
+      <p>Select a version to preview it. Images, text, video and audio show in the window. A big file asks first:
+      choose <gui style="button">Show preview</gui>. Anything else opens in its own application with
+      <gui style="button">Open</gui>.</p>
+    </item>
+    <item>
+      <p>Choose how to bring it back:</p>
+      <list>
+        <item><p><gui style="button">Restore as a copy</gui> puts the old version next to the original, named like
+        <file>report (restored 2026-11-16).odt</file>. Nothing is overwritten.</p></item>
+        <item><p><gui style="button">Replace the current version…</gui> puts the old version in place of the current one.
+        Delta asks first and keeps the current one beside it, renamed with the date and time. If something fails,
+        the original goes back to its place.</p></item>
+      </list>
+    </item>
+  </steps>
+
+  <note style="tip">
+    <p>If the window says <em>No earlier versions</em>, the item is not in any backup yet.</p>
+  </note>
+
+  <section id="folders">
+    <title>Folders</title>
+    <p>For a folder, the window shows what it held in the version you chose. Open subfolders to move around;
+    <gui style="button">Back</gui> goes up.</p>
+    <list>
+      <item><p><gui>Search by name</gui> finds a file at any depth below the folder.</p></item>
+      <item><p>The filter has <gui>All</gui>, <gui>Changed</gui> (everything that differs from your disk now) and
+      <gui>Deleted</gui>. Each row says <gui>Modified</gui>, <gui>Changed inside</gui>, <gui>Unchanged</gui> or
+      <gui>Deleted</gui>.</p></item>
+      <item><p><gui style="button">Select several items</gui> lets you restore many at once.</p></item>
+      <item><p><gui style="button">Restore deleted…</gui> puts back everything that was deleted from the folder since
+      that version. Nothing that exists today is touched.</p></item>
+      <item><p><gui>Show in Files</gui> opens the original location.</p></item>
+    </list>
+  </section>
+
+  <section id="keys">
+    <title>Keyboard</title>
+    <list>
+      <item><p><keyseq><key>Ctrl</key><key>F</key></keyseq>: go to the search box.</p></item>
+      <item><p><keyseq><key>Alt</key><key>←</key></keyseq>: up one folder, or back from a file to the list.</p></item>
+      <item><p><keyseq><key>Ctrl</key><key>↓</key></keyseq> and <keyseq><key>Ctrl</key><key>↑</key></keyseq>:
+      the next older and newer version.</p></item>
+      <item><p><key>Esc</key>: clear the search, or leave selection mode.</p></item>
+    </list>
+  </section>
+</page>

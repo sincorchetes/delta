@@ -1,0 +1,32 @@
+---
+title: La ventana de Delta
+description: Qué te dice la ventana principal y qué significa cada mensaje.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Shot from '../../../components/Shot.astro';
+
+Abre **Delta** desde la vista de Actividades. Siempre responde a una pregunta: ¿están protegidos mis archivos?
+
+<Shot name="status" alt="La ventana de Delta con «Tus archivos están protegidos», las horas de la última y la próxima copia y un botón «Copiar ahora»." />
+
+Cuando todo va bien ves **Tus archivos están protegidos** y una línea como
+*Última copia: hace 5 minutos. Próxima copia: en 30 minutos.* **Copiar ahora** inicia una copia al instante.
+
+## Mensajes
+
+| Ves | Qué significa | Qué hacer |
+|---|---|---|
+| **Las copias no están configuradas** | Aún no hay destino. | Elige **Configurar copias**. |
+| **Copiando…** | Hay una copia en marcha. Puedes seguir trabajando. | Nada. |
+| **Hay una copia abierta como carpeta** | Abriste una copia con **Examinar como carpeta**. La próxima copia espera. | Cierra la carpeta; la copia empieza sola. |
+| **El repositorio de copias está bloqueado** | Una copia no terminó bien, o algo más está usando el repositorio. | Consulta [Solución de problemas](../troubleshooting/#el-repositorio-de-copias-está-bloqueado). |
+| **La última copia falló** | La última copia se detuvo con un error. | Elige **Reintentar** y consulta [Solución de problemas](../troubleshooting/). |
+| **El servicio de copias no está disponible** | Delta no pudo iniciar su servicio en segundo plano. | Consulta [Solución de problemas](../troubleshooting/). |
+
+<Aside type="note">
+Delta también te avisa con una notificación: **Copia de seguridad en curso**, **Copia de seguridad completada**,
+**Copia completada con avisos**, **Copia de seguridad interrumpida** (Delta la reanuda automáticamente), **Copia aplazada** y **Error en la copia de seguridad**.
+</Aside>
+
+El botón **Historial de copias** abre [la lista de tus copias](../history/). El menú principal tiene **Preferencias**.

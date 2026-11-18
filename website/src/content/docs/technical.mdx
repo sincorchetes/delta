@@ -1,0 +1,83 @@
+---
+title: Technical specifications
+description: What Delta is made of, how it is tested, why it uses BorgBackup and how a backup works.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## At a glance
+
+| | |
+|---|---|
+| Backup engine | BorgBackup 1.4 or newer, run as a separate program |
+| Built with | Python 3.12+, PyGObject, GTK 4.10+, libadwaita 1.5+ (GNOME 46 or newer) |
+| Design | Clean Architecture in four layers, files of about 300 lines at most |
+| Service | A user-session D-Bus service with no extra privileges |
+| Schedule | A `systemd` user timer (native) or Delta's own timer (Flatpak) |
+| Secrets | Your desktop keyring; handed to Borg through a private pipe, never in a file or on a command line |
+| Where copies live | Only on your computer: a folder or a connected drive |
+| Languages | English and Spanish |
+| Licence | GPL-3.0-or-later |
+
+## How it is tested
+
+Delta's quality is measured, not claimed. Every figure below comes from a command you can run yourself, and they were taken on 2026-11-18.
+
+- **Automated tests.** More than 1,200 test functions in 113 files: about 900 unit tests, 112 integration tests and 211 tests of the windows.
+  The integration tests use **real BorgBackup** on a temporary repository. The window tests run on a virtual screen and never show anything on yours.
+- **100 % coverage of lines and branches**, required. There is no code excluded from the count: what cannot be tested is simplified instead of hidden.
+- **Mutation tests.** A mutation test changes the code on purpose (a `>` becomes `>=`, a message is altered) and checks that some test fails.
+  If none does, that test was not really watching the code. They cover the logic that decides what is restored, kept, refused or read:
+  **2,028 changes tried, 2,020 caught, 7 that made the program loop forever (also counted as caught) and 1 that no test can
+  tell apart**, because it changes nothing the program can observe.
+- **Checks of the project itself.** Every visible text is translated, the help pages are valid and their links exist, the version of every package matches the build,
+  the Flatpak asks for no more permissions than agreed, and the AppStream and desktop entries are validated.
+- **Seven distributions in continuous integration**, and the packages are built and installed in clean containers on Fedora, Rocky Linux, openSUSE, Debian, Ubuntu and Arch.
+
+## Why BorgBackup
+
+There is no measured comparison of Borg with other tools here, and this page does not pretend there is: other modern backup tools also
+deduplicate and encrypt. Delta uses Borg **for what it needs**, and each reason can be checked in the code:
+
+1. **Every copy is a complete snapshot you can look into by path.** Asking “what versions does this file have?” does not unpack anything. It is what the *Previous versions* window is built on.
+2. **Incremental copies with deduplication.** After the first, only what changed is stored, and identical data is kept once, even across different files. That is what makes an hourly backup practical.
+3. **Authenticated encryption from the start.** The repository is always encrypted, even on your own disk, and Borg verifies everything it reads.
+4. **Output a program can read.** Progress and results come as structured data, not text to be interpreted.
+5. **A copy can be opened as a folder** (**Browse as a folder**).
+6. **Checkpoints.** Borg saves its progress every five minutes, so an interrupted copy loses roughly that much at most.
+7. **A repository is just a folder.** No server, account or credentials.
+8. **It is already in your distribution.** Fedora, Rocky Linux (through EPEL), openSUSE, Debian, Ubuntu and Arch all provide it, so Delta does not bundle its own.
+
+<Aside type="note" title="Limits Delta accepts">
+- A repository has a single lock. While a copy is open as a folder, a backup cannot write, so Delta pauses or postpones the backup and never leaves a folder mounted behind.
+- Listing the versions of a file asks Borg once for each snapshot, which is slower the more copies you keep.
+- Delta uses Borg 1.x. Borg 2 changes how it is driven, and that will be reviewed before any move.
+</Aside>
+
+## How a backup works
+
+1. **The schedule.** Every hour by default, a `systemd` user timer asks Delta's service for a backup. If the computer was off at the due time, one is made on start, as `Persistent=true` does. In the Flatpak, Delta's own timer does the same.
+2. **One job at a time.** A backup moves through a few states: pending, running, and then succeeded, succeeded with warnings, interrupted or failed. Nothing else is allowed.
+3. **What is copied.** The folders you chose or, with none chosen, your home folder, except `~/.cache` and the trash. If you chose folders and none is valid, the backup fails: it never grows to your whole home folder on its own.
+4. **The key.** The repository password stays in your keyring and reaches Borg through a private pipe that only its process can read.
+5. **What is kept.** After each copy, old ones are removed by a grandfather-father-son rule: by default 24 hourly, 7 daily, 4 weekly and 12 monthly. Delta refuses a rule that would keep nothing.
+6. **If it is interrupted.** A marker file records that a copy is running. If the service starts and finds it, the copy is resumed.
+7. **A notice.** GNOME tells you the result; an error from Borg is shortened to 300 characters.
+
+### Restoring
+
+- **Versions and preview.** The version you look at is unpacked into a private, read-only folder that is emptied when you close the window.
+- **Restore as a copy** is the default and leaves the old version next to the original under another name. **Replace** first sets the current one aside and puts it back if anything fails.
+  Paths are checked: they must be inside your home folder once links are resolved.
+- **Browse as a folder** mounts the copy with FUSE (native install only), pauses the backup while it is open, and unmounts it when you close it, suspend or lock the computer, or leave it unused.
+
+## How it is organised
+
+`ui → application → domain ← infrastructure`. The domain is pure: no files, windows or D-Bus. The use cases talk to **ports** (the backup engine, the secret store, the scheduler)
+and the adapters for Borg, the keyring and `systemd` are plugged in at the edges. The window and the Files extension only talk to the service over D-Bus.
+That is why the Flatpak could swap `systemd` for its own timer without touching the rest.
+
+<Aside type="tip">
+The full design, the D-Bus contract and the threat model are in the repository, in
+[`docs/`](https://github.com/sincorchetes/delta/tree/main/docs): `plan.md`, `dbus-api.md`, `security.md` and `technical.md`.
+</Aside>

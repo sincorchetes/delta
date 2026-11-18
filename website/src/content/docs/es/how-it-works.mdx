@@ -1,0 +1,44 @@
+---
+title: Cómo funciona Delta
+description: Qué ocurre detrás de la ventana y por qué hay dos formas de instalarlo.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+## Las copias
+
+Delta usa **BorgBackup**. La primera copia es la que más tarda; las siguientes guardan **solo lo que cambió**, y los datos idénticos se guardan una vez.
+Cada copia es una **instantánea**: una imagen completa de tus archivos en un momento, que es lo que permite abrir cualquier versión antigua.
+Todo va cifrado y con comprobación de integridad.
+
+Un servicio en segundo plano inicia la copia con un **temporizador de usuario de systemd**, así que Delta no necesita estar abierto.
+Si una copia se interrumpe, Delta la reanuda automáticamente.
+
+## Qué se conserva
+
+Con el tiempo, Delta elimina las copias antiguas según lo que elegiste en [Preferencias](../preferences/#conservar-copias-antiguas).
+
+## Dónde viven las copias
+
+Solo **en tu equipo**: una carpeta o una unidad que conectas. Delta no tiene nube ni destinos de red, así que no hay
+cuentas ni servidores que gestionar.
+
+## Dos formas de instalarlo
+
+| | Nativa | Flatpak (previsto) |
+|---|---|---|
+| Ventana de Delta, versiones, vista previa, restaurar | Sí | Sí |
+| **Restaurar versión anterior…** en Archivos | Sí | Solo con la [extensión opcional](../install/#clic-derecho-en-archivos-con-el-flatpak) |
+| **Examinar como carpeta** | Sí | No |
+| Copias programadas | Temporizador de usuario de systemd | Temporizador propio de Delta, iniciado al abrir sesión con el portal Background |
+
+**Examinar como carpeta** necesita un montaje FUSE que Archivos pueda ver. Archivos se ejecuta fuera del sandbox de Flatpak y no ve uno hecho dentro,
+y permitirlo exigiría un acceso amplio a dispositivos. Por eso Delta no lo ofrece ahí.
+
+Archivos también carga sus extensiones desde el equipo y no desde un Flatpak, y por eso la entrada del clic derecho necesita un
+pequeño archivo instalado fuera del sandbox.
+
+<Aside type="note">
+Para saber de qué está hecho Delta, cómo se prueba y por qué usa BorgBackup, consulta las [especificaciones técnicas](../technical/).
+La documentación interna del proyecto está en el repositorio, en `docs/`: la arquitectura, la API D-Bus y el modelo de seguridad.
+</Aside>

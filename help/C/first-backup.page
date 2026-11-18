@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" style="task" id="first-backup">
+  <info>
+    <link type="guide" xref="index#get-started"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>This help is free software, under the GNU General Public License, version 3 or later.</p>
+    </license>
+  </info>
+
+  <title>Set up your first backup</title>
+  <desc>Choose where backups go, what to copy, and save your recovery key.</desc>
+
+  <p>The first time you open Delta it says <gui>Backups are not set up</gui>. Choose <gui style="button">Set up backups</gui>.
+  The assistant has a few short pages, with <gui style="button">Next</gui> and <gui style="button">Back</gui>.
+  Nothing is created until you choose <gui style="button">Create backups</gui> on the last one.</p>
+
+  <steps>
+    <item>
+      <title>Where should backups go?</title>
+      <p>Pick a <gui>Folder</gui> with <gui style="button">Choose…</gui>, which must be new or empty, or one of the
+      connected drives. On a drive, backups go in a folder called <file>delta-backups</file>. Delta tells you at once if
+      the place is not usable: a path that does not exist, a file, a whole disk, or a folder that is not empty.</p>
+    </item>
+    <item>
+      <title>What should be backed up?</title>
+      <p>By default, <gui>Everything in your home folder</gui>. To choose, add folders with
+      <gui style="button">Choose a folder to back up</gui>.</p>
+    </item>
+    <item>
+      <title>Save your recovery key</title>
+      <p>Backups are encrypted. Use <gui style="button">Save to a file…</gui> and keep the file somewhere safe,
+      <em>away from this computer</em>. You cannot finish until you turn on <gui>I have saved my recovery key</gui>.
+      <gui style="button">Copy</gui> alone does not count as saving it. If you prefer your own passphrase, turn on
+      <gui>Use my own passphrase instead</gui>.</p>
+      <p>See <link xref="recovery-key"/>.</p>
+    </item>
+    <item>
+      <title>Create the backups</title>
+      <p>Choose <gui style="button">Create backups</gui>. Delta prepares the destination and starts protecting your files.</p>
+    </item>
+  </steps>
+
+  <section id="existing">
+    <title>Use a backup you already have</title>
+    <p>If the folder already holds a Delta backup, for example after reinstalling, the assistant offers
+    <gui>Use the existing repository</gui>. Enter its passphrase and choose
+    <gui style="button">Use this repository</gui>. Nothing in it is erased.</p>
+  </section>
+</page>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<page xmlns="http://projectmallard.org/1.0/" type="topic" style="task" id="browse-folder">
+  <info>
+    <link type="guide" xref="index#use"/>
+    <revision pkgversion="0.1.0" date="2026-11-17" status="candidate"/>
+    <credit type="author copyright">
+      <name>Álvaro Castillo</name>
+      <years>2026</years>
+    </credit>
+    <license href="https://www.gnu.org/licenses/gpl-3.0.html">
+      <p>Esta ayuda es software libre, bajo la Licencia Pública General de GNU, versión 3 o posterior.</p>
+    </license>
+  </info>
+
+  <title>Examina una copia como carpeta</title>
+  <desc>Abre una copia entera en Archivos, de solo lectura, y copia lo que necesites.</desc>
+
+  <p>En la ventana <gui>Versiones anteriores</gui>, <gui style="button">Examinar como carpeta</gui> abre la copia que elegiste como una
+  carpeta normal, de solo lectura, en <app>Archivos</app>. Puedes abrir sus archivos con cualquier aplicación, ver miniaturas y
+  copiar lo que necesites. Al terminar, pulsa <gui style="button">Cerrar la carpeta</gui>.</p>
+
+  <note style="important">
+    <title>No se puede hacer una copia mientras hay una abierta</title>
+    <p>Abrir una copia detiene la copia que está en marcha, y Delta la reanuda al cerrar la carpeta. Una copia programada
+    espera y se te avisa: <gui>Copia aplazada</gui>. La ventana principal dice <gui>Hay una copia abierta como carpeta</gui>.</p>
+  </note>
+
+  <section id="closing">
+    <title>Cuándo se cierra la carpeta</title>
+    <p>No tienes que acordarte de cerrarla. Delta la cierra cuando:</p>
+    <list>
+      <item><p>pulsas <gui style="button">Cerrar la carpeta</gui> o cierras la ventana <gui>Versiones anteriores</gui>;</p></item>
+      <item><p>el equipo se suspende o la pantalla se bloquea;</p></item>
+      <item><p>nada la ha usado durante dos o tres minutos: ni un archivo abierto ni una ventana que la muestre. Una copia larga
+      mantiene su archivo abierto, así que nunca se corta.</p></item>
+    </list>
+    <p>Una ventana de <app>Archivos</app> que se quede en una carpeta recién cerrada muestra un error. Ciérrala.</p>
+  </section>
+
+  <note style="warning">
+    <title>No está en la versión Flatpak</title>
+    <p>Solo existe en la instalación nativa. Un Flatpak no puede crear una carpeta que <app>Archivos</app> vea, así que el botón no
+    aparece. Todo lo demás funciona igual.</p>
+  </note>
+</page>

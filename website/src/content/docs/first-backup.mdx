@@ -1,0 +1,57 @@
+---
+title: Your first backup
+description: Choose where to keep your backups, what to copy, and save your recovery key.
+---
+
+import { Aside, Steps } from '@astrojs/starlight/components';
+import Shot from '../../components/Shot.astro';
+
+The first time you open Delta it says **Backups are not set up**. Choose **Set up backups** and the
+assistant walks you through four short pages with **Next** and **Back**. Nothing is created until you choose **Create backups** on the last one.
+
+<Steps>
+
+1. **Where should backups go?**
+
+   Pick a folder or a drive on this computer.
+
+   - **Folder**: choose **Choose…** and pick a **new or empty** folder.
+   - **Connected drives**: removable drives appear here. Backups go in a folder called `delta-backups` on the drive you pick.
+
+   <Shot name="wizard-destination" alt="The first page of the assistant, “Where should backups go?”, with a Folder row and a list of connected drives." />
+
+   Delta tells you right away if the path is not a full path, does not exist, is a file, is a whole disk, or is a folder that is not empty.
+
+2. **What should be backed up?**
+
+   By default, **Everything in your home folder**. To choose, add folders with **Choose a folder to back up**.
+   Add the folders you care about and leave the rest out.
+
+3. **Your recovery key**
+
+   Delta protects your backups with a key kept in your keyring. If you ever lose access to it, this
+   recovery key is the only way to read them.
+
+   <Shot name="wizard-recovery" alt="The assistant page “Your recovery key”, with the key, the Copy and “Save to a file…” buttons and the confirmation switch." />
+
+   Use **Save to a file…**, then store the file somewhere safe, **away from this computer**. You cannot finish until you
+   choose **I have saved my recovery key**, or accept the risk with **Or I accept that I could lose access to my backups without it.**
+   **Copy** alone does not count as saving it.
+
+   Prefer your own passphrase? Choose **Use my own passphrase instead**, type it twice (it has a minimum length) and do not lose it.
+
+4. **Ready to go**
+
+   Delta creates the destination and starts protecting your files. **Setting up your backups…** can take a moment.
+
+</Steps>
+
+## Using a backup you already have
+
+If the folder you picked already holds a Delta backup (after reinstalling, for example), the assistant offers
+**Use the existing repository**. Enter its passphrase and choose **Use this repository**. **Nothing in it is erased.**
+
+<Aside type="tip">
+The first backup runs on the schedule you chose, or right away with **Back up now**. Afterwards,
+[the status window](../status/) tells you when the last and the next one happen.
+</Aside>

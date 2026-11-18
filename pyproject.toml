@@ -1,0 +1,98 @@
+[build-system]
+requires = ["poetry-core>=2.0"]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "delta"
+version = "0.1.0"
+description = "GNOME integrated, BorgBackup powered file time travel"
+requires-python = ">=3.12"
+dependencies = [
+    "PyGObject>=3.48",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "python-dbusmock>=0.32",
+    "mutmut>=3",  # mutation testing: `uv run mutmut run` shows which tests do not really watch the code
+    # Build backend for the meson-based source distributions (PyGObject,
+    # pycairo, dbus-python), built against the system libraries from
+    # devenv/CI. meson, ninja and patchelf come from the system (devenv or
+    # the distro): their PyPI wheels ship generic-Linux binaries that do
+    # not run on NixOS.
+    "meson-python>=0.17",
+    "poetry-core>=2.0",
+]
+
+[project.scripts]
+delta-daemon = "delta.daemon.main:main"
+
+[tool.poetry]
+packages = [{ include = "delta", from = "src" }]
+
+[tool.uv]
+# GNOME sdists are built with the meson/ninja installed in the venv itself,
+# against the system libraries provided by devenv.
+no-build-isolation = true
+python-preference = "only-system"
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["src/delta", "src/nautilus"]
+relative_files = true
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 100  # lines and branches; the GTK widget tests need a display (xvfb-run where there is none)
+# No "pragma: no cover" and no omitted files: what the tests do not run is reported, not hidden.
+
+[tool.mutmut]
+# Mutation testing (`uv run mutmut run`, then `mutmut results`): only the logic that decides what is
+# restored, kept, refused or parsed. Widgets, the daemon and the platform adapters are covered by
+# tests that check wiring, not rules.
+source_paths = ["src/"]
+only_mutate = [
+    "src/delta/domain/*",
+    "src/delta/application/*",
+    "src/delta/infrastructure/borg_parsing.py",
+    "src/delta/infrastructure/borg_commands.py",
+    "src/delta/infrastructure/timer_scheduler.py",
+    "src/delta/ui/wizard.py",
+]
+pytest_add_cli_args_test_selection = ["tests/unit/"]
+# Tests of the repository itself, not of rules: the first reads the source files (which mutmut has
+# already rewritten with its mutants), the second the files at the root (LICENSE, meson.build, ...),
+# which are not copied into the mutants folder.
+pytest_add_cli_args = [
+    "--ignore=tests/unit/test_translations_complete.py",
+    "--ignore=tests/unit/test_credits.py",
+    "--ignore=tests/unit/test_help_pages.py",
+    "--ignore=tests/unit/test_appstream.py",
+    "--ignore=tests/unit/test_meson_options.py",
+    "--ignore=tests/unit/test_flatpak_manifest.py",
+    "--ignore=tests/unit/test_nix_module.py",
+    "--ignore=tests/unit/test_packaging.py",
+    "--ignore=tests/unit/test_website_pages.py",
+]
+# Workers are forked from a clean server, not from the process that already ran the suite: a test
+# that starts a real process (Gio.Subprocess) hangs forever in a fork of a process GLib has threads in.
+process_isolation = "forkserver"
+forkserver_warmup = "none"
+also_copy = ["po/"]  # test_i18n compiles po/es.po, resolved relative to the copied tests
+
+[tool.ruff]
+line-length = 120
+extend-exclude = [".devenv", "build", "result"]
+
+[tool.ruff.lint]
+# Explicit, so a newer ruff with more rules on by default does not turn the same code into errors.
+select = ["E4", "E7", "E9", "F"]
+# PyGObject needs `gi.require_version(...)` to run before `from gi.repository import ...`, so some imports follow code.
+ignore = ["E402"]

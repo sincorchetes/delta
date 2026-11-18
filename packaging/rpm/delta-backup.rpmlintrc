@@ -1,0 +1,10 @@
+# Delta loads GTK, libadwaita and libsecret through GObject Introspection from Python: no ELF links, so RPM
+# cannot find the dependency by itself and it has to be written down.
+addFilter(r"explicit-lib-dependency (libadwaita|libsecret)")
+
+# The entries start the application with `env DELTA_LOCALEDIR=...` so that translations are found where the
+# locale folder is not the standard one (Nix); with an RPM it changes nothing.
+addFilter(r"desktopfile-without-binary .* env")
+
+# A graphical application: its manual is the in-app help (F1).
+addFilter(r"no-manual-page-for-binary delta-ui")
