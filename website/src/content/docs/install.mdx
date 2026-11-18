@@ -17,7 +17,7 @@ import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 Delta is published in a **repository for each distribution**, built by the openSUSE Build Service: add it once, and your
 package manager installs Delta and keeps it up to date. Fedora (43 and 44), Rocky Linux 10, AlmaLinux 10, openSUSE
 Tumbleweed, Debian 13 and Ubuntu (26.04 and 26.10) have one, and Arch Linux has the AUR. For any other distribution, or
-version, build the package yourself, use Nix, or build from source. A Flatpak is planned for the 1.0 release.
+version, install the Flatpak, build the package yourself, use Nix, or build from source.
 </Aside>
 
 ## Install from the repository
@@ -122,6 +122,21 @@ git clone https://github.com/sincorchetes/delta.git && cd delta
 
 Then log out and back in, so Files loads the extension and your session finds the Delta service.
 
+## Install the Flatpak
+
+The Flatpak works on any distribution with Flatpak and a GNOME desktop. Download `delta-0.1.0.flatpak` from the
+[latest release](https://github.com/sincorchetes/delta/releases/latest) and install it. Flatpak fetches the GNOME runtime
+from Flathub by itself if you do not have it.
+
+```sh
+flatpak install --user ./delta-0.1.0.flatpak
+flatpak run io.github.sincorchetes.Delta
+```
+
+It is not in Flathub, so it does not update by itself: to update, install the bundle of the new release the same way. Install
+the Flatpak **or** the native package, not both: they share the same service name, and the window would talk to whichever
+service started first.
+
 ## Install with Nix and Home Manager
 
 <Steps>
@@ -166,8 +181,8 @@ Then log out and back in, so Files loads the extension and your session finds th
 Open **Delta** from the Activities overview. If the window asks you to set up backups, it is ready:
 continue with [your first backup](../first-backup/).
 
-<Aside type="caution" title="Flatpak will not have the folder view">
-The planned Flatpak has the Delta window with versions, preview, folder browser and restore. It cannot offer
+<Aside type="caution" title="The Flatpak does not have the folder view">
+The Flatpak has the Delta window with versions, preview, folder browser and restore. It cannot offer
 **Browse as a folder**, because Files runs outside the sandbox and cannot see a folder mounted inside it.
 See [How Delta works](../how-it-works/#two-ways-to-install-it).
 </Aside>

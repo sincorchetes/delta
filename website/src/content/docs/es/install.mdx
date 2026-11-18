@@ -17,7 +17,7 @@ import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 Delta se publica en un **repositorio para cada distribución**, construido por el openSUSE Build Service: lo añades una vez
 y tu gestor de paquetes instala Delta y lo mantiene actualizado. Fedora (43 y 44), Rocky Linux 10, AlmaLinux 10, openSUSE
 Tumbleweed, Debian 13 y Ubuntu (26.04 y 26.10) tienen el suyo, y Arch Linux tiene el AUR. Para cualquier otra distribución,
-o versión, compila el paquete tú, usa Nix o compila desde el código fuente. Un Flatpak está previsto para la versión 1.0.
+o versión, instala el Flatpak, compila el paquete tú, usa Nix o compila desde el código fuente.
 </Aside>
 
 ## Instalar desde el repositorio
@@ -122,6 +122,21 @@ git clone https://github.com/sincorchetes/delta.git && cd delta
 
 Después, cierra la sesión y vuelve a entrar, para que Archivos cargue la extensión y tu sesión encuentre el servicio de Delta.
 
+## Instalar el Flatpak
+
+El Flatpak funciona en cualquier distribución con Flatpak y un escritorio GNOME. Descarga `delta-0.1.0.flatpak` de la
+[última versión](https://github.com/sincorchetes/delta/releases/latest) e instálalo. Flatpak descarga por sí mismo el runtime
+de GNOME desde Flathub si no lo tienes.
+
+```sh
+flatpak install --user ./delta-0.1.0.flatpak
+flatpak run io.github.sincorchetes.Delta
+```
+
+No está en Flathub, así que no se actualiza solo: para actualizar, instala del mismo modo el bundle de la nueva versión. Instala
+el Flatpak **o** el paquete nativo, no los dos: comparten el nombre del servicio, y la ventana hablaría con el servicio que
+arranque primero.
+
 ## Instalar con Nix y Home Manager
 
 <Steps>
@@ -166,8 +181,8 @@ Después, cierra la sesión y vuelve a entrar, para que Archivos cargue la exten
 Abre **Delta** desde la vista de Actividades. Si la ventana te pide configurar las copias, está listo:
 sigue con [tu primera copia](../first-backup/).
 
-<Aside type="caution" title="El Flatpak no tendrá la vista como carpeta">
-El Flatpak previsto tiene la ventana de Delta con versiones, vista previa, explorador de carpetas y restauración. No puede ofrecer
+<Aside type="caution" title="El Flatpak no tiene la vista como carpeta">
+El Flatpak tiene la ventana de Delta con versiones, vista previa, explorador de carpetas y restauración. No puede ofrecer
 **Examinar como carpeta**, porque Archivos se ejecuta fuera del sandbox y no ve una carpeta montada dentro de él.
 Consulta [Cómo funciona Delta](../how-it-works/#dos-formas-de-instalarlo).
 </Aside>

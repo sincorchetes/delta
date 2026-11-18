@@ -57,10 +57,11 @@ Do it after the first CI run, so that the names of the checks exist.
 - [x] **AUR:** `delta-backup` is published, and builds, installs and imports in a clean Arch container.
 - [ ] **AUR, next version:** in `packaging/arch/PKGBUILD` the optional dependency is `python-nautilus`; the real name in Arch is
       `nautilus-python`.
-- [ ] **Flatpak:** it builds and runs on Fedora (`flatpak/`), but it is not published anywhere. Decide how: a bundle attached to the
-      GitHub Release (quick, no automatic updates), a repository of its own, or Flathub (the standard, with a review).
-- [ ] **Flathub:** the Python modules from pinned sources without network access (`flatpak-pip-generator`); see
-      `flatpak/README.md`.
+- [x] **Flatpak:** built offline from pinned sources, installed from its bundle in Fedora and tried (`flatpak/`); the bundle is
+      attached to the GitHub Release. It has no automatic updates: each release needs its bundle built and attached.
+- [ ] **Flatpak, updates:** a repository of its own (for instance in GitHub Pages) would update it by itself.
+- [ ] **Flathub:** left out on purpose for now. Its policy does not accept manifests with AI-assisted content, which this one has,
+      and asks for a stable project with some history. Look at it again when the project has both.
 
 ## 5. Try it on a real system
 
