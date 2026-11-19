@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from delta.ui.disk import inspect_path
+from delta.ui.disk import inspect_path, is_repository, is_unmounted
 from delta.ui.wizard import PathState
 
 
@@ -40,3 +40,65 @@ def test_an_unreadable_folder_is_never_offered(tmp_path):
         assert inspect_path(str(locked)) is PathState.NOT_EMPTY
     finally:
         locked.chmod(0o700)
+
+
+def make_repository(folder):
+    folder.mkdir(exist_ok=True)
+    (folder / "README").write_text("This is a Borg Backup repository.\nSee https://borgbackup.readthedocs.io/\n")
+    (folder / "data").mkdir()
+
+
+def test_a_folder_that_holds_a_borg_repository_is_one_to_reopen(tmp_path):
+    make_repository(tmp_path / "repo")
+
+    assert inspect_path(str(tmp_path / "repo")) is PathState.REPOSITORY
+
+
+def test_a_folder_that_only_looks_like_one_is_just_not_empty(tmp_path):
+    (tmp_path / "README").write_text("my notes")
+    (tmp_path / "data").mkdir()
+
+    assert inspect_path(str(tmp_path)) is PathState.NOT_EMPTY
+    assert not is_repository(str(tmp_path))
+
+
+def test_a_readme_without_the_data_folder_is_not_a_repository(tmp_path):
+    (tmp_path / "README").write_text("This is a Borg Backup repository.")
+
+    assert not is_repository(str(tmp_path))
+
+
+def test_a_folder_without_a_readme_is_not_a_repository(tmp_path):
+    assert not is_repository(str(tmp_path))
+
+
+def never(path):
+    return False
+
+
+def mounted(*points):
+    return lambda path: path in points
+
+
+def test_under_the_places_where_drives_are_mounted_what_is_not_on_a_mount_is_a_drive_that_is_away():
+    assert is_unmounted("/run/media/u/DISK/delta", never)
+    assert is_unmounted("/media/DISK", never)
+    assert is_unmounted("/media/u/DISK/a/b", never)
+    assert is_unmounted("/run/media/u", never)
+
+
+def test_on_a_mount_it_is_there_whatever_the_depth():
+    assert not is_unmounted("/run/media/u/DISK/delta", mounted("/run/media/u/DISK"))
+    assert not is_unmounted("/media/DISK", mounted("/media/DISK"))
+    assert not is_unmounted("/media/u/DISK/a/b", mounted("/media/u/DISK"))
+
+
+def test_anywhere_else_is_the_disk_of_the_computer(tmp_path):
+    assert not is_unmounted("/home/u/Backups", never)
+    assert not is_unmounted("/mnt/backups", never)
+    assert not is_unmounted("/media", never)
+    assert not is_unmounted(str(tmp_path))
+
+
+def test_the_real_check_asks_the_system_and_a_path_under_the_media_roots_that_is_not_mounted_is_unmounted():
+    assert is_unmounted("/media/delta-test-nobody-mounts-this") and inspect_path("/media/delta-test-nobody-mounts-this") is PathState.UNMOUNTED

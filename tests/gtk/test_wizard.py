@@ -213,6 +213,10 @@ class Settings:
     def __init__(self):
         self.written = []
 
+    @staticmethod
+    def get_string(key):
+        return "/media/current/delta"
+
     def set_strv(self, key, value):
         self.written.append((key, value))
 
@@ -407,3 +411,53 @@ def test_a_changed_destination_leaves_the_folders_to_back_up_alone(change):
     change.client.subscriptions["on_backup_finished"]("job", True, "")
 
     assert change.done == 1 and change.settings.written == []
+
+
+# --- a folder that already holds a repository ----------------------------------------------------
+
+
+def test_a_folder_with_a_repository_is_reopened_with_its_passphrase_instead_of_created(setup):
+    wizard = setup.wizard
+    wizard._model.inspect = lambda path: PathState.REPOSITORY
+    wizard._model.destination = setup.destination
+    wizard._model.folders = ("/home/u/docs",)
+    wizard._model.inspect = lambda path: PathState.REPOSITORY if path == setup.destination else PathState.NOT_EMPTY
+
+    wizard._on_next(None)
+    wizard._on_next(None)
+
+    summary = wizard._pages[Step.SUMMARY]
+    assert wizard._model.step is Step.SUMMARY  # no recovery key to save: it has its own passphrase
+    assert summary._existing.get_visible() and not wizard._next.get_visible()
+    summary._existing_passphrase.set_text("old passphrase")
+    summary._existing_button.emit("clicked")
+    assert setup.client.asked("use_repository") == [(setup.destination, "old passphrase")]
+    assert setup.client.asked("create_repository") == []
+
+    setup.client.answer("use_repository", "job", None)
+    setup.client.subscriptions["on_backup_finished"]("job", True, "")
+    assert setup.done == 1 and setup.settings.written == [("backup-sources", ["/home/u/docs"])]
+
+
+def test_going_back_from_a_repository_to_a_new_folder_creates_again(setup):
+    wizard = setup.wizard
+    wizard._model.destination = setup.destination
+    wizard._model.inspect = lambda path: PathState.REPOSITORY if path == setup.destination else PathState.NOT_EMPTY
+    wizard._on_next(None)
+    wizard._on_next(None)
+    wizard._on_back(None)
+    wizard._on_back(None)
+
+    wizard._model.inspect = lambda path: PathState.MISSING
+    wizard._model.recovery_saved = True
+    for _step in range(3):
+        wizard._on_next(None)
+
+    assert wizard._next.get_visible() and not wizard._pages[Step.SUMMARY]._existing.get_visible()
+
+
+def test_changing_to_the_folder_where_the_backups_already_are_is_refused(change):
+    change.wizard._model.destination = "/media/current/delta"
+
+    assert not change.wizard._next.get_sensitive()
+    assert change.wizard._model.errors() == ["Your backups are already kept there."]

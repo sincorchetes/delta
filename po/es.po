@@ -1,17 +1,28 @@
 # Spanish translation for Delta.
 msgid ""
 msgstr ""
-"Project-Id-Version: delta 0.1.0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-17 09:27+0100\n"
-"PO-Revision-Date: 2026-11-10 00:00+0000\n"
-"Last-Translator: Delta contributors\n"
-"Language-Team: Spanish\n"
-"Language: es\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Project-Id-Version: delta 0.1.0
+"
+"Report-Msgid-Bugs-To: 
+"
+"POT-Creation-Date: 2026-11-17 09:27+0100
+"
+"PO-Revision-Date: 2026-11-10 00:00+0000
+"
+"Last-Translator: Delta contributors
+"
+"Language-Team: Spanish
+"
+"Language: es
+"
+"MIME-Version: 1.0
+"
+"Content-Type: text/plain; charset=UTF-8
+"
+"Content-Transfer-Encoding: 8bit
+"
+"Plural-Forms: nplurals=2; plural=(n != 1);
+"
 
 #: data/io.github.sincorchetes.Delta.gschema.xml:6
 msgid "Borg repository location"
@@ -755,7 +766,8 @@ msgstr ""
 #: src/delta/ui/about.py:36
 msgid "translator-credits"
 msgstr ""
-"Álvaro Castillo https://sincorchetes.tech\n"
+"Álvaro Castillo https://sincorchetes.tech
+"
 "Claude (Anthropic) https://claude.ai"
 
 #: src/delta/ui/about.py:38
@@ -1403,3 +1415,15 @@ msgstr "Usar este destino"
 
 msgid "Change…"
 msgstr "Cambiar…"
+
+msgid "That place is on a drive that is not connected. Connect it first."
+msgstr "Ese sitio está en un disco que no está conectado. Conéctalo primero."
+
+msgid "Your backups are already kept there."
+msgstr "Tus copias ya se guardan ahí."
+
+msgid "The passphrase it already has"
+msgstr "La contraseña que ya tiene"
+
+msgid "Delta will keep using the backups that are there."
+msgstr "Delta seguirá usando las copias que hay ahí."

@@ -28,7 +28,10 @@ class SetupWizard(Adw.Window):
         )
         self._client, self._settings, self._on_done = client, settings, on_done
         self._change = change
-        self._model = WizardModel(home=os.path.expanduser("~"), inspect=inspect_path, keep_folders=change)
+        self._model = WizardModel(
+            home=os.path.expanduser("~"), inspect=inspect_path, keep_folders=change,
+            current=settings.get_string("repository-location") if change and settings is not None else "",
+        )
         self._touched: set[Step] = set()
         self._busy = False
         self._adopting = False
@@ -43,8 +46,8 @@ class SetupWizard(Adw.Window):
             Step.SUMMARY: SummaryPage(self._model, self, self._on_change),
         }
         self._stack = Gtk.Stack(transition_type=Gtk.StackTransitionType.SLIDE_LEFT_RIGHT, vexpand=True)
-        for step in self._model.steps:
-            self._stack.add_named(self._pages[step], step.value)
+        for step, page in self._pages.items():
+            self._stack.add_named(page, step.value)
 
         header = Adw.HeaderBar()
         self._back = Gtk.Button(label=_("Back"))
@@ -69,6 +72,11 @@ class SetupWizard(Adw.Window):
     def _show(self) -> None:
         if self._model.step is Step.SUMMARY:
             self._pages[Step.SUMMARY].refresh()
+            if self._model.reuses_repository:
+                self._request = self._model.request()
+                self._pages[Step.SUMMARY].offer_existing(self._use_existing)
+            else:
+                self._pages[Step.SUMMARY].hide_existing()
         self._stack.set_visible_child_name(self._model.step.value)
         self._sync()
 
@@ -78,6 +86,7 @@ class SetupWizard(Adw.Window):
         self._pages[step].show_problems(problems)
         self._back.set_sensitive(step is not self._model.steps[0] and not self._busy)
         self._next.set_sensitive(self._model.can_continue() and not self._busy)
+        self._next.set_visible(not (self._model.is_last and self._model.reuses_repository))  # it has its own button
         last = _("Use this destination") if self._change else _("Create backups")
         self._next.set_label(last if self._model.is_last else _("Next"))
 

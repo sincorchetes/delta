@@ -193,6 +193,11 @@ class SummaryPage(Page):
         self._finish_layout()
 
     def refresh(self) -> None:
+        self._group.set_description(
+            _("Delta will keep using the backups that are there.")
+            if self._model.reuses_repository
+            else _("Delta will create your backup destination and start protecting your files.")
+        )
         for row in self._rows:
             self._group.remove(row)
         self._rows = []
