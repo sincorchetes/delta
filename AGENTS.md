@@ -107,7 +107,7 @@ workflows themselves, on every PR, on `main` and once a week.
 
 **The system libraries of each distribution** are checked in another workflow, `.github/workflows/distros.yml`, which does not block
 a pull request: you run it by hand, and it runs by itself once a week. It covers Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10,
-Rocky 10, Ubuntu 26.04 and 26.10 and Debian 13, plus a build of the Nix flake. Each distribution installs the packages it ships (its
+Rocky 10, Ubuntu 26.04 and 26.10 and Debian 13, plus a build of the Nix flake and of a minimal NixOS system with its module, with flakes and without (`scripts/ci/nixos-module-check.nix`). Each distribution installs the packages it ships (its
 `python3-gobject`, GTK, libadwaita, BorgBackup) with `scripts/ci/install-deps.sh`, with **no uv and nothing from PyPI**: it is what
 a user of that distribution's package gets. It checks the minimum base with `scripts/ci/check_base.py` (GNOME 46: GTK 4.10,
 libadwaita 1.5, Python 3.12), builds with Meson, validates the GSettings schema, the `.desktop` file and the AppStream
