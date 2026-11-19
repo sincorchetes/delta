@@ -29,6 +29,7 @@ hits = []
 
 def on_interrupt(*_):
     hits.append(1)
+    pathlib.Path(sys.argv[1] + ".hits").write_text(str(len(hits)))
     if len(hits) == 2:
         sys.exit(130)
 
@@ -54,6 +55,16 @@ class Stubborn:
         self.thread.start()
         assert wait_until(self.ready.exists), "the stand-in never started"
 
+    def signals(self):
+        """How many SIGINT it has handled. Two that arrive together can count as one, so the next waits for this."""
+        try:
+            return int((self.ready.parent / "ready.hits").read_text())
+        except (FileNotFoundError, ValueError):
+            return 0
+
+    def wait_for_signals(self, count):
+        assert wait_until(lambda: self.signals() >= count), f"the stand-in handled {self.signals()} of {count} signals"
+
     def _work(self):
         try:
             self.runner._run(["borg", str(self.ready)], REPO)
@@ -75,6 +86,7 @@ def test_one_signal_alone_does_not_stop_it_and_the_second_does(tmp_path):
     borg = Stubborn(tmp_path, insist_after=3600)
     try:
         borg.runner.interrupt()
+        borg.wait_for_signals(1)
         borg.thread.join(0.3)
         assert borg.thread.is_alive() and len(borg.runner._running) == 1
 
@@ -87,7 +99,7 @@ def test_one_signal_alone_does_not_stop_it_and_the_second_does(tmp_path):
 
 
 def test_interrupt_insists_by_itself_after_the_wait(tmp_path):
-    borg = Stubborn(tmp_path, insist_after=0.05)
+    borg = Stubborn(tmp_path, insist_after=0.3)
     try:
         borg.runner.interrupt()
         borg.thread.join(5)
@@ -102,6 +114,7 @@ def test_insisting_leaves_alone_what_already_ended(tmp_path):
     borg = Stubborn(tmp_path, insist_after=3600)
     gone = list(borg.runner._running)
     borg.runner.interrupt()
+    borg.wait_for_signals(1)
     borg.end()
     assert borg.outcome == {"ended": "interrupted"}
 
