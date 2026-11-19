@@ -12,6 +12,7 @@ from delta.i18n import _
 from delta.ui import history_window
 from delta.ui.history_window import HistoryWindow, Row, _column
 from delta.ui.job_tracker import JobTracker
+from delta.ui import preferences_dialog
 from delta.ui.preferences_dialog import PreferencesDialog
 from delta.ui.preview_pane import PreviewPane, read_text_head
 from delta.ui.restore_deleted import RestoreDeleted, confirm_replace
@@ -145,9 +146,9 @@ class Settings:
     set_string = set_int = set_strv = _set
 
 
-def preferences(**values):
+def preferences(client=None, **values):
     settings = Settings(**values)
-    dialog = PreferencesDialog(settings, "/home/u", None)
+    dialog = PreferencesDialog(settings, "/home/u", None, client)
     toasts = []
     dialog.add_toast = toasts.append
     return dialog, settings, toasts
@@ -382,3 +383,30 @@ def test_replacing_asks_first_and_only_a_yes_goes_ahead(dialogs, count, heading)
     dialogs.respond("replace")
 
     assert yes == [True]
+
+
+def test_the_destination_can_be_changed_when_there_is_a_daemon_to_ask(monkeypatch):
+    opened = []
+
+    class Wizard:
+        def __init__(self, parent, client, settings, on_done, change=False):
+            opened.append((client, settings, change, on_done))
+
+        def present(self):
+            opened.append("shown")
+
+    monkeypatch.setattr(preferences_dialog, "SetupWizard", Wizard)
+    dialog, settings, _toasts = preferences(client="client")
+    (button,) = [b for b in of_type(dialog.get_visible_page(), Gtk.Button) if b.get_label() == _("Change…")]
+
+    button.emit("clicked")
+
+    assert opened[0][:3] == ("client", settings, True) and opened[1] == "shown"
+    settings.values["repository-location"] = "/media/other/delta"
+    opened[0][3]()
+    assert dialog._location_row.get_subtitle() == "/media/other/delta"
+
+
+def test_without_a_daemon_or_a_destination_there_is_nothing_to_change():
+    for dialog in (preferences()[0], preferences(client="client", **{"repository-location": ""})[0]):
+        assert not [b for b in of_type(dialog.get_visible_page(), Gtk.Button) if b.get_label() == _("Change…")]

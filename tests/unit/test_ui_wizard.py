@@ -227,3 +227,31 @@ def test_the_summary_describes_destination_folders_and_protection():
 
 def test_the_summary_says_personal_folder_when_none_chosen():
     assert dict(model(destination="~/B").summary())["Folders"] == "Your personal folder"
+
+
+# --- changing the destination: what is backed up stays as it is -----------------------------------
+
+
+def changing(**fields):
+    return WizardModel(home=HOME, inspect=lambda path: PathState.MISSING, keep_folders=True, recovery_key="AAAAA-BBBBB", **fields)
+
+
+def test_changing_the_destination_skips_the_folders_step():
+    model = changing(destination="/media/disk/delta", recovery_saved=True)
+
+    assert model.steps == [Step.DESTINATION, Step.RECOVERY, Step.SUMMARY]
+    assert model.next() and model.step is Step.RECOVERY
+    assert model.next() and model.step is Step.SUMMARY and model.is_last
+    assert model.back() and model.back() and model.step is Step.DESTINATION and not model.back()
+
+
+def test_the_summary_of_a_change_does_not_list_the_folders():
+    model = changing(destination="/media/disk/delta")
+
+    assert [label for label, _value in model.summary()] == ["Destination", "Protection"]
+
+
+def test_a_first_set_up_has_every_step():
+    model = WizardModel(home=HOME, inspect=lambda path: PathState.MISSING)
+
+    assert model.steps == list(Step)

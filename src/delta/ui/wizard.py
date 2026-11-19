@@ -121,6 +121,11 @@ class WizardModel:
     own_passphrase: str = ""
     own_confirmation: str = ""
     recovery_saved: bool = False  # saved to a file, copied, or the risk accepted
+    keep_folders: bool = False  # changing the destination: what is backed up stays as it is
+
+    @property
+    def steps(self) -> list[Step]:
+        return [step for step in Step if not (self.keep_folders and step is Step.FOLDERS)]
 
     def destination_text(self) -> str:
         """What the user typed or chose, before it is checked."""
@@ -138,7 +143,7 @@ class WizardModel:
             return check_folders(self.folders, self.home, self.inspect)[1]
         if step is Step.RECOVERY:
             return self._protection_errors()
-        return [e for earlier in list(Step)[:-1] for e in self.errors(earlier)]
+        return [e for earlier in self.steps[:-1] for e in self.errors(earlier)]
 
     def _destination_errors(self) -> list[str]:
         _location, error = check_destination(self.destination, self.home, self.inspect)
@@ -160,14 +165,14 @@ class WizardModel:
         return self.step is Step.SUMMARY
 
     def next(self) -> bool:
-        steps = list(Step)
+        steps = self.steps
         if self.is_last or not self.can_continue():
             return False
         self.step = steps[steps.index(self.step) + 1]
         return True
 
     def back(self) -> bool:
-        steps = list(Step)
+        steps = self.steps
         if self.step is steps[0]:
             return False
         self.step = steps[steps.index(self.step) - 1]
@@ -189,8 +194,7 @@ class WizardModel:
             if self.protection is Protection.GENERATED
             else _("Your own passphrase")
         )
-        return [
-            (_("Destination"), location or ""),
-            (_("Folders"), ", ".join(folders) or _("Your personal folder")),
-            (_("Protection"), protection),
-        ]
+        rows = [(_("Destination"), location or "")]
+        if not self.keep_folders:
+            rows.append((_("Folders"), ", ".join(folders) or _("Your personal folder")))
+        return [*rows, (_("Protection"), protection)]

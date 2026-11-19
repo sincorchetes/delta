@@ -5,6 +5,12 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Change where backups are kept**, from Preferences → Destination → *Change…*. What is backed up and how long it is kept
+  stay as they are, and the backups already made are left where they were: the password of each repository stays in your
+  keyring, so going back to it needs nothing.
+
 ### Changed
 
 - **A drive with your backups that is not connected is no longer a failed backup.** It has its own state, error and messages:

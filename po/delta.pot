@@ -1338,3 +1338,12 @@ msgstr ""
 #: src/delta/ui/status.py:147
 msgid "Check again"
 msgstr ""
+
+msgid "Change where backups are kept"
+msgstr ""
+
+msgid "Use this destination"
+msgstr ""
+
+msgid "Change…"
+msgstr ""

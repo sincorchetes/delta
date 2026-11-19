@@ -364,3 +364,46 @@ def test_closing_the_wizard_lets_go_of_the_signal(setup):
     assert setup.wizard._on_close(setup.wizard) is False
 
     assert setup.client.unsubscribed == [1]
+
+
+# --- changing the destination --------------------------------------------------------------------
+
+
+@pytest.fixture
+def change(client, tmp_path):
+    seen = SimpleNamespace(done=0, settings=Settings(), client=client)
+    seen.wizard = SetupWizard(None, client, seen.settings, lambda: setattr(seen, "done", seen.done + 1), change=True)
+    seen.destination = str(tmp_path / "other-drive")
+    return seen
+
+
+def test_changing_the_destination_is_a_wizard_of_its_own_with_no_folders_step(change):
+    wizard = change.wizard
+    wizard._model.destination = change.destination
+    wizard._model.recovery_saved = True
+
+    assert wizard.get_title() == "Change where backups are kept"
+    wizard._on_next(None)
+    wizard._on_next(None)
+    assert wizard._model.step is Step.SUMMARY
+    assert wizard._next.get_label() == "Use this destination" and wizard._back.get_sensitive()
+    wizard._on_back(None)
+    assert wizard._model.step is Step.RECOVERY and wizard._next.get_label() == "Next"
+
+
+def test_the_first_page_of_a_change_cannot_go_back(change):
+    assert not change.wizard._back.get_sensitive()
+
+
+def test_a_changed_destination_leaves_the_folders_to_back_up_alone(change):
+    wizard = change.wizard
+    wizard._model.destination = change.destination
+    wizard._model.recovery_saved = True
+    wizard._on_next(None)
+    wizard._on_next(None)
+    wizard._on_next(None)
+    change.client.answer("create_repository", "job", None)
+
+    change.client.subscriptions["on_backup_finished"]("job", True, "")
+
+    assert change.done == 1 and change.settings.written == []

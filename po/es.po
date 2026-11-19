@@ -1394,3 +1394,12 @@ msgstr "Comprobar de nuevo"
 
 #~ msgid "First release."
 #~ msgstr "Primera versión."
+
+msgid "Change where backups are kept"
+msgstr "Cambiar dónde se guardan las copias"
+
+msgid "Use this destination"
+msgstr "Usar este destino"
+
+msgid "Change…"
+msgstr "Cambiar…"
