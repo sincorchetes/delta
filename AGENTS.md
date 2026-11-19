@@ -123,7 +123,7 @@ distributions in parity; when you add a system dependency, add it to `install-de
   green → a squash merge → the branch is deleted.
 - To merge, the jobs `devenv` (tests and mutants) and `web` must pass in the PR. The distributions workflow is a check, not a gate.
 - A new version is one more PR: it raises the version in `meson.build`, `packaging/rpm/delta-backup.spec` (with its `%changelog`),
-  `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/_service`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md` (`tests/unit/test_packaging.py` fails
+  `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md` (`tests/unit/test_packaging.py` fails
   if they disagree) and, once in `main`, it is tagged `vX.Y.Z` (with the `v` attached to the number: `v0.1.0`, never `v.0.1.0`).
   The guide for contributors is in `CONTRIBUTING.md`.
 

@@ -25,13 +25,22 @@ def test_every_package_names_the_version_of_the_build():
         "rpm changelog": first(r"^\* .* - (\S+)-\d+$", read("packaging/rpm/delta-backup.spec")),
         "debian": first(r"^delta-backup \(([^-]+)-\d+\)", read("debian/changelog")),
         "arch": first(r"^pkgver=(\S+)", read("packaging/arch/PKGBUILD")),
-        "obs": first(r"/archive/v([^/]+)/delta-", read("packaging/obs/_service")),
         "obs dsc": first(r"^Version: ([^-]+)-\d+$", read("packaging/obs/delta-backup.dsc")),
         "obs dsc tarball": first(r"^DEBTRANSFORM-TAR: delta-(\S+)\.tar\.gz$", read("packaging/obs/delta-backup.dsc")),
         "changelog": first(r"^## \[(\d+\.\d+\.\d+)\]", read("CHANGELOG.md")),
     }
 
     assert versions == dict.fromkeys(versions, MESON_VERSION)
+
+
+def test_the_service_of_obs_reads_the_release_branch_and_carries_no_version():
+    service = read("packaging/obs/_service")
+
+    assert service.count('<param name="revision">release</param>') == 2
+    assert "<param name=\"extract\">packaging/rpm/delta-backup.spec</param>" in service
+    assert "<param name=\"extract\">packaging/obs/delta-backup.dsc</param>" in service
+    assert '<param name="subdir">debian</param>' in service
+    assert not re.search(r"\d+\.\d+\.\d+", service)
 
 
 def test_the_dsc_for_obs_asks_for_the_same_build_dependencies_as_debian_control():

@@ -1,8 +1,26 @@
 <services>
-  <!-- The source of the tag the version names; the spec and the debian/ files are uploaded next to it. -->
-  <service name="download_url">
-    <param name="protocol">https</param>
-    <param name="host">github.com</param>
-    <param name="path">/sincorchetes/delta/archive/v0.1.1/delta-0.1.1.tar.gz</param>
+  <service name="tar_scm">
+    <param name="scm">git</param>
+    <param name="url">https://github.com/sincorchetes/delta.git</param>
+    <param name="revision">release</param>
+    <param name="versionformat">@PARENT_TAG@</param>
+    <param name="versionrewrite-pattern">v(.*)</param>
+    <param name="versionrewrite-replacement">\1</param>
+    <param name="filename">delta</param>
+    <param name="extract">packaging/rpm/delta-backup.spec</param>
+    <param name="extract">packaging/obs/delta-backup.dsc</param>
+  </service>
+  <service name="tar_scm">
+    <param name="scm">git</param>
+    <param name="url">https://github.com/sincorchetes/delta.git</param>
+    <param name="revision">release</param>
+    <param name="subdir">debian</param>
+    <param name="filename">debian</param>
+    <param name="without-version">enable</param>
+    <param name="exclude">debian/source</param>
+  </service>
+  <service name="recompress">
+    <param name="file">*.tar</param>
+    <param name="compression">gz</param>
   </service>
 </services>
