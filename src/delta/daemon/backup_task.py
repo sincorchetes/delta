@@ -34,8 +34,10 @@ def make_backup_task(
     def task(on_progress) -> tuple[bool, str]:
         missing = backup.unreachable()
         if missing is not None:
-            # Nothing was started, so there is nothing to withdraw and nothing to tell: the runner waits for the drive.
+            # Nothing was started, so there is nothing to withdraw; the user is told once, not at every hourly try.
             job.wait_for_destination(missing)
+            if notes is not None:
+                notes.destination_unavailable(missing)
             raise missing
         if journal is not None:
             _journal(journal.begin)
@@ -55,7 +57,7 @@ def make_backup_task(
             # The drive went while the engine worked: the notification of the start gives way to this one.
             error = cast(DestinationUnavailable, job.unavailable)
             if notes is not None:
-                notes.destination_unavailable(error)
+                notes.destination_lost(error)
             raise error
 
         if job.state is JobState.FAILED:

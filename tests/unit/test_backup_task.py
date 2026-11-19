@@ -170,7 +170,7 @@ def waiting(error, *states):
     return task, job, journal, notifier
 
 
-def test_a_drive_that_is_not_there_starts_nothing_and_tells_nothing(tmp_path):
+def test_a_drive_that_is_not_there_starts_nothing_and_is_told_without_a_backup_in_progress(tmp_path):
 
     task, job, journal, notifier = waiting(None, "MISSING")
 
@@ -179,7 +179,8 @@ def test_a_drive_that_is_not_there_starts_nothing_and_tells_nothing(tmp_path):
 
     assert raised.value.location == "/media/disk/delta"
     assert job.state is JobState.UNAVAILABLE
-    assert (journal.begun, journal.ended, notifier.kinds) == (0, 0, [])  # no "backup in progress" to take back
+    assert (journal.begun, journal.ended) == (0, 0)
+    assert notifier.kinds == ["destination-unavailable"]  # and no "backup in progress" to take back
 
 
 def test_a_drive_that_goes_while_the_engine_works_replaces_the_notification_of_the_start():

@@ -11,7 +11,8 @@ and the versions follow [Semantic Versioning](https://semver.org/).
   the window says «The drive with your backups is not connected» and where it has to be, in your language and not with Borg's
   text, and nothing is started or announced for a drive that is not there. The place counts as unreachable when its folder is not
   there or is empty (the mount point of a drive that is not mounted). A folder that is there but holds no repository is still a
-  different error.
+  different error. You are told once, not at every hourly try, and reminded after a week; a good
+  backup starts the count again.
 
 ### Fixed
 
