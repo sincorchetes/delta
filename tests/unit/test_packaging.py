@@ -85,7 +85,7 @@ def test_every_package_recommends_the_gstreamer_plugins_that_the_preview_of_a_vi
     # Without them GTK stops the whole program, not just the preview (the Nix package lists them as dependencies).
     spec, control, arch = read("packaging/rpm/delta-backup.spec"), read("debian/control"), read("packaging/arch/PKGBUILD")
     recommended = control.split("Recommends:", 1)[1].split("Description:", 1)[0]
-    optional = arch.split("optdepends=(", 1)[1].split(")", 1)[0]
+    optional = arch.split("optdepends=(", 1)[1].split("\n)", 1)[0]  # not at the first ")": 'yelp: the help (F1)' has one
 
     for kind in ("base", "good"):
         assert f"Recommends:     gstreamer-plugins-{kind}\n" in spec, f"openSUSE {kind}"
