@@ -12,7 +12,7 @@ and the versions follow [Semantic Versioning](https://semver.org/).
   text, and nothing is started or announced for a drive that is not there. The place counts as unreachable when its folder is not
   there or is empty (the mount point of a drive that is not mounted). A folder that is there but holds no repository is still a
   different error. You are told once, not at every hourly try, and reminded after a week; a good
-  backup starts the count again.
+  backup starts the count again. When you connect the drive, the backup that was waiting for it is made at once.
 
 ### Fixed
 
