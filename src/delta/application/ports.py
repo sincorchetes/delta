@@ -89,6 +89,12 @@ class SessionEvents(Protocol):
     def release(self) -> None: ...
 
 
+class MountEvents(Protocol):
+    """Tells when a drive or a folder gets mounted."""
+
+    def watch(self, callback: Callable[[], None]) -> None: ...
+
+
 class SnapshotSource(Protocol):
     def list_snapshots(self, repo: Repository) -> list[Snapshot]: ...
 

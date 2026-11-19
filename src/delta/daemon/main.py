@@ -16,6 +16,7 @@ from delta.application.repository_setup import RepositorySetup
 from delta.daemon.browse_controller import REASON_REPOSITORY_CHANGED, REASON_SHUTDOWN, BrowseController
 from delta.daemon.composition import build_services
 from delta.daemon.config_reloader import ConfigReloader
+from delta.daemon.drive_return import DriveReturn
 from delta.daemon.introspection import INTERFACE_NAME
 from delta.daemon.job_runner import JobRunner
 from delta.daemon.next_run import NextRunCache
@@ -30,6 +31,7 @@ from delta.infrastructure.gio_notifier import GioNotifier
 from delta.infrastructure.libsecret_store import LibsecretStore
 from delta.infrastructure.proc_mount_usage import ProcMountUsage
 from delta.infrastructure.runtime import in_flatpak
+from delta.infrastructure.mount_events import GioMountEvents
 from delta.infrastructure.session_events import LogindSessionEvents
 from delta.infrastructure.settings import configured_repository, open_settings, save_repository
 from delta.infrastructure.systemd_scheduler import SystemdScheduler
@@ -58,6 +60,7 @@ class DeltaDaemon:
         self._reloader = None
         self._engine = None
         self._mounter = None
+        self._mount_events = None
         self._jobs = None
 
     def run(self) -> int:
@@ -111,6 +114,8 @@ class DeltaDaemon:
             journal=FileJobJournal(),
             next_runs=NextRunCache(scheduler),
         )
+        self._mount_events = GioMountEvents()
+        self._mount_events.watch(DriveReturn(lambda: jobs.status, self._service.start_scheduled_backup).on_mounted)
         services.preview.clear()  # leftovers of a daemon that was killed
         if self._service.resume_interrupted():
             log.info("resuming the backup that was interrupted")
