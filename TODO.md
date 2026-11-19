@@ -27,7 +27,9 @@ the website builds and is deployed from `main`.
 - [ ] **Code security, still to check:** Dependabot alerts and private vulnerability reporting. Leave CodeQL's *default setup* off:
       the workflow `.github/workflows/codeql.yml` does it.
 - [x] **Pages:** source *GitHub Actions* and the custom domain `delta.sincorchetes.tech`.
-- [ ] **Pages:** *Enforce HTTPS* is off; turn it on once the certificate is issued. Limit the `github-pages` environment to `main`.
+- [ ] **Pages:** GitHub reports no certificate of its own for the domain (*Enforce HTTPS* is off), although the site is served
+      over HTTPS. Check who serves it (a proxy such as Cloudflare would) and that `http://` redirects to `https://`. Limit the
+      `github-pages` environment to `main`.
 - [x] **SonarQube Cloud:** the project `sincorchetes_delta` analyzes on every change to the code (the secret `SONAR_TOKEN`).
 - [ ] **SonarQube Cloud:** mark the six `--no-build` hotspots of `scripts/sync-venv.sh` and `scripts/ci/check_mutants.sh` as *Safe*:
       the GNOME sdists have to be built against the system libraries (see "Known traps" in `AGENTS.md`).
@@ -69,7 +71,8 @@ the website builds and is deployed from `main`.
 Building and importing in a clean container is not the same as running it.
 
 - [ ] Install each package and run it: the service starts, the window opens, and a backup and a restore work.
-- [ ] A pass with a screen reader (Orca) and with the keyboard only.
+- [x] A pass with a screen reader (Orca): it works.
+- [ ] A pass with the keyboard only.
 - [ ] Flatpak: the background permission with the portals active (`services.flatpak.enable = true` on NixOS).
 - [ ] The Nautilus menu entry appears only once after `home-manager switch` (the extension used to be loaded twice).
 
