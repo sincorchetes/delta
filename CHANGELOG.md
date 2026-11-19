@@ -3,7 +3,7 @@
 All notable changes to Delta are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.1.2] - 2026-11-19
 
 ### Added
 
@@ -14,6 +14,12 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 - **A backup folder inside what you back up** (for example `~/Backups` with your home folder as the source) is no longer copied
   into itself: the repository is always skipped.
+
+### Changed
+
+- **A release is published by pushing its tag.** The GitHub Release (with the notes of this file) and the Flatpak bundle, the
+  AUR package (with the real checksum) and the openSUSE Build Service repositories are made from the tag, with nothing uploaded
+  by hand.
 
 ## [0.1.1] - 2026-11-18
 
@@ -51,5 +57,6 @@ The first release.
   and a Flatpak (the Delta window, with its own timer started through the Background portal).
 - **Documentation** at <https://delta.sincorchetes.tech>, in English and Spanish.
 
+[0.1.2]: https://github.com/sincorchetes/delta/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sincorchetes/delta/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sincorchetes/delta/releases/tag/v0.1.0

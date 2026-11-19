@@ -30,7 +30,7 @@ let
 in
 stdenv.mkDerivation {
   pname = "delta";
-  version = "0.1.1";
+  version = "0.1.2";
 
   src = lib.fileset.toSource {
     root = ../.;
