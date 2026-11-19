@@ -41,6 +41,14 @@ Recommends:     nautilus-python
 %endif
 Recommends:     gnome-keyring
 Recommends:     yelp
+# The preview of a video or audio plays through GStreamer, and GTK stops the whole program when its plugins are missing.
+%if 0%{?suse_version}
+Recommends:     gstreamer-plugins-base
+Recommends:     gstreamer-plugins-good
+%else
+Recommends:     gstreamer1-plugins-base
+Recommends:     gstreamer1-plugins-good
+%endif
 
 %description
 Delta shows how a file or a folder looked on any day, from Nautilus or its own

@@ -3,6 +3,14 @@
 All notable changes to Delta are listed here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and the versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- **The preview of a video or audio no longer depends on luck.** It plays through GStreamer, and GTK ends the whole program when
+  its plugins are missing: the RPM, the `.deb` and the Arch package now recommend the base and good plugins (the Nix package
+  already included them).
+
 ## [0.1.2] - 2026-11-19
 
 ### Added

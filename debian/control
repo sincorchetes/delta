@@ -31,6 +31,8 @@ Recommends:
  python3-nautilus,
  gnome-keyring,
  yelp,
+ gstreamer1.0-plugins-base,
+ gstreamer1.0-plugins-good,
 Description: Time travel for your files in GNOME, with BorgBackup
  Delta shows how a file or a folder looked on any day, from Nautilus or its
  own window, and restores it. Copies are made by BorgBackup (incremental,

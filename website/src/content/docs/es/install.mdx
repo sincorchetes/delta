@@ -11,6 +11,8 @@ import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 - **BorgBackup**, el programa que guarda las copias.
 - **Un llavero**, como GNOME Keyring, para guardar la contraseña de tus copias.
 - **nautilus-python**, para que Archivos muestre **Restaurar versión anterior…**. Delta funciona sin él, pero solo desde su propia ventana.
+- **Los plugins de GStreamer** (base y good), para la vista previa de vídeos y audio en la ventana de versiones. Los paquetes los
+  recomiendan; sin ellos, previsualizar uno de esos archivos cierra Delta, porque GTK termina todo el programa.
 - Una **sesión de usuario de systemd**, que ejecuta las copias programadas. Todo escritorio GNOME de una distribución común la tiene.
 
 <Aside type="note" title="Dónde está Delta hoy">
