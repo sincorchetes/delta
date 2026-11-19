@@ -1,9 +1,9 @@
 name: Publish packages
 
-# When a version tag is pushed, publishes the package to the AUR. The GitHub Release and the Flatpak bundle are made by
-# flatpak.yml. The credentials are secrets of the `release` environment. The openSUSE Build Service is published by hand
-# for now (packaging/obs/README.md).
-# By hand (Run workflow) it checks everything but the last step: the push to the AUR.
+# When a version tag is pushed, publishes the package to the AUR and, if the secret OBS_TOKEN exists, to the openSUSE Build
+# Service (without it, OBS is published by hand: packaging/obs/README.md). The GitHub Release and the Flatpak bundle are
+# made by flatpak.yml. The credentials are secrets of the `release` environment.
+# By hand (Run workflow) it checks everything but the last step: the push to the AUR, and the branch and the trigger of OBS.
 on:
   push:
     tags: ["v*"]
@@ -47,3 +47,25 @@ jobs:
           AUR_GIT_EMAIL: ${{ vars.AUR_GIT_EMAIL }}
           SOURCE_DIR: ${{ github.workspace }}/tag
         run: sh scripts/ci/publish_aur.sh "$TAG"
+
+  obs:
+    name: Publish to OBS
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write # to move the branch `release`, which OBS reads
+    steps:
+      # The script: the one of the workflow that runs.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      # The tag, from which the script runs git: by hand it can be an older one than the script.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ inputs.tag || github.ref_name }}
+          path: tag
+
+      - name: Publish
+        env:
+          OBS_TOKEN: ${{ secrets.OBS_TOKEN }}
+        working-directory: tag
+        run: sh "$GITHUB_WORKSPACE/scripts/ci/publish_obs.sh" "$TAG"

@@ -66,7 +66,9 @@ Pushing the tag does most of the rest:
 - `release.yml` publishes the package to the AUR: the real checksum of the tarball of the tag (the `PKGBUILD` keeps `SKIP`, since
   the sum only exists once the tag does) and `.SRCINFO`. Run it by hand (*Actions → Publish packages → Run workflow*) with a tag
   and *dry run* on to check a publication without pushing anything.
-- The openSUSE Build Service is published by hand: see `packaging/obs/README.md`.
+- The openSUSE Build Service is published by hand (`packaging/obs/README.md`) until the secret `OBS_TOKEN` exists. With it,
+  `release.yml` moves the branch `release` to the tag and asks OBS to run its source service, which fetches the sources of that
+  branch itself.
 
 ### What the maintainer sets up once
 
@@ -76,6 +78,7 @@ The AUR credentials are in a GitHub environment named `release` (*Settings → E
 |---|---|---|
 | `AUR_SSH_PRIVATE_KEY` | secret | A key made only for this, whose public half is in the AUR account. |
 | `AUR_GIT_NAME`, `AUR_GIT_EMAIL` | variables | The author of the commits in the AUR. |
+| `OBS_TOKEN` | secret, optional | An OBS token of type `service`, bound to the package `delta-backup` (it can only run its source service). |
 
 The host keys of the AUR are in `scripts/ci/aur_known_hosts` (taken with `ssh-keyscan aur.archlinux.org`; the Arch wiki does not
 publish their fingerprints), so the workflow never trusts a key it was not given. If the AUR ever changes its keys, the push fails
