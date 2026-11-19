@@ -4,9 +4,10 @@ import os
 import uuid
 from collections.abc import Callable
 
-from delta.application.ports import BackupEngine
+from delta.application.ports import BackupEngine, DestinationProbe
 from delta.domain.backup_job import BackupJob
-from delta.domain.errors import BackupInterrupted, BackupWarning, DeltaError
+from delta.domain.destination import DestinationState
+from delta.domain.errors import BackupInterrupted, BackupWarning, DeltaError, DestinationUnavailable
 from delta.domain.progress import ProgressEvent
 from delta.domain.repository import Repository
 from delta.i18n import _
@@ -19,11 +20,13 @@ class BackupService:
         repo: Repository | None,
         sources: tuple[str, ...],
         excludes: tuple[str, ...] = (),
+        destination: DestinationProbe | None = None,
     ) -> None:
         self._engine = engine
         self._repo = repo
         self._sources = sources
         self._excludes = excludes
+        self._destination = destination
 
     def new_job(self) -> BackupJob:
         """The repository is never part of what it holds: a destination inside the sources would copy itself."""
@@ -37,6 +40,10 @@ class BackupService:
         if self._repo is None:
             job.fail(_("no repository configured"))
             return job
+        missing = self.unreachable()
+        if missing is not None:  # a drive that is not connected: there is nothing to ask the engine, and it is not a failure
+            job.wait_for_destination(missing)
+            return job
         job.start()
         try:
             self._engine.create(self._repo, job, on_progress=on_progress)
@@ -45,7 +52,20 @@ class BackupService:
         except BackupWarning as err:
             job.warn(str(err))
         except DeltaError as err:
-            job.fail(str(err))
+            missing = self.unreachable()  # the drive may have gone while the engine worked: that is not its failure either
+            if missing is not None:
+                job.wait_for_destination(missing)
+            else:
+                job.fail(str(err))
         else:
             job.succeed()
         return job
+
+    def unreachable(self) -> DestinationUnavailable | None:
+        """The error to wait with when the place of the repository cannot be reached, else None."""
+        if self._destination is None or self._repo is None:
+            return None
+        state = self._destination.state(self._repo)
+        if state is DestinationState.AVAILABLE:
+            return None
+        return DestinationUnavailable(self._repo.location, state)

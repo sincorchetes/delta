@@ -3,6 +3,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 
+from delta.domain.errors import DestinationUnavailable
 from delta.i18n import _
 
 
@@ -12,20 +13,23 @@ class JobState(str, Enum):
     SUCCEEDED = "succeeded"
     WARNINGS = "warnings"
     INTERRUPTED = "interrupted"
+    UNAVAILABLE = "unavailable"  # the place where the copy goes cannot be reached: not a failure, it waits
     FAILED = "failed"
 
 
 _TRANSITIONS = {
-    JobState.PENDING: {JobState.RUNNING, JobState.FAILED},
+    JobState.PENDING: {JobState.RUNNING, JobState.FAILED, JobState.UNAVAILABLE},
     JobState.RUNNING: {
         JobState.SUCCEEDED,
         JobState.WARNINGS,
         JobState.INTERRUPTED,
+        JobState.UNAVAILABLE,
         JobState.FAILED,
     },
     JobState.SUCCEEDED: set(),
     JobState.WARNINGS: set(),
     JobState.INTERRUPTED: set(),
+    JobState.UNAVAILABLE: set(),
     JobState.FAILED: set(),
 }
 
@@ -37,6 +41,7 @@ class BackupJob:
     excludes: tuple[str, ...] = ()
     state: JobState = JobState.PENDING
     message: str = field(default="")
+    unavailable: DestinationUnavailable | None = None  # why, when the state is UNAVAILABLE
 
     def __post_init__(self) -> None:
         if not self.sources:
@@ -56,6 +61,12 @@ class BackupJob:
     def interrupt(self) -> None:
         """Stopped on purpose; no snapshot was completed and the job must be resumed."""
         self._move(JobState.INTERRUPTED)
+
+    def wait_for_destination(self, error: DestinationUnavailable) -> None:
+        """The place where the copy goes cannot be reached: nothing was made, and it is tried again later."""
+        self._move(JobState.UNAVAILABLE)
+        self.unavailable = error
+        self.message = str(error)
 
     def fail(self, message: str) -> None:
         self._move(JobState.FAILED)

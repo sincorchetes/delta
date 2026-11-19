@@ -3,6 +3,7 @@
 import logging
 
 from delta.application.ports import Notifier
+from delta.domain.errors import DestinationUnavailable
 from delta.domain.notification import Notification, NotificationKind
 
 log = logging.getLogger(__name__)
@@ -31,6 +32,9 @@ class BackupNotifications:
 
     def failed(self, detail: str) -> None:
         self._send(NotificationKind.BACKUP_FAILED, detail)
+
+    def destination_unavailable(self, error: DestinationUnavailable) -> None:
+        self._send(NotificationKind.DESTINATION_UNAVAILABLE, error.hint)
 
     def repository_failed(self, detail: str) -> None:
         self._send(NotificationKind.REPOSITORY_FAILED, detail)

@@ -7,6 +7,7 @@ src/delta/infrastructure/borg_runner.py
 src/delta/infrastructure/borg_parsing.py
 src/delta/domain/paths.py
 src/delta/domain/repository.py
+src/delta/domain/errors.py
 src/delta/domain/backup_job.py
 src/delta/daemon/service.py
 src/delta/daemon/job_calls.py

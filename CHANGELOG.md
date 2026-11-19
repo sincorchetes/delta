@@ -5,6 +5,14 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **A drive with your backups that is not connected is no longer a failed backup.** It has its own state, error and messages:
+  the window says «The drive with your backups is not connected» and where it has to be, in your language and not with Borg's
+  text, and nothing is started or announced for a drive that is not there. The place counts as unreachable when its folder is not
+  there or is empty (the mount point of a drive that is not mounted). A folder that is there but holds no repository is still a
+  different error.
+
 ### Fixed
 
 - **A system without GStreamer no longer closes Delta when a video or audio is previewed.** The preview plays through

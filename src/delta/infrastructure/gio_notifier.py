@@ -42,6 +42,9 @@ def render(notification: Notification) -> tuple[str, str, Gio.NotificationPriori
             _("A backup is open as a folder. The new copy will start when you close it."),
             Gio.NotificationPriority.NORMAL,
         )
+    if kind is NotificationKind.DESTINATION_UNAVAILABLE:
+        body = detail or _("Connect the drive that holds your backups.")
+        return _("Backup drive not connected"), body, Gio.NotificationPriority.NORMAL
     if kind is NotificationKind.REPOSITORY_FAILED:
         body = detail or _("The backup destination could not be created.")
         return _("Could not set up backups"), body, Gio.NotificationPriority.HIGH

@@ -209,3 +209,36 @@ def test_running_still_wins_over_a_lock_failure():
 
 def test_the_lock_state_uses_a_shipped_icon():
     assert build_status(snapshot(last_error=LOCK), NOW).icon_name == "dialog-warning-symbolic"
+
+
+# --- the drive with the backups is not connected ---------------------------------------------------
+
+
+def test_a_drive_that_is_not_connected_says_so_and_where_it_has_to_be():
+    view = build_status(snapshot(status="unavailable", repository="/run/media/u/BACKUPS/delta"), NOW)
+
+    assert view.health is Health.UNAVAILABLE
+    assert view.title == "The drive with your backups is not connected"
+    assert "/run/media/u/BACKUPS/delta" in view.subtitle and "by itself" in view.subtitle
+    assert view.icon_name == "drive-removable-media-symbolic"
+
+
+def test_a_drive_that_is_not_connected_is_not_an_error_and_can_be_checked_again():
+    view = build_status(snapshot(status="unavailable"), NOW)
+
+    assert (view.action, view.action_label, view.action_enabled) == (Action.BACK_UP, "Check again", True)
+    assert view.can_back_up_now and view.icon_name != "dialog-error-symbolic"
+
+
+def test_it_is_what_is_said_even_if_an_earlier_backup_failed():
+    view = build_status(snapshot(status="unavailable", last_error="Repository /x does not exist."), NOW)
+
+    assert view.health is Health.UNAVAILABLE and "does not exist" not in view.subtitle
+
+
+def test_a_backup_that_is_running_is_running_whatever_came_before():
+    assert build_status(snapshot(status="running", last_error="x"), NOW).health is Health.RUNNING
+
+
+def test_without_a_repository_it_is_not_a_drive_that_is_missing():
+    assert build_status(snapshot(status="unavailable", repository=""), NOW).health is Health.NOT_CONFIGURED
