@@ -40,9 +40,21 @@ the website builds and is deployed from `main`.
 - [x] `ruff`, the mutation step (one allowed survivor) and `devenv` from scratch pass in the CI; CodeQL runs on `python` and
       `actions`; the website is deployed from `main`; Dependabot works for `uv`, `bun` and the actions (it ignores major versions of
       `typescript`).
-- [ ] Run the **Distributions** workflow by hand (*Actions → Distributions → Run workflow*): the seven distributions and the Nix
-      flake, each with its own libraries. It has never run, and the package names in `scripts/ci/install-deps.sh` were written
-      from memory: fix what the first run reports.
+- [x] The **Distributions** workflow runs green on Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10, Rocky 10, Ubuntu 26.04 and
+      26.10, Debian 13 and the Nix flake, each with its own libraries. Its first run found, besides the package names: the
+      keyring daemon needs `IPC_LOCK` in a container (Fedora, Arch); Enterprise Linux 10 has no Xvfb (`xwfb-run` stands in) and keeps
+      `python3-dbusmock` in the repository `devel`; and GTK aborts the whole process, not just the test, when the GStreamer
+      plugins or a GL library are missing.
+- [ ] **Distributions, the Nix job** builds the package and checks the flake, but does not use the NixOS module: build a minimal
+      NixOS system with it, with flakes and importing `nix/nixos.nix` by path, and check its units and its profile.
+- [ ] **GStreamer in the packages:** the RPM, the `.deb` and the PKGBUILD do not declare the GStreamer plugins that the preview of
+      a video or audio needs (only the Nix package lists them), and without them GTK aborts the process. Declare them as
+      recommended (`Recommends:`, `optdepends`) once the names are checked in each distribution.
+- [ ] **GTK 4.16** (Rocky and AlmaLinux 10) measures the `FlowBox` of the rows of buttons as one button wide, so two tests of how
+      the row wraps are skipped before GTK 4.18; look at how it behaves in a real window with a long translation.
+- [ ] **The widget tests print 52 GTK and libadwaita criticals** on every distribution (windows created before the application
+      starts up, a widget added twice to a `PreferencesGroup`): the output was hidden until the workflow stopped capturing it. Some
+      may point at a real mistake.
 - [ ] The two issue forms show up under *Issues → New issue*.
 
 ## 4. Release channels

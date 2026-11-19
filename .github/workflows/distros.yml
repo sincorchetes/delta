@@ -18,13 +18,17 @@ jobs:
   distros:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
-    container: ${{ matrix.image }}
+    container:
+      image: ${{ matrix.image }}
+      options: ${{ matrix.options }}
     strategy:
       fail-fast: false
       matrix:
         include:
-          - { name: "Fedora", image: "fedora:latest" }
-          - { name: "Arch Linux", image: "archlinux:latest" }
+          - { name: "Fedora", image: "fedora:latest", options: "--cap-add=IPC_LOCK" }
+          # gnome-keyring-daemon stops in Fedora and Arch with "error dropping process capabilities": their containers get IPC_LOCK,
+          # the capability that daemon keeps, and with it the keyring starts
+          - { name: "Arch Linux", image: "archlinux:latest", options: "--cap-add=IPC_LOCK" }
           - { name: "openSUSE Tumbleweed", image: "opensuse/tumbleweed:latest" }
           - { name: "AlmaLinux 10", image: "almalinux:10" }
           - { name: "Rocky Linux 10", image: "rockylinux/rockylinux:10" }
@@ -52,13 +56,17 @@ jobs:
         run: meson test -C build
 
       - name: Tests
-        # Widget tests need a display: without Xvfb they are left out and the log says so.
+        # Widget tests need a display: xvfb-run gives one, xwfb-run (Xwayland on a headless Weston) where there is no Xvfb
+        # (Enterprise Linux 10); without either they are left out and the log says so. --capture=sys lets what the C
+        # libraries print reach the log at once: with the default capture it is lost when one of them aborts the process.
         run: |
           if command -v xvfb-run > /dev/null; then
-            xvfb-run -a python3 -m pytest -q
+            xvfb-run -a python3 -m pytest -q --capture=sys
+          elif command -v xwfb-run > /dev/null; then
+            xwfb-run -- python3 -m pytest -q --capture=sys
           else
             echo "::warning::no xvfb-run on this distribution: the GTK widget tests were not run"
-            python3 -m pytest -q --ignore=tests/gtk
+            python3 -m pytest -q --capture=sys --ignore=tests/gtk
           fi
 
   # The flake builds Delta with the libraries of nixpkgs, the "system" libraries of Nix.
