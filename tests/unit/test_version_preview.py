@@ -52,16 +52,35 @@ class FakePane:
         self.media_error = on_error
 
 
+class FakeMedia:
+    """Stands in for MediaProbe: says at once whether the player can be made, or None to wait until the test answers."""
+
+    def __init__(self, supported: bool | None = True):
+        self.supported, self.waiting = supported, []
+
+    def check(self, then):
+        if self.supported is None:
+            self.waiting.append(then)
+        else:
+            then(self.supported)
+
+    def answer(self, supported):
+        waiting, self.waiting = self.waiting, []
+        for then in waiting:
+            then(supported)
+
+
 class Setup:
-    def __init__(self, path="/home/u/photo.jpg", scratch_root=None):
+    def __init__(self, path="/home/u/photo.jpg", scratch_root=None, media=None):
         self.path = path
         self.client, self.pane, self.tracker = FakeClient(), FakePane(), JobTracker()
         self.current = None
         self.toasts, self.changes = [], []
+        self.media = media or FakeMedia()
         self.previewer = VersionPreviewer(
             self.client, self.tracker, self.pane, None,
             lambda: self.current, lambda: self.changes.append(1), self.toasts.append,
-            scratch_root=scratch_root,
+            scratch_root=scratch_root, media=self.media,
         )
 
     def target(self, snapshot, size=1000, is_dir=False, path=None):
@@ -166,6 +185,66 @@ def test_the_copies_made_for_the_player_are_removed_on_close(tmp_path):
 def test_when_the_copy_cannot_be_made_the_mp3_goes_to_its_own_application(tmp_path):
     s, unpacked = play_mp3(tmp_path, TAG + AUDIO, scratch=tmp_path / "missing")
     assert s.pane.events[-1][0] == "action" and ("media", str(unpacked)) not in s.pane.events
+
+
+def unpack_video(s, name="film.mp4"):
+    s.select(s.target("a"))
+    s.finish("j1", message=f"/run/preview/a/{name}")
+
+
+def test_where_the_player_cannot_be_made_a_video_goes_to_its_own_application():
+    # GTK ends the whole program when GStreamer cannot make it, so it must not be tried in this process.
+    s = Setup("/home/u/film.mp4", media=FakeMedia(supported=False))
+
+    unpack_video(s)
+
+    assert s.pane.events[-1][0] == "action" and not any(event[0] == "media" for event in s.pane.events)
+
+
+def test_an_mp3_is_not_even_copied_when_there_is_no_player_for_it(tmp_path):
+    scratch = tmp_path / "scratch"
+    scratch.mkdir()
+    unpacked = tmp_path / "unpacked.mp3"
+    unpacked.write_bytes(TAG + AUDIO)
+    s = Setup("/home/u/song.mp3", scratch_root=str(scratch), media=FakeMedia(supported=False))
+
+    s.select(s.target("a"))
+    s.finish("j1", message=str(unpacked))
+
+    assert s.pane.events[-1][0] == "action" and not any(scratch.iterdir())
+
+
+def test_a_video_waits_for_the_answer_about_the_player_and_then_plays():
+    media = FakeMedia(supported=None)
+    s = Setup("/home/u/film.mp4", media=media)
+    unpack_video(s)
+    assert s.pane.events == [("loading",)]  # still the spinner: the answer has not come
+
+    media.answer(True)
+
+    assert s.pane.events[-1] == ("media", "/run/preview/a/film.mp4")
+
+
+def test_a_video_waits_for_the_answer_and_then_goes_to_its_own_application_when_there_is_no_player():
+    media = FakeMedia(supported=None)
+    s = Setup("/home/u/film.mp4", media=media)
+    unpack_video(s)
+
+    media.answer(False)
+
+    assert s.pane.events[-1][0] == "action" and not any(event[0] == "media" for event in s.pane.events)
+
+
+def test_if_another_version_is_chosen_while_the_player_is_tried_the_answer_shows_nothing():
+    media = FakeMedia(supported=None)
+    s = Setup("/home/u/film.mp4", media=media)
+    unpack_video(s)
+    s.current = s.target("b")  # the choice changed while the other process was running
+    before = list(s.pane.events)
+
+    media.answer(True)
+
+    assert s.pane.events == before
 
 
 def test_a_big_video_asks_before_being_unpacked():

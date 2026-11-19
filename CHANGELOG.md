@@ -7,9 +7,12 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
-- **The preview of a video or audio no longer depends on luck.** It plays through GStreamer, and GTK ends the whole program when
-  its plugins are missing: the RPM, the `.deb` and the Arch package now recommend the base and good plugins (the Nix package
-  already included them).
+- **A system without GStreamer no longer closes Delta when a video or audio is previewed.** The preview plays through
+  GStreamer, and when it cannot find what it needs (the plugins, a GL library) GTK ends the whole program, which cannot be
+  caught. Delta now tries to make the player in a process of its own, once, and where that fails it offers the file to its own
+  application, as it does for a file it cannot play.
+- **The packages recommend the GStreamer plugins** that the preview needs: the RPM, the `.deb` and the Arch package (the Nix
+  package already included them).
 
 ## [0.1.2] - 2026-11-19
 
