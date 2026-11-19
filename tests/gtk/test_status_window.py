@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 from gtk_helpers import of_type, started_application
-from gi.repository import Adw, GLib, Gtk
+from gi.repository import GLib, Gtk
 
 from delta.ui import application as application_module
 from delta.ui import window as window_module

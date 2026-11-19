@@ -4,7 +4,7 @@ import time
 
 import pytest
 from gtk_helpers import of_type, started_application
-from gi.repository import Adw, Gtk
+from gi.repository import Gtk
 
 from delta.ui import version_preview, versions_window
 from delta.ui.versions_window import VersionsWindow
