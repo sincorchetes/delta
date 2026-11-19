@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 import pytest
 from gtk_helpers import of_type
-from gi.repository import Adw, GLib, Gtk
+from gi.repository import Adw, Gio, GLib, Gtk
 
 from delta.ui import application as application_module
 from delta.ui import window as window_module
@@ -45,7 +45,9 @@ def fresh_recorder():
 
 @pytest.fixture
 def app():
-    return Adw.Application(application_id="io.github.sincorchetes.DeltaTests")
+    application = Adw.Application(application_id="io.github.sincorchetes.DeltaTests", flags=Gio.ApplicationFlags.NON_UNIQUE)
+    application.register(None)  # emits `startup`: GTK complains about a window of an application that has not started
+    return application
 
 
 def open_window(app, client, settings=None, with_settings=True):

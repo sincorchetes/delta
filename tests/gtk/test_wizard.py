@@ -151,7 +151,6 @@ def test_dismissing_the_save_dialog_changes_nothing():
 
 def test_a_file_that_cannot_be_written_is_reported_and_does_not_count():
     page, chosen, _changes = recovery_page()
-    page._finish_layout()
 
     page._on_save_chosen(SaveDialog("t", "n"), Gio.File.new_for_path("/nonexistent-folder/key.txt"))
 
