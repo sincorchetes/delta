@@ -3,8 +3,8 @@
 import time
 
 import pytest
-from gtk_helpers import of_type
-from gi.repository import Adw, Gio, Gtk
+from gtk_helpers import of_type, started_application
+from gi.repository import Adw, Gtk
 
 from delta.ui import version_preview, versions_window
 from delta.ui.versions_window import VersionsWindow
@@ -14,11 +14,7 @@ OLD = 1_700_000_000
 
 @pytest.fixture
 def app():
-    application = Adw.Application(
-        application_id="io.github.sincorchetes.DeltaVersionsTests", flags=Gio.ApplicationFlags.NON_UNIQUE
-    )
-    application.register(None)  # emits `startup`: GTK complains about a window of an application that has not started
-    return application
+    return started_application("DeltaVersionsTests")
 
 
 @pytest.fixture
