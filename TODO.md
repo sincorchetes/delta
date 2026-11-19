@@ -45,8 +45,9 @@ the website builds and is deployed from `main`.
       keyring daemon needs `IPC_LOCK` in a container (Fedora, Arch); Enterprise Linux 10 has no Xvfb (`xwfb-run` stands in) and keeps
       `python3-dbusmock` in the repository `devel`; and GTK aborts the whole process, not just the test, when the GStreamer
       plugins or a GL library are missing.
-- [ ] **Distributions, the Nix job** builds the package and checks the flake, but does not use the NixOS module: build a minimal
-      NixOS system with it, with flakes and importing `nix/nixos.nix` by path, and check its units and its profile.
+- [x] **Distributions, the Nix job** builds the package, checks the flake and builds a minimal NixOS system with the module, as a
+      flake module and imported by path with no flake, and checks its user units, its profile and the settings schema
+      (`scripts/ci/check_nixos_module.sh`). It does not start the session: that needs a VM (`nixosTest`).
 - [ ] **GStreamer in the packages:** the RPM, the `.deb` and the PKGBUILD do not declare the GStreamer plugins that the preview of
       a video or audio needs (only the Nix package lists them), and without them GTK aborts the process. Declare them as
       recommended (`Recommends:`, `optdepends`) once the names are checked in each distribution.
