@@ -32,40 +32,42 @@ Arch is not built here: it goes to the AUR, from `packaging/arch/PKGBUILD`.
 
 ## Publishing a version
 
-The package is `delta-backup`. Its files are:
+The package is `delta-backup`, and **OBS fetches its sources from this repository by itself**. Nothing is uploaded to OBS by
+hand: the package holds only a source service, `_service` (a copy of it is `packaging/obs/_service`), that reads the branch
+`release` of the repository and produces:
 
-- `packaging/rpm/delta-backup.spec` for the RPM repositories;
-- `packaging/obs/delta-backup.dsc` and a `debian.tar.gz` with the `debian/` directory, for Debian and Ubuntu;
-- `packaging/obs/_service`, which downloads the source from the tag `vX.Y.Z` on GitHub, so **the tag must exist first**.
+- the tarball of the code, `delta-X.Y.Z.tar.gz` (the version comes from the nearest tag, without the `v`);
+- `delta-backup.spec`, for the RPM repositories;
+- `delta-backup.dsc` and `debian.tar.gz` (the `debian/` directory, without `debian/source`), for Debian and Ubuntu. In the `.dsc`,
+  `DEBTRANSFORM-TAR` names the tarball and `DEBTRANSFORM-FILES-TAR` the tarball of `debian/`; OBS makes the Debian source
+  package from them, in format 1.0, which is why `debian/source` is left out.
 
-The source is the same tarball for all of them. In the `.dsc`, `DEBTRANSFORM-TAR` names it and `DEBTRANSFORM-FILES-TAR` names
-the tarball of `debian/`: OBS makes the Debian source package from them. The tarball of `debian/` leaves out `debian/source`,
-because the source package that OBS makes this way is in format 1.0.
+**Pushing a tag `vX.Y.Z` does it.** `.github/workflows/release.yml` moves the branch `release` to the tag and asks OBS to run
+the service with a token (the secret `OBS_TOKEN`) that is bound to this package and can do nothing else. OBS then builds every
+repository above. The branch `release` is moved only by that workflow; do not work on it.
+
+To try it without touching anything, run the workflow by hand (*Actions → Publish packages → Run workflow*) with *dry run* on.
+
+### How the project is set up
+
+- **Project Config** has one line, `Prefer: wget2-wget`. OBS adds a download service for sources that are URLs, and in Fedora
+  `wget` has two candidates (`wget1-wget` and `wget2-wget`) that it cannot choose between: without the line the builds are
+  `unresolvable`.
+- **The token** is made in OBS (*Your profile → Tokens → Create Token*), of type `service`, for `home:sincorchetes:delta` and
+  `delta-backup`. It is shown once: it goes into the secret `OBS_TOKEN` of the `release` environment of GitHub, nowhere else.
+- **A new release** changes the version in `delta-backup.spec` and `delta-backup.dsc` (the version and the name of the tarball),
+  among the files `CONTRIBUTING.md` asks to update. `_service` does not carry a version.
+
+To follow the builds from a terminal (`osc`):
 
 ```sh
-git clone --depth 1 --branch vX.Y.Z https://github.com/sincorchetes/delta.git source
-osc checkout home:sincorchetes:delta delta-backup      # the package that already exists in OBS
-cd home:sincorchetes:delta/delta-backup
-cp ../../source/packaging/rpm/delta-backup.spec ../../source/packaging/obs/_service ../../source/packaging/obs/delta-backup.dsc .
-tar --owner=0 --group=0 --exclude=debian/source -czf debian.tar.gz -C ../../source debian
-osc status                             # the four files, with M
-osc commit -m "Delta X.Y.Z"
+osc results home:sincorchetes:delta delta-backup      # one line for each repository and architecture
+osc results -v                                        # the reason of each failure
+osc buildlog Fedora_44 x86_64                         # the log of one build
 ```
 
-Do not use `osc mkpac` or `osc add` for an update: they make a new local package, and `osc commit` then fails with `package
-'delta-backup' already exists`. (`mkpac` and `add` are only for creating the package the first time.)
-
-If the tarball does not show up after the commit, run `osc service remoterun`. To follow the builds:
-
-```sh
-osc results                            # one line for each repository and architecture
-osc results -v                         # the reason of each failure
-osc buildlog Fedora_44 x86_64          # the log of one build
-```
-
-A new release changes the version in `delta-backup.spec`, in `delta-backup.dsc` (the version and the name of the tarball) and
-in the path of `_service` (all of them are in the list of files `CONTRIBUTING.md` asks to update), and is published with the
-same commands.
+If something has to be published without the workflow, run the service by hand: `osc service remoterun home:sincorchetes:delta
+delta-backup` (after moving the branch `release` to the tag).
 
 ## Check what was published
 

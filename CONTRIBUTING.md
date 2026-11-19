@@ -55,7 +55,7 @@ ruff check src tests scripts
 ## A new version
 
 A release is one more pull request. It changes the version in `meson.build`, `packaging/rpm/delta-backup.spec` (and its
-`%changelog`), `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/_service`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md`, and sets the date of the
+`%changelog`), `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md`, and sets the date of the
 release in the changelog. `tests/unit/test_packaging.py` fails if they disagree. Once it is merged, tag `main` as `vX.Y.Z`
 (for example `v0.1.0`, with no dot after the `v`).
 
@@ -66,19 +66,19 @@ Pushing the tag does most of the rest:
 - `release.yml` publishes the package to the AUR: the real checksum of the tarball of the tag (the `PKGBUILD` keeps `SKIP`, since
   the sum only exists once the tag does) and `.SRCINFO`. Run it by hand (*Actions → Publish packages → Run workflow*) with a tag
   and *dry run* on to check a publication without pushing anything.
-- The openSUSE Build Service is published by hand (`packaging/obs/README.md`) until the secret `OBS_TOKEN` exists. With it,
-  `release.yml` moves the branch `release` to the tag and asks OBS to run its source service, which fetches the sources of that
-  branch itself.
+- `release.yml` also publishes to the openSUSE Build Service: it moves the branch `release` to the tag and asks OBS to run its
+  source service, which fetches the spec, the `.dsc`, `debian/` and the tarball of that branch by itself. Nothing is uploaded to
+  OBS by hand; how the project is set up is in `packaging/obs/README.md`.
 
 ### What the maintainer sets up once
 
-The AUR credentials are in a GitHub environment named `release` (*Settings → Environments*), limited to `main` and the tags `v*`:
+The credentials are in a GitHub environment named `release` (*Settings → Environments*), limited to `main` and the tags `v*`:
 
 | Name | Kind | What |
 |---|---|---|
 | `AUR_SSH_PRIVATE_KEY` | secret | A key made only for this, whose public half is in the AUR account. |
 | `AUR_GIT_NAME`, `AUR_GIT_EMAIL` | variables | The author of the commits in the AUR. |
-| `OBS_TOKEN` | secret, optional | An OBS token of type `service`, bound to the package `delta-backup` (it can only run its source service). |
+| `OBS_TOKEN` | secret | An OBS token of type `service`, bound to the package `delta-backup` (it can only run its source service). Without it OBS is not published. |
 
 The host keys of the AUR are in `scripts/ci/aur_known_hosts` (taken with `ssh-keyscan aur.archlinux.org`; the Arch wiki does not
 publish their fingerprints), so the workflow never trusts a key it was not given. If the AUR ever changes its keys, the push fails
