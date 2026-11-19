@@ -63,10 +63,10 @@ Do it after the first CI run, so that the names of the checks exist.
       and asks for a stable project with some history. Look at it again when the project has both.
 - [x] **NixOS module** (`nixosModules.default`, `nix/nixos.nix`): `services.delta.enable` installs the package and
       `nautilus-python`, declares the user units, the D-Bus service and the settings schema. Tried in a VM with GNOME
-      (`nixos-rebuild build-vm`, importing the file from a `configuration.nix` without flakes): the timer, the daemon, the
-      window and the menu of Files work.
-- [ ] **NixOS module with flakes:** evaluated and built (the units and the profile are right), but not run in a session yet.
-      Try it with `nixos-rebuild test --flake` on a real system.
+      (`nixos-rebuild build-vm`), both importing the file from a `configuration.nix` without flakes and as
+      `delta.nixosModules.default` from a flake: the timer, the daemon, the window and the menu of Files work.
+- [ ] **NixOS module on a real system:** only tried in VMs; `nixos-rebuild test --flake` on a machine with its own configuration
+      would show how it lives with the rest of it (for instance, next to the Home Manager module, which must be off).
 
 ## 5. Try it on a real system
 
