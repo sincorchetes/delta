@@ -5,6 +5,11 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **A NixOS module** (`nixosModules.default`) for `configuration.nix`, with or without flakes: `services.delta.enable = true;`
+  installs Delta and sets up its user service and timer, the D-Bus service, the settings and the menu of Files.
+
 ### Fixed
 
 - **A backup folder inside what you back up** (for example `~/Backups` with your home folder as the source) is no longer copied

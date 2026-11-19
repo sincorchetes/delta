@@ -61,10 +61,12 @@ Do it after the first CI run, so that the names of the checks exist.
 - [ ] **Flatpak, updates:** a repository of its own (for instance in GitHub Pages) would update it by itself.
 - [ ] **Flathub:** left out on purpose for now. Its policy does not accept manifests with AI-assisted content, which this one has,
       and asks for a stable project with some history. Look at it again when the project has both.
-- [ ] **NixOS module** (`nixosModules.default`) for `configuration.nix` without Home Manager: `services.delta.enable` that sets
-      up the user unit (`systemd.packages`), the D-Bus service (`services.dbus.packages`), the settings schema and
-      `nautilus-python`. Try it on a real NixOS (`nixos-rebuild build-vm` or a `nixosTest`) before documenting it; until then
-      the installation page sends NixOS users without Home Manager to the Flatpak.
+- [x] **NixOS module** (`nixosModules.default`, `nix/nixos.nix`): `services.delta.enable` installs the package and
+      `nautilus-python`, declares the user units, the D-Bus service and the settings schema. Tried in a VM with GNOME
+      (`nixos-rebuild build-vm`, importing the file from a `configuration.nix` without flakes): the timer, the daemon, the
+      window and the menu of Files work.
+- [ ] **NixOS module with flakes:** evaluated and built (the units and the profile are right), but not run in a session yet.
+      Try it with `nixos-rebuild test --flake` on a real system.
 
 ## 5. Try it on a real system
 
