@@ -214,3 +214,15 @@ def test_the_notification_of_a_drive_that_is_not_connected_says_what_to_do_and_i
     assert render(Notification(NotificationKind.DESTINATION_UNAVAILABLE))[1] == translate(
         "Connect the drive that holds your backups."
     )
+
+
+def test_a_drive_that_goes_while_the_engine_works_is_still_unavailable_without_notifications():
+    probe = Probe(DestinationState.AVAILABLE, DestinationState.AVAILABLE, DestinationState.MISSING)
+    backup = BackupService(FakeEngine(EngineError("Input/output error")), Repository("/media/disk/delta"), ("/home",), destination=probe)
+    job = backup.new_job()
+    task = make_backup_task(job, backup, None, None, None)
+
+    with pytest.raises(DestinationUnavailable):
+        task(lambda event: None)
+
+    assert job.state is JobState.UNAVAILABLE
