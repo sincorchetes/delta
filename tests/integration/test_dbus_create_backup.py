@@ -2,7 +2,7 @@ import os
 import shutil
 
 import pytest
-from conftest import call_and_wait_finished
+from dbus_helpers import call_and_wait_finished
 
 from delta.application.backup_notifications import BackupNotifications
 from delta.application.backup_service import BackupService

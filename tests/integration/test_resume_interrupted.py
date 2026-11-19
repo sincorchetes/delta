@@ -1,7 +1,7 @@
 import threading
 import time
 
-from conftest import call_and_wait_finished
+from dbus_helpers import call_and_wait_finished
 from gi.repository import GLib
 
 from delta.application.backup_service import BackupService

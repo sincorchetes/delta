@@ -3,7 +3,7 @@ import shutil
 import stat
 
 import pytest
-from conftest import IFACE, PATH, call_and_wait_finished
+from dbus_helpers import IFACE, PATH, call_and_wait_finished
 from gi.repository import Gio, GLib
 
 from delta.application.preview_service import PreviewService

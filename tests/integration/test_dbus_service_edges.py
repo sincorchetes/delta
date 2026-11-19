@@ -2,7 +2,7 @@
 
 from types import SimpleNamespace
 
-from conftest import call_rows
+from dbus_helpers import call_rows
 from gi.repository import GLib
 
 from delta.application.backup_service import BackupService

@@ -13,7 +13,7 @@ case "$ID" in
         dnf install -y --setopt=install_weak_deps=False \
             git meson ninja-build glib2-devel dbus-daemon \
             python3 python3-gobject python3-pytest python3-dbusmock \
-            libsecret gnome-keyring gtk4 libadwaita gettext borgbackup fuse3 \
+            libsecret gnome-keyring gtk4 libadwaita gobject-introspection gettext borgbackup fuse3 \
             xorg-x11-server-Xvfb appstream desktop-file-utils
         ;;
     almalinux | rocky)
@@ -23,7 +23,7 @@ case "$ID" in
         dnf install -y --setopt=install_weak_deps=False \
             git meson ninja-build glib2-devel dbus-daemon \
             python3 python3-gobject python3-pytest \
-            libsecret gnome-keyring gtk4 libadwaita gettext fuse3 desktop-file-utils
+            libsecret gnome-keyring gtk4 libadwaita gobject-introspection gettext fuse3 desktop-file-utils
         # Not in every release: the build goes on without them and the checks that need them say so.
         dnf install -y borgbackup python3-dbusmock xorg-x11-server-Xvfb appstream || echo "warning: some optional packages are missing"
         ;;

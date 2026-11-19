@@ -61,13 +61,15 @@ def store(tmp_path_factory, private_session_bus):
         "XDG_DATA_HOME": str(root / "data"),
         "XDG_RUNTIME_DIR": str(runtime),
     }
-    daemon = subprocess.Popen(
-        ["gnome-keyring-daemon", "--foreground", "--components=secrets", "--unlock"],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        env=env,
-    )
+    log = root / "keyring.log"
+    with log.open("wb") as sink:
+        daemon = subprocess.Popen(
+            ["gnome-keyring-daemon", "--foreground", "--components=secrets", "--unlock"],
+            stdin=subprocess.PIPE,
+            stdout=sink,
+            stderr=sink,
+            env=env,
+        )
     assert daemon.stdin is not None
     daemon.stdin.write(b"test\n")
     daemon.stdin.close()
@@ -80,8 +82,12 @@ def store(tmp_path_factory, private_session_bus):
     deadline = time.monotonic() + 10
     while not _name_has_owner(connection):
         if time.monotonic() > deadline:
+            code = daemon.poll()
             daemon.kill()
-            pytest.fail("gnome-keyring-daemon did not own org.freedesktop.secrets")
+            pytest.fail(
+                f"gnome-keyring-daemon did not own org.freedesktop.secrets "
+                f"(exit code {code}). Its output:\n{log.read_text(errors='replace')}"
+            )
         time.sleep(0.1)
     yield LibsecretStore()
     Secret.Service.disconnect()  # drop libsecret's cached proxy before the bus goes away
