@@ -1,64 +1,62 @@
 # TODO — Delta
 
-What is missing before the 0.1.0 release, and what was deferred on purpose. The design is in [`docs/plan.md`](docs/plan.md)
-and the status of each milestone in [`docs/roadmap.md`](docs/roadmap.md).
+What is missing, and what was deferred on purpose. The design is in [`docs/plan.md`](docs/plan.md) and the status of each
+milestone in [`docs/roadmap.md`](docs/roadmap.md).
 
-**Done and verified (2026-11-18):** milestones M0–M6, and M7 except for what is listed below. The tests pass at 100 % of lines and
-branches; the mutation tests leave one equivalent survivor and seven timeouts; the website builds. Packages named `delta-backup`
-were built and installed in clean containers on Fedora 44, Rocky 10, openSUSE Tumbleweed, Debian 13, Ubuntu 24.04 and Arch. The
-Flatpak was built and tried on Fedora.
+**Done and verified (2026-11-19):** milestones M0–M6, and M7 except for what is listed below. Version 0.1.2 is published: the
+GitHub Release with its Flatpak bundle, the AUR and the openSUSE Build Service repositories (Fedora 43 and 44, Rocky 10,
+AlmaLinux 10, openSUSE Tumbleweed, Debian 13 and Ubuntu 26.04 and 26.10) are all made by pushing the tag, and the packages were
+installed in clean containers. The tests pass at 100 % of lines and branches; the mutation tests leave one equivalent survivor;
+the website builds and is deployed from `main`.
 
 ## 1. Publish the repository (the maintainer)
 
-- [ ] Restart the repository so that the old recovery key is not in its history (it is in the commits `293c3c2` and `d939fe1`;
-      it is already gone from the tree). Keep a copy of the old `.git` outside the repository.
-- [ ] Push the first commit to `main` and make the repository public.
-- [ ] Tag `v0.1.0` (no dot after the `v`), set the release date in `CHANGELOG.md` and create the GitHub Release from its notes.
-- [x] The real `sha256sums` is in `packaging/arch/PKGBUILD`, and the download from the tag builds and installs in a clean Arch container.
+- [x] The repository was restarted, so the old recovery key is not in its history; it is public, and `v0.1.0` was tagged and
+      released.
+- [ ] Treat the old recovery key as burned: it was in the history of the first repository. Replace it wherever a backup was
+      made with it.
+- [x] The real `sha256sums` goes into the AUR by itself on each tag (`packaging/arch/PKGBUILD` keeps `SKIP`).
 
 ## 2. Configure GitHub
 
-Do it after the first CI run, so that the names of the checks exist.
+- [x] **Ruleset for `main`** and **ruleset for the tags `v*`** (`releases-tag`): both active.
+- [x] **Settings:** description, website and topics; squash merging only.
+- [ ] **Settings, still to check:** delete branches automatically after merging (it is off; `gh pr merge --delete-branch` does it),
+      workflow permissions read-only, approval for first-time contributors, a social preview image.
+- [x] **Code security:** Dependabot security updates, secret scanning and push protection.
+- [ ] **Code security, still to check:** Dependabot alerts and private vulnerability reporting. Leave CodeQL's *default setup* off:
+      the workflow `.github/workflows/codeql.yml` does it.
+- [x] **Pages:** source *GitHub Actions* and the custom domain `delta.sincorchetes.tech`.
+- [ ] **Pages:** GitHub reports no certificate of its own for the domain (*Enforce HTTPS* is off), although the site is served
+      over HTTPS. Check who serves it (a proxy such as Cloudflare would) and that `http://` redirects to `https://`. Limit the
+      `github-pages` environment to `main`.
+- [x] **SonarQube Cloud:** the project `sincorchetes_delta` analyzes on every change to the code (the secret `SONAR_TOKEN`).
+- [ ] **SonarQube Cloud:** mark the six `--no-build` hotspots of `scripts/sync-venv.sh` and `scripts/ci/check_mutants.sh` as *Safe*:
+      the GNOME sdists have to be built against the system libraries (see "Known traps" in `AGENTS.md`).
+- [x] **Release credentials:** the environment `release` (limited to `main` and the tags `v*`) has the AUR key and the OBS token.
 
-- [ ] **Ruleset for `main`:** target the default branch; require a pull request (0 approvals, squash only); require the checks
-      `devenv (tests, quality, Sonar)` and `website (build and check)` and an up-to-date branch; require linear history;
-      block deletions and force pushes. Add *Require code scanning results* once CodeQL has run.
-- [ ] **Ruleset for the tags `v*`:** restrict updates and deletions and block force pushes; bypass for the repository admin role.
-- [ ] **Settings:** description, website and topics; squash merging only and delete branches after merging; workflow permissions
-      read-only; approval for first-time contributors; a social preview image.
-- [ ] **Code security:** Dependabot alerts and security updates, secret scanning with push protection, private vulnerability
-      reporting. Leave CodeQL's *default setup* off: the workflow `.github/workflows/codeql.yml` does it.
-- [ ] **Pages:** source *GitHub Actions*; the custom domain `delta.sincorchetes.tech`; a DNS `CNAME` from `delta` to
-      `sincorchetes.github.io`; then *Enforce HTTPS*; limit the `github-pages` environment to `main`.
-- [ ] **SonarQube Cloud:** create the project `sincorchetes_delta` in the organization `sincorchetes`, turn its *Automatic Analysis*
-      off and add the `SONAR_TOKEN` secret.
+## 3. Check the CI
 
-## 3. Check the first real CI run
-
-- [ ] `ruff` with the version from devenv's nixpkgs (it was only tried with a newer ruff from another project).
-- [ ] The mutation step ends with `surviving mutants: 1 (allowed: 1)`.
-- [ ] `devenv` passes from scratch now that `scripts/sync-venv.sh` installs the build tools before the project.
+- [x] `ruff`, the mutation step (one allowed survivor) and `devenv` from scratch pass in the CI; CodeQL runs on `python` and
+      `actions`; the website is deployed from `main`; Dependabot works for `uv`, `bun` and the actions (it ignores major versions of
+      `typescript`).
 - [ ] Run the **Distributions** workflow by hand (*Actions → Distributions → Run workflow*): the seven distributions and the Nix
-      flake, each with its own libraries. The package names in `scripts/ci/install-deps.sh` were written from memory; fix
-      what the first run reports.
-- [ ] Dependabot opened a pull request that bumps `typescript` from 5 to 7 (a major version) in `website/`: do not merge it
-      blindly (`astro check` may not support it); close it, or ignore major versions of `typescript` in `dependabot.yml`.
-- [ ] CodeQL: the version of the actions (`@v4` was written from memory) and the checks `CodeQL (python)` and `CodeQL (actions)`.
-- [x] Dependabot accepts the `bun` ecosystem (it opened a pull request for `website/`).
+      flake, each with its own libraries. It has never run, and the package names in `scripts/ci/install-deps.sh` were written
+      from memory: fix what the first run reports.
 - [ ] The two issue forms show up under *Issues → New issue*.
-- [ ] The website is deployed from `main`.
 
-## 4. Release channels (after the tag)
+## 4. Release channels
 
-- [x] **OBS:** `home:sincorchetes:delta` builds `delta-backup` 0.1.0 for Fedora 43 and 44, openSUSE Tumbleweed, Rocky 10
-      (`x86_64`), AlmaLinux 10, Debian 13 and Ubuntu 26.04 and 26.10, and each one installs from its repository in a clean
-      container (see `packaging/obs/README.md`).
-- [ ] **OBS, Ubuntu 24.04:** its repository built but was never published, so it was left out. Try it again later.
-- [x] **AUR:** `delta-backup` is published, and builds, installs and imports in a clean Arch container.
-- [x] **AUR, 0.1.1:** the optional dependency is `nautilus-python`, the real name in Arch.
-- [x] **Flatpak:** built offline from pinned sources, installed from its bundle in Fedora and tried (`flatpak/`); the bundle is
-      attached to the GitHub Release. It has no automatic updates: each release needs its bundle built and attached.
-- [ ] **Flatpak, updates:** a repository of its own (for instance in GitHub Pages) would update it by itself.
+- [x] **A release is published by pushing its tag** (`flatpak.yml` and `release.yml`): the GitHub Release with the notes of
+      `CHANGELOG.md` and the Flatpak bundle, the AUR (the real checksum and `.SRCINFO`) and OBS (the branch `release` and a token
+      that can only run the source service, which fetches the spec, the dsc, `debian/` and the tarball from git). How it is set up
+      is in `packaging/obs/README.md` and `CONTRIBUTING.md`.
+- [ ] **OBS, Ubuntu 24.04:** its repository built but was never published, so it was left out. Try it again.
+- [ ] **OBS, the test project** `home:sincorchetes:delta-test` and its token are no longer needed: delete them.
+- [x] **Flatpak:** built offline from pinned sources and attached to each release (`flatpak/`).
+- [ ] **Flatpak, updates:** the bundle does not update by itself. A repository of its own (for instance in GitHub Pages) would, or
+      OBS, which builds Flatpaks from a `flatpak.yaml` (its docs do not say whether it publishes a repository, or whether it has
+      the GNOME 51 runtime).
 - [ ] **Flathub:** left out on purpose for now. Its policy does not accept manifests with AI-assisted content, which this one has,
       and asks for a stable project with some history. Look at it again when the project has both.
 - [x] **NixOS module** (`nixosModules.default`, `nix/nixos.nix`): `services.delta.enable` installs the package and
@@ -73,7 +71,8 @@ Do it after the first CI run, so that the names of the checks exist.
 Building and importing in a clean container is not the same as running it.
 
 - [ ] Install each package and run it: the service starts, the window opens, and a backup and a restore work.
-- [ ] A pass with a screen reader (Orca) and with the keyboard only.
+- [x] A pass with a screen reader (Orca): it works.
+- [ ] A pass with the keyboard only.
 - [ ] Flatpak: the background permission with the portals active (`services.flatpak.enable = true` on NixOS).
 - [ ] The Nautilus menu entry appears only once after `home-manager switch` (the extension used to be loaded twice).
 
@@ -86,7 +85,7 @@ Building and importing in a clean container is not the same as running it.
       `scripts/smoke_session.py`.
 - [ ] Optional: rename the local project directory from `gnome-time-machine` to `delta`.
 
-## Deferred on purpose (after 0.1.0)
+## Deferred on purpose
 
 - **Unlock repository** on screen: done with tests, but a real lock could never be provoked (Borg cleans the ones left by an
   abrupt shutdown).
@@ -99,4 +98,6 @@ Building and importing in a clean container is not the same as running it.
   the journal.
 - **Borg 2:** review its API policy before migrating.
 - **A `SourceSnapshot` port** to back up from a read-only BTRFS or ZFS snapshot (2.0).
+- **A backup destination reached through a bind mount** inside the folders that are backed up: the repository is skipped by its
+  path (and Borg skips its own by inode), so a second path to the same folder is not recognized.
 - After each Dependabot pull request that touches `uv.lock`, update `nix/python.nix` in step with it.
