@@ -92,6 +92,7 @@ jobs:
             -Dsonar.python.version=3.12,3.13,3.14
             -Dsonar.python.coverage.reportPaths=coverage.xml
             -Dsonar.exclusions=po/**,data/**,nix/**
+            -Dsonar.coverage.exclusions=scripts/**,website/**
             -Dsonar.sourceEncoding=UTF-8
 
   # The website is built when website/ changes, and published only from main.
