@@ -69,6 +69,25 @@ jobs:
             python3 -m pytest -q --capture=sys --ignore=tests/gtk
           fi
 
+  # A system where GTK cannot make its player: GStreamer without its plugins. Making the player ends the whole process there
+  # (a GLib error that Python cannot catch), so Delta tries it in a process of its own; the check proves that premise first
+  # and then that Delta's probe says "no player" and goes on.
+  without-gstreamer:
+    name: Ubuntu without the GStreamer plugins
+    runs-on: ubuntu-latest
+    container: ubuntu:26.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install the distribution's packages
+        run: sh scripts/ci/install-deps.sh
+
+      - name: Take the GStreamer plugins away
+        run: apt-get remove -y gstreamer1.0-plugins-base gstreamer1.0-plugins-good
+
+      - name: Delta goes on without a player
+        run: xvfb-run -a python3 scripts/ci/check_without_gstreamer.py
+
   # The flake builds Delta with the libraries of nixpkgs, the "system" libraries of Nix, and its NixOS module gives a system
   # what a session needs to find (scripts/ci/nixos-module-check.nix builds a minimal one, and check_nixos_module.sh looks at it).
   nix:
