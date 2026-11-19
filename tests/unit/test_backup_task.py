@@ -227,3 +227,14 @@ def test_a_drive_that_goes_while_the_engine_works_is_still_unavailable_without_n
         task(lambda event: None)
 
     assert job.state is JobState.UNAVAILABLE
+
+
+def test_a_drive_that_is_not_there_waits_without_notifications_too():
+    backup = BackupService(FakeEngine(), Repository("/media/disk/delta"), ("/home",), destination=Probe(DestinationState.MISSING))
+    job = backup.new_job()
+    task = make_backup_task(job, backup, None, None, None)
+
+    with pytest.raises(DestinationUnavailable):
+        task(lambda event: None)
+
+    assert job.state is JobState.UNAVAILABLE
