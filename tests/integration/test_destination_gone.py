@@ -53,13 +53,25 @@ def test_a_drive_that_went_away_makes_the_backup_wait_and_nothing_is_created_whe
 
 
 def test_the_mount_point_of_a_drive_that_is_not_mounted_is_not_a_place_for_the_copy_either(world):
+    # The repository is the root of the drive: unmounted, what stays on the computer is an empty folder.
+    runner, _repo, drive, source = world
+    shutil.rmtree(drive)
+    drive.mkdir()
+
+    job = run_backup(runner, Repository(str(drive)), source)
+
+    assert job.state is JobState.UNAVAILABLE and job.unavailable.state is DestinationState.EMPTY
+    assert list(drive.iterdir()) == []
+
+
+def test_a_repository_in_a_folder_of_a_drive_that_is_not_mounted_is_a_folder_that_is_not_there(world):
     runner, repo, drive, source = world
     shutil.rmtree(drive)
-    drive.mkdir()  # what stays on the computer when a drive is unmounted: an empty folder
+    drive.mkdir()
 
     job = run_backup(runner, repo, source)
 
-    assert job.state is JobState.UNAVAILABLE and job.unavailable.state is DestinationState.EMPTY
+    assert job.state is JobState.UNAVAILABLE and job.unavailable.state is DestinationState.MISSING
     assert list(drive.iterdir()) == []
 
 
