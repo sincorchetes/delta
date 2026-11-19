@@ -16,7 +16,7 @@ Documentation, in English and Spanish: <https://delta.sincorchetes.tech>
 Delta needs GNOME 46 or newer (libadwaita 1.5, GTK 4.10) and Python 3.12 or newer. It is published in a repository for
 Fedora, Rocky Linux, AlmaLinux, openSUSE, Debian and Ubuntu (built by the openSUSE Build Service), so your package manager
 installs it and keeps it up to date, and in the AUR for Arch Linux. For another distribution you build the package. The recipes are in
-[`packaging/`](packaging/) and [`debian/`](debian/); there is also a Nix flake with a Home Manager module and a Flatpak
+[`packaging/`](packaging/) and [`debian/`](debian/); there is also a Nix flake with a NixOS module and a Home Manager one, and a Flatpak
 (a bundle attached to each release, built from [`flatpak/`](flatpak/)). Step by step: <https://delta.sincorchetes.tech/install/>
 
 ## Development

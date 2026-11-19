@@ -137,7 +137,57 @@ No está en Flathub, así que no se actualiza solo: para actualizar, instala del
 el Flatpak **o** el paquete nativo, no los dos: comparten el nombre del servicio, y la ventana hablaría con el servicio que
 arranque primero.
 
-## Instalar con Nix y Home Manager
+## Instalar con Nix
+
+### En NixOS
+
+El módulo de NixOS instala Delta, **nautilus-python** (para el menú del clic derecho de Archivos) y deja preparado lo que una
+sesión tiene que encontrar: el servicio de usuario y su temporizador, el servicio de D-Bus, el esquema de ajustes, el manual y
+las traducciones.
+
+Con flakes, en el flake de tu sistema:
+
+```nix
+{
+  inputs.delta.url = "github:sincorchetes/delta";
+  inputs.delta.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs = { nixpkgs, delta, ... }: {
+    nixosConfigurations.tu-equipo = nixpkgs.lib.nixosSystem {
+      modules = [
+        ./configuration.nix
+        delta.nixosModules.default
+        { services.delta.enable = true; }
+      ];
+    };
+  };
+}
+```
+
+Sin flakes, en tu `configuration.nix`:
+
+```nix
+{ ... }:
+let
+  delta = builtins.fetchTarball "https://github.com/sincorchetes/delta/archive/main.tar.gz";
+in
+{
+  imports = [ "${delta}/nix/nixos.nix" ];
+  services.delta.enable = true;
+}
+```
+
+Después ejecuta `sudo nixos-rebuild switch` y cierra la sesión y vuelve a entrar. Para dejar fija la versión, apunta la dirección
+a una etiqueta o a un commit y añade su `sha256` a `fetchTarball`.
+
+<Aside type="caution" title="Un solo módulo">
+Usa el módulo de NixOS **o** el de Home Manager, no los dos: instalan el mismo paquete y declaran las mismas unidades, y las que
+Home Manager enlaza en tu carpeta personal tienen prioridad sobre las del sistema.
+</Aside>
+
+### Con Home Manager
+
+Para cualquier distribución con Nix, y para NixOS si prefieres dejarlo en tu configuración de usuario.
 
 <Steps>
 
@@ -158,13 +208,6 @@ arranque primero.
 4. Cierra la sesión y vuelve a entrar para que Archivos cargue la extensión.
 
 </Steps>
-
-<Aside type="caution" title="NixOS sin Home Manager">
-Delta solo tiene un módulo para Home Manager. Un módulo de NixOS para `configuration.nix` está previsto, pero aún no existe, e
-instalar el paquete solo en `environment.systemPackages` no basta: también hay que encontrar el servicio de usuario, el servicio
-de D-Bus y el esquema de ajustes, que es lo que resuelve el módulo de Home Manager. En NixOS sin Home Manager, usa el
-[Flatpak](#instalar-el-flatpak) (`services.flatpak.enable = true;`) o añade Home Manager.
-</Aside>
 
 ## Compilar desde el código fuente
 

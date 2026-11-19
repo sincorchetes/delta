@@ -137,7 +137,56 @@ It is not in Flathub, so it does not update by itself: to update, install the bu
 the Flatpak **or** the native package, not both: they share the same service name, and the window would talk to whichever
 service started first.
 
-## Install with Nix and Home Manager
+## Install with Nix
+
+### On NixOS
+
+The NixOS module installs Delta, **nautilus-python** (for the right-click menu of Files), and sets up what a session has to
+find: the user service and its timer, the D-Bus service, the settings schema, the manual and the translations.
+
+With flakes, in the flake of your system:
+
+```nix
+{
+  inputs.delta.url = "github:sincorchetes/delta";
+  inputs.delta.inputs.nixpkgs.follows = "nixpkgs";
+
+  outputs = { nixpkgs, delta, ... }: {
+    nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
+      modules = [
+        ./configuration.nix
+        delta.nixosModules.default
+        { services.delta.enable = true; }
+      ];
+    };
+  };
+}
+```
+
+Without flakes, in your `configuration.nix`:
+
+```nix
+{ ... }:
+let
+  delta = builtins.fetchTarball "https://github.com/sincorchetes/delta/archive/main.tar.gz";
+in
+{
+  imports = [ "${delta}/nix/nixos.nix" ];
+  services.delta.enable = true;
+}
+```
+
+Then run `sudo nixos-rebuild switch` and log out and back in. To keep the version fixed, point the address at a tag or a commit
+and add its `sha256` to `fetchTarball`.
+
+<Aside type="caution" title="One module only">
+Use the NixOS module **or** the Home Manager one, not both: they install the same package and declare the same units, and the
+ones that Home Manager links in your home folder win over the system's.
+</Aside>
+
+### With Home Manager
+
+For any distribution with Nix, and for NixOS if you would rather keep it in your user configuration.
 
 <Steps>
 
@@ -158,13 +207,6 @@ service started first.
 4. Log out and back in so Files loads the extension.
 
 </Steps>
-
-<Aside type="caution" title="NixOS without Home Manager">
-Delta only has a module for Home Manager. A NixOS module for `configuration.nix` is planned but does not exist yet, and
-installing the package in `environment.systemPackages` alone is not enough: the user service, the D-Bus service and the
-settings schema also have to be found, which is what the Home Manager module takes care of. On NixOS without Home Manager,
-use the [Flatpak](#install-the-flatpak) (`services.flatpak.enable = true;`), or add Home Manager.
-</Aside>
 
 ## Build it from source
 

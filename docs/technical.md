@@ -37,7 +37,7 @@ Quality is measured, not claimed. Every figure comes from a command that can be 
   the same). The pipeline fails if more than that one survive (`scripts/ci/check_mutants.sh`).
 - **Tests of the repository itself:** that every visible text is translated, that the help is valid Mallard and its links exist,
   that the versions of all the packages match `meson.build`, that the Flatpak manifest asks for no more permissions than agreed,
-  that the Home Manager module links what the session needs, and that the website has the same pages in both languages.
+  that the Home Manager module links what the session needs, that the NixOS module declares the same units as the package, and that the website has the same pages in both languages.
 - **Meson validators:** `appstreamcli validate` for the AppStream and `desktop-file-validate` for the `.desktop` files.
 - **CI** (`.github/workflows/ci.yml`): the tests, then the mutation tests, then the website build and its checks, then publishing
   (only from `main`). CodeQL runs in another workflow.
