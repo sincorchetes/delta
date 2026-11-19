@@ -90,7 +90,7 @@ git clone https://github.com/sincorchetes/delta.git && cd delta
     ```sh
     sudo dnf builddep packaging/rpm/delta-backup.spec
     mkdir -p ~/rpmbuild/SOURCES
-    git archive --format=tar.gz --prefix=delta-0.1.1/ -o ~/rpmbuild/SOURCES/delta-0.1.1.tar.gz HEAD
+    git archive --format=tar.gz --prefix=delta-0.1.2/ -o ~/rpmbuild/SOURCES/delta-0.1.2.tar.gz HEAD
     rpmbuild -ba packaging/rpm/delta-backup.spec
     sudo dnf install ~/rpmbuild/RPMS/noarch/delta-backup-*.rpm
     ```
@@ -99,7 +99,7 @@ git clone https://github.com/sincorchetes/delta.git && cd delta
     ```sh
     sudo zypper install rpm-build $(rpmspec -q --buildrequires packaging/rpm/delta-backup.spec)
     mkdir -p ~/rpmbuild/SOURCES
-    git archive --format=tar.gz --prefix=delta-0.1.1/ -o ~/rpmbuild/SOURCES/delta-0.1.1.tar.gz HEAD
+    git archive --format=tar.gz --prefix=delta-0.1.2/ -o ~/rpmbuild/SOURCES/delta-0.1.2.tar.gz HEAD
     rpmbuild -ba packaging/rpm/delta-backup.spec
     sudo zypper install ~/rpmbuild/RPMS/noarch/delta-backup-*.rpm
     ```
@@ -124,12 +124,12 @@ Después, cierra la sesión y vuelve a entrar, para que Archivos cargue la exten
 
 ## Instalar el Flatpak
 
-El Flatpak funciona en cualquier distribución con Flatpak y un escritorio GNOME. Descarga `delta-0.1.1.flatpak` de la
+El Flatpak funciona en cualquier distribución con Flatpak y un escritorio GNOME. Descarga el archivo `.flatpak` de la
 [última versión](https://github.com/sincorchetes/delta/releases/latest) e instálalo. Flatpak descarga por sí mismo el runtime
 de GNOME desde Flathub si no lo tienes.
 
 ```sh
-flatpak install --user ./delta-0.1.1.flatpak
+flatpak install --user ./delta-*.flatpak
 flatpak run io.github.sincorchetes.Delta
 ```
 

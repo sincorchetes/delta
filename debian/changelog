@@ -1,3 +1,9 @@
+delta-backup (0.1.2-1) unstable; urgency=medium
+
+  * The backup repository is never copied into itself.
+
+ -- Álvaro Castillo <sincorchetes@gmail.com>  Thu, 19 Nov 2026 12:00:00 +0100
+
 delta-backup (0.1.1-1) unstable; urgency=medium
 
   * No change to the code: packaging and documentation (the Flatpak bundle, the repositories).
