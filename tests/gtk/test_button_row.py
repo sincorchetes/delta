@@ -1,10 +1,19 @@
 """The row of action buttons: side by side while they fit, in lines when they do not, never in the keyboard's way."""
 
+import pytest
 from gi.repository import Gtk
 
 from delta.ui.button_row import GAP, button_row
 
 LONG = ("Replace the current version…", "Open", "Browse as a folder", "Restore as a copy")
+
+# GTK 4.16.7 (Rocky and AlmaLinux 10) measures this FlowBox as one button wide, not as all of them side by side (both the
+# minimum and the natural width are the widest button), so these two checks cannot tell whether the row wraps there. From
+# GTK 4.18 on they hold.
+measures_the_row_as_one_button = pytest.mark.skipif(
+    (Gtk.get_major_version(), Gtk.get_minor_version()) < (4, 18),
+    reason="before GTK 4.18 a FlowBox is measured as wide as its widest child",
+)
 
 
 def buttons(*labels):
@@ -24,6 +33,7 @@ def test_the_buttons_are_in_the_row_in_the_order_given():
     assert slot(row, 3) is None
 
 
+@measures_the_row_as_one_button
 def test_a_row_can_be_narrower_than_all_its_buttons_side_by_side():
     row = button_row(buttons(*LONG))
 
@@ -32,6 +42,7 @@ def test_a_row_can_be_narrower_than_all_its_buttons_side_by_side():
     assert minimum < natural  # a window does not have to be as wide as the whole row
 
 
+@measures_the_row_as_one_button
 def test_when_the_width_is_short_the_buttons_go_to_another_line():
     row = button_row(buttons(*LONG))
     minimum, natural, _, _ = row.measure(Gtk.Orientation.HORIZONTAL, -1)
