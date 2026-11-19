@@ -31,7 +31,7 @@ the website builds and is deployed from `main`.
       over HTTPS. Check who serves it (a proxy such as Cloudflare would) and that `http://` redirects to `https://`. Limit the
       `github-pages` environment to `main`.
 - [x] **SonarQube Cloud:** the project `sincorchetes_delta` analyzes on every change to the code (the secret `SONAR_TOKEN`).
-- [ ] **SonarQube Cloud:** mark the six `--no-build` hotspots of `scripts/sync-venv.sh` and `scripts/ci/check_mutants.sh` as *Safe*:
+- [x] **SonarQube Cloud:** mark the six `--no-build` hotspots of `scripts/sync-venv.sh` and `scripts/ci/check_mutants.sh` as *Safe*:
       the GNOME sdists have to be built against the system libraries (see "Known traps" in `AGENTS.md`).
 - [x] **Release credentials:** the environment `release` (limited to `main` and the tags `v*`) has the AUR key and the OBS token.
 
@@ -64,7 +64,7 @@ the website builds and is deployed from `main`.
       that can only run the source service, which fetches the spec, the dsc, `debian/` and the tarball from git). How it is set up
       is in `packaging/obs/README.md` and `CONTRIBUTING.md`.
 - [ ] **OBS, Ubuntu 24.04:** its repository built but was never published, so it was left out. Try it again.
-- [ ] **OBS, the test project** `home:sincorchetes:delta-test` and its token are no longer needed: delete them.
+- [x] **OBS, the test project** `home:sincorchetes:delta-test` was deleted, with its token.
 - [x] **Flatpak:** built offline from pinned sources and attached to each release (`flatpak/`).
 - [ ] **Flatpak, updates:** the bundle does not update by itself. A repository of its own (for instance in GitHub Pages) would, or
       OBS, which builds Flatpaks from a `flatpak.yaml` (its docs do not say whether it publishes a repository, or whether it has
@@ -75,8 +75,8 @@ the website builds and is deployed from `main`.
       `nautilus-python`, declares the user units, the D-Bus service and the settings schema. Tried in a VM with GNOME
       (`nixos-rebuild build-vm`), both importing the file from a `configuration.nix` without flakes and as
       `delta.nixosModules.default` from a flake: the timer, the daemon, the window and the menu of Files work.
-- [ ] **NixOS module on a real system:** only tried in VMs; `nixos-rebuild test --flake` on a machine with its own configuration
-      would show how it lives with the rest of it (for instance, next to the Home Manager module, which must be off).
+- [x] **NixOS module on a real system:** tried in VMs and on the maintainer's own machine, with the rest of its configuration
+      (the Home Manager module of Delta must be off there).
 
 ## 5. Try it on a real system
 
@@ -84,7 +84,7 @@ Building and importing in a clean container is not the same as running it.
 
 - [ ] Install each package and run it: the service starts, the window opens, and a backup and a restore work.
 - [x] A pass with a screen reader (Orca): it works.
-- [ ] A pass with the keyboard only.
+- [x] A pass with the keyboard only: it works.
 - [ ] Flatpak: the background permission with the portals active (`services.flatpak.enable = true` on NixOS).
 - [ ] The Nautilus menu entry appears only once after `home-manager switch` (the extension used to be loaded twice).
 
