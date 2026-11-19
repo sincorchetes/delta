@@ -3,7 +3,7 @@
 from types import SimpleNamespace
 
 import pytest
-from conftest import labels, of_type
+from gtk_helpers import labels, of_type
 from gi.repository import Adw, Gio, GLib, Gtk
 
 from delta.ui import path_list, shortcuts, wizard_base, wizard_destination

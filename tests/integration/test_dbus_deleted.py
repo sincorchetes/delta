@@ -1,7 +1,7 @@
 import shutil
 
 import pytest
-from conftest import call_and_wait_finished, call_rows
+from dbus_helpers import call_and_wait_finished, call_rows
 from gi.repository import GLib
 
 from delta.application.deleted_service import DeletedService

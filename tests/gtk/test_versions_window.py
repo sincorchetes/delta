@@ -3,7 +3,7 @@
 import time
 
 import pytest
-from conftest import of_type
+from gtk_helpers import of_type
 from gi.repository import Adw, Gtk
 
 from delta.ui import version_preview, versions_window

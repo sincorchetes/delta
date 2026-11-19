@@ -1,7 +1,7 @@
 import shutil
 
 import pytest
-from conftest import call_and_wait_finished
+from dbus_helpers import call_and_wait_finished
 
 from delta.application.snapshot_service import SnapshotService
 from delta.application.unlock_service import UnlockService

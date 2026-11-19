@@ -42,11 +42,11 @@ Quality is measured, not claimed. Every figure comes from a command that can be 
 - **CI** (`.github/workflows/ci.yml`): the tests, then the mutation tests, then the website build and its checks, then publishing
   (only from `main`). CodeQL runs in another workflow.
 - **Each distribution's own libraries** (`.github/workflows/distros.yml`, by hand and once a week; it does not block a pull
-  request): Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10, Rocky 10, Ubuntu 24.04 and Debian 13 install the packages they ship
+  request): Fedora, Arch, openSUSE Tumbleweed, AlmaLinux 10, Rocky 10, Ubuntu 26.04 and 26.10 and Debian 13 install the packages they ship
   (`python3-gobject`, GTK, libadwaita, BorgBackup), with their own Python and no uv or PyPI, check the minimum base, build and run
   the suite; and the Nix flake is built. That is what a user of the distribution's package gets, as opposed to the pinned
   libraries of `pyproject.toml`, which are only for development, the Nix package and the Flatpak.
-- **Packages** built and installed in clean containers: Fedora 44, Rocky 10, openSUSE Tumbleweed, Debian 13, Ubuntu 24.04 and Arch.
+- **Packages** built and installed in clean containers: Fedora 44, Rocky 10, openSUSE Tumbleweed, Debian 13, Ubuntu 26.04 and 26.10 and Arch.
 
 ## Why BorgBackup
 

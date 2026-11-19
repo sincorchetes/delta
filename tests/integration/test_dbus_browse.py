@@ -4,7 +4,7 @@ import os
 import time
 from datetime import datetime
 
-from conftest import IFACE, PATH, call_and_wait_finished
+from dbus_helpers import IFACE, PATH, call_and_wait_finished
 from gi.repository import Gio, GLib
 
 from delta.application.backup_service import BackupService

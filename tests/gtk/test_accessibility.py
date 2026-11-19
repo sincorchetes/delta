@@ -3,7 +3,7 @@
 import base64
 
 import pytest
-from conftest import of_type
+from gtk_helpers import of_type
 from gi.repository import Gtk
 
 from delta.ui.a11y import decorative_icon, loading_spinner, named, tipped

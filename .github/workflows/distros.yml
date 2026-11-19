@@ -28,7 +28,8 @@ jobs:
           - { name: "openSUSE Tumbleweed", image: "opensuse/tumbleweed:latest" }
           - { name: "AlmaLinux 10", image: "almalinux:10" }
           - { name: "Rocky Linux 10", image: "rockylinux/rockylinux:10" }
-          - { name: "Ubuntu 24.04", image: "ubuntu:24.04" }
+          - { name: "Ubuntu 26.04", image: "ubuntu:26.04" }
+          - { name: "Ubuntu 26.10", image: "ubuntu:26.10" }
           - { name: "Debian 13", image: "debian:trixie" }
     steps:
       - uses: actions/checkout@v7

@@ -4,7 +4,7 @@ import time
 from types import SimpleNamespace
 
 import pytest
-from conftest import of_type
+from gtk_helpers import of_type
 from gi.repository import Adw, GLib, Gtk
 
 from delta.ui import application as application_module

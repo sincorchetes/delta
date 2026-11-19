@@ -5,7 +5,7 @@ import gi
 import pytest
 
 gi.require_version("Gio", "2.0")
-from conftest import IFACE, PATH
+from dbus_helpers import IFACE, PATH
 from gi.repository import Gio, GLib
 
 from delta.application.snapshot_service import SnapshotService
