@@ -12,6 +12,8 @@ optdepends=(
   'nautilus-python: the right-click menu and the versions window from Nautilus'
   'gnome-keyring: where passwords are kept'
   'yelp: the help (F1)'
+  'gst-plugins-base: the preview of a video or audio'
+  'gst-plugins-good: the preview of a video or audio'
 )
 source=("delta-$pkgver.tar.gz::https://github.com/sincorchetes/delta/archive/v$pkgver.tar.gz")
 sha256sums=('SKIP') # the release workflow puts the real sum (updpkgsums) in the AUR: it is the sum of the tarball of the tag

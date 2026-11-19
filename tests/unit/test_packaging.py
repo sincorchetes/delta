@@ -81,6 +81,19 @@ def test_the_arch_and_debian_packages_depend_on_what_the_application_loads():
         assert typelib in control, typelib
 
 
+def test_every_package_recommends_the_gstreamer_plugins_that_the_preview_of_a_video_needs():
+    # Without them GTK stops the whole program, not just the preview (the Nix package lists them as dependencies).
+    spec, control, arch = read("packaging/rpm/delta-backup.spec"), read("debian/control"), read("packaging/arch/PKGBUILD")
+    recommended = control.split("Recommends:", 1)[1].split("Description:", 1)[0]
+    optional = arch.split("optdepends=(", 1)[1].split(")", 1)[0]
+
+    for kind in ("base", "good"):
+        assert f"Recommends:     gstreamer-plugins-{kind}\n" in spec, f"openSUSE {kind}"
+        assert f"Recommends:     gstreamer1-plugins-{kind}\n" in spec, f"Fedora {kind}"
+        assert f"gstreamer1.0-plugins-{kind}," in recommended, f"Debian {kind}"
+        assert f"'gst-plugins-{kind}:" in optional, f"Arch {kind}"
+
+
 def test_a_package_can_be_built_without_the_program_that_refreshes_the_icon_cache():
     meson = read("meson.build")
 
