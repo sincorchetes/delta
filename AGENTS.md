@@ -123,6 +123,10 @@ distributions in parity; when you add a system dependency, add it to `install-de
   `main`; the only exception is the first commit of the repository.
 - Every change follows the same path: a **new branch from `main`** (`feature/…`, `fix/…`, `docs/…`) → a **pull request** → CI
   green → a squash merge → the branch is deleted.
+- **Always run every test before any push**, not just the ones of what changed: `sh scripts/sync-venv.sh && xvfb-run -a uv run pytest
+  --cov` green at 100 % (and `sh scripts/ci/check_mutants.sh` when the change is in what the mutation tests cover). If an agent
+  cannot run them, it does not push: it hands the exact commands to the maintainer and waits for the result. That goes for
+  every branch, a one-line fix and a change to the CI included, and a push is not "just to let the CI try it".
 - To merge, the jobs `devenv` (tests and mutants) and `web` must pass in the PR. The distributions workflow is a check, not a gate.
 - A new version is one more PR: it raises the version in `meson.build`, `packaging/rpm/delta-backup.spec` (with its `%changelog`),
   `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md` (`tests/unit/test_packaging.py` fails
