@@ -73,9 +73,12 @@ def test_the_identifier_is_read_from_the_repository_part_of_the_answer():
 
 
 @pytest.mark.parametrize("answer", ["", "garbage", "[]", "{}", '{"repository": {}}', '{"repository": null}'])
-def test_an_answer_without_an_identifier_is_an_error_of_the_engine(answer):
-    with pytest.raises(EngineError, match="unexpected borg list output"):
+def test_an_answer_without_an_identifier_is_an_error_of_the_engine_that_says_what_it_was(answer):
+    with pytest.raises(EngineError) as raised:
         parse_repository_id(answer)
+
+    assert str(raised.value) == f"unexpected borg list output: {raised.value.__cause__}"
+    assert str(raised.value.__cause__) != ""
 
 
 def test_the_runner_gives_the_identifier_its_engine_printed(monkeypatch):
@@ -230,20 +233,20 @@ class Store:
         self.items.pop(key, None)
 
 
-def test_a_repository_that_is_made_is_remembered():
-    identity = Identity()
+def test_a_repository_that_is_made_is_remembered_after_asking_the_engine_about_that_repository():
+    identity, engine = Identity(), Engine(found=MINE)
 
-    RepositorySetup(Engine(found=MINE), Store(), identity).create(REPO, "pass")
+    RepositorySetup(engine, Store(), identity).create(REPO, "pass")
 
-    assert identity.remembered == [MINE]
+    assert identity.remembered == [MINE] and engine.asked == [REPO]
 
 
 def test_a_repository_that_is_adopted_is_remembered_in_the_place_of_the_one_before():
-    identity = Identity(MINE)
+    identity, engine = Identity(MINE), Engine(found=OTHER)
 
-    RepositorySetup(Engine(found=OTHER), Store(), identity).adopt(REPO, "pass")
+    RepositorySetup(engine, Store(), identity).adopt(REPO, "pass")
 
-    assert identity.value == OTHER
+    assert identity.value == OTHER and engine.asked == [REPO]
 
 
 def test_when_its_identifier_cannot_be_read_it_is_forgotten_so_the_first_backup_learns_it():
