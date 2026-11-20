@@ -13,6 +13,14 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- **A drive that is connected but is not the one with your backups says so**, instead of «not connected»: another disk (or a
+  wiped one) in the same place gets «Your backups are not on this drive». The root of a freshly formatted drive (which holds only
+  the `lost+found` that the file system makes) is a folder you can use in the wizard, not «not empty».
+- **A place that cannot be written to is not a failed backup either: full, read-only, no permission.** Each cause has its own
+  name, window text, notification (told once, and again after a week) and hint, in your language and not with Borg's list of
+  files. A full destination used to show «The last backup failed» with a line for every file and `[Errno 28]`. The wizard also
+  refuses a read-only place, or one you have no permission to write in, when you choose it.
+
 - **A folder that already holds your backups is reopened, not refused.** If you set Delta up again (the settings were
   deleted, a new computer) and choose the folder of an existing repository, the wizard asks for its passphrase and keeps
   using it instead of saying «That folder is not empty». It also says when the place is on a drive that is not connected,

@@ -11,7 +11,11 @@ class NotificationKind(str, Enum):
     BACKUP_INTERRUPTED = "backup-interrupted"
     BACKUP_POSTPONED = "backup-postponed"
     BACKUP_FAILED = "backup-failed"
-    DESTINATION_UNAVAILABLE = "destination-unavailable"
+    DESTINATION_UNAVAILABLE = "destination-unavailable"  # a drive that is not connected, or a folder that is not there
+    DESTINATION_OTHER_DRIVE = "destination-other-drive"
+    DESTINATION_FULL = "destination-full"
+    DESTINATION_READ_ONLY = "destination-read-only"
+    DESTINATION_DENIED = "destination-denied"
     REPOSITORY_FAILED = "repository-failed"
 
 

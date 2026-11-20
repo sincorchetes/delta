@@ -289,3 +289,17 @@ def test_changing_to_where_the_backups_are_now_is_refused_whatever_is_typed_arou
     model = with_state(PathState.REPOSITORY, destination="/media/disk//delta/", keep_folders=True, current="/media/disk/delta")
 
     assert model.errors() == ["Your backups are already kept there."]
+
+
+def test_a_place_that_is_read_only_is_not_a_place_to_keep_backups():
+    location, error = check_destination("/media/disk/delta", HOME, lambda path: PathState.READ_ONLY)
+
+    assert location is None
+    assert error == "That place is read-only: nothing can be written to it. Choose another."
+
+
+def test_a_folder_that_may_not_be_written_in_is_refused_with_what_to_do():
+    location, error = check_destination("/srv/backups", HOME, lambda path: PathState.NOT_WRITABLE)
+
+    assert location is None
+    assert error == "You cannot write in that folder. Choose another, or change its permissions."

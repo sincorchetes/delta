@@ -54,6 +54,7 @@ def test_declared_properties_match_draft_api():
         "Status": "s",
         "LastBackup": "t",
         "LastError": "s",
+        "UnavailableReason": "s",
         "NextBackup": "t",
         "CanMount": "b",
     }

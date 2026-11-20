@@ -157,3 +157,75 @@ def test_what_is_told_of_a_drive_is_its_kind_and_what_to_do():
 
     expected = Notification(NotificationKind.DESTINATION_UNAVAILABLE, error.hint)
     assert recorder.sent == [expected, expected]
+
+
+# --- each cause is told, and another cause is news -----------------------------------------------------
+
+
+def of(state):
+    from delta.domain.destination import DestinationState
+    from delta.domain.errors import DestinationUnavailable
+
+    return DestinationUnavailable("/media/disk/delta", DestinationState(state))
+
+
+@pytest.mark.parametrize(
+    "state, kind",
+    [
+        ("missing", NotificationKind.DESTINATION_UNAVAILABLE),
+        ("empty", NotificationKind.DESTINATION_UNAVAILABLE),
+        ("other-drive", NotificationKind.DESTINATION_OTHER_DRIVE),
+        ("full", NotificationKind.DESTINATION_FULL),
+        ("read-only", NotificationKind.DESTINATION_READ_ONLY),
+        ("denied", NotificationKind.DESTINATION_DENIED),
+    ],
+)
+def test_each_cause_is_told_with_its_own_kind_and_its_hint(state, kind):
+    notes, recorder, _clock = absent_notes()
+    error = of(state)
+
+    notes.destination_unavailable(error)
+
+    assert recorder.sent == [Notification(kind, error.hint)]
+
+
+def test_a_place_that_is_full_for_days_is_told_once_not_every_hour():
+    notes, recorder, clock = absent_notes()
+
+    for _hour in range(24):
+        notes.destination_unavailable(of("full"))
+        clock.now += 3600
+
+    assert len(recorder.sent) == 1
+
+
+def test_another_cause_is_news_even_before_the_reminder():
+    notes, recorder, clock = absent_notes()
+    notes.destination_unavailable(of("missing"))
+    clock.now += 3600
+
+    notes.destination_unavailable(of("full"))
+    notes.destination_unavailable(of("full"))
+
+    assert [n.kind for n in recorder.sent] == [
+        NotificationKind.DESTINATION_UNAVAILABLE,
+        NotificationKind.DESTINATION_FULL,
+    ]
+
+
+@pytest.mark.parametrize("state", ["other-drive", "full", "read-only", "denied"])
+def test_the_notification_of_each_cause_has_a_title_and_is_not_an_alarm(state):
+    from gi.repository import Gio
+
+    error = of(state)
+    kind = {
+        "other-drive": NotificationKind.DESTINATION_OTHER_DRIVE,
+        "full": NotificationKind.DESTINATION_FULL,
+        "read-only": NotificationKind.DESTINATION_READ_ONLY,
+        "denied": NotificationKind.DESTINATION_DENIED,
+    }[state]
+
+    title, body, priority = render(Notification(kind, error.hint))
+
+    assert title and body == error.hint and priority == Gio.NotificationPriority.NORMAL
+    assert render(Notification(kind))[1]  # and a body of its own when there is no detail

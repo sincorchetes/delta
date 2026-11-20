@@ -35,7 +35,8 @@ class JobRunner:
         self._idle_callbacks: list[Callable[[], None]] = []
         self.last_backup = 0
         self.last_error = ""  # why the latest backup failed; empty after a good one
-        self.unavailable = ""  # where the repository should be, while the latest backup could not reach it; else empty
+        self.unavailable = ""  # where the repository should be, while the latest backup could not use it; else empty
+        self.unavailable_reason = ""  # why, as the value of a DestinationState: missing, empty, full, read-only or denied
 
     def clear_error(self) -> None:
         """The reason of the last failure no longer applies (e.g. the repository was unlocked)."""
@@ -121,6 +122,7 @@ class JobRunner:
             self.last_backup = int(time.time())
         # A place that cannot be reached is a state of its own, not the last error: it ends by itself when it is back.
         self.unavailable = "" if unreachable is None else unreachable.location
+        self.unavailable_reason = "" if unreachable is None else unreachable.state.value
         self.last_error = "" if ok or unreachable is not None else message
 
     def _run_when_idle(self, callback: Callable[[], None]) -> bool:

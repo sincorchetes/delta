@@ -61,7 +61,7 @@ def test_read_state_returns_the_daemons_properties(bus):
     service.unregister()
 
     assert error is None
-    assert value["Status"] == "idle" and value["LastBackup"] == 0 and value["LastError"] == ""
+    assert value["Status"] == "idle" and value["LastBackup"] == 0 and value["LastError"] == "" and value["UnavailableReason"] == ""
 
 
 def test_a_failed_backup_is_reported_through_signal_and_property(bus):

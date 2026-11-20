@@ -242,3 +242,32 @@ def test_a_backup_that_is_running_is_running_whatever_came_before():
 
 def test_without_a_repository_it_is_not_a_drive_that_is_missing():
     assert build_status(snapshot(status="unavailable", repository=""), NOW).health is Health.NOT_CONFIGURED
+
+
+# --- the place cannot be used, and each cause says so -------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    "reason, title, icon",
+    [
+        ("other-drive", "Your backups are not on this drive", "drive-harddisk-symbolic"),
+        ("full", "The place with your backups is full", "drive-harddisk-symbolic"),
+        ("read-only", "The place with your backups is read-only", "changes-prevent-symbolic"),
+        ("denied", "You cannot write where your backups are kept", "changes-prevent-symbolic"),
+        ("missing", "The drive with your backups is not connected", "drive-removable-media-symbolic"),
+        ("empty", "The drive with your backups is not connected", "drive-removable-media-symbolic"),
+        ("", "The drive with your backups is not connected", "drive-removable-media-symbolic"),
+    ],
+)
+def test_each_cause_has_its_own_title_and_says_where_the_place_is(reason, title, icon):
+    view = build_status(snapshot(status="unavailable", repository="/run/media/u/BACKUPS/delta", reason=reason), NOW)
+
+    assert (view.health, view.title, view.icon_name) == (Health.UNAVAILABLE, title, icon)
+    assert "/run/media/u/BACKUPS/delta" in view.subtitle
+    assert (view.action, view.action_label, view.action_enabled) == (Action.BACK_UP, "Check again", True)
+
+
+def test_a_place_that_is_full_points_to_the_preferences_and_not_to_a_cable():
+    view = build_status(snapshot(status="unavailable", repository="/x", reason="full"), NOW)
+
+    assert "Free some space" in view.subtitle and "preferences" in view.subtitle and "Connect" not in view.subtitle

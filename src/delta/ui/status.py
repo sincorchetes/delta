@@ -36,6 +36,7 @@ class DaemonSnapshot:
     repository: str = ""
     schedule: str = "hourly"
     next_backup: int = 0  # epoch seconds; 0 = unknown
+    reason: str = ""  # while the status is "unavailable": missing, empty, full, read-only or denied
 
 
 @dataclass(frozen=True)
@@ -101,6 +102,34 @@ def describe_schedule(expression: str) -> str:
     return _("on the schedule “{expression}”").format(expression=expression)
 
 
+def unavailable_view(snapshot: DaemonSnapshot) -> StatusView:
+    """The place of the backups cannot be used, and each cause says what to do about it (none of them is a failed backup)."""
+    where = snapshot.repository
+    if snapshot.reason == "other-drive":
+        title = _("Your backups are not on this drive")
+        subtitle = _("A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences.")
+        icon = "drive-harddisk-symbolic"
+    elif snapshot.reason == "full":
+        title = _("The place with your backups is full")
+        subtitle = _("There is no room left in {location}. Free some space, or choose another place in the preferences.")
+        icon = "drive-harddisk-symbolic"
+    elif snapshot.reason == "read-only":
+        title = _("The place with your backups is read-only")
+        subtitle = _("{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences.")
+        icon = "changes-prevent-symbolic"
+    elif snapshot.reason == "denied":
+        title = _("You cannot write where your backups are kept")
+        subtitle = _("You do not have permission to write in {location}. Change its permissions, or choose another place in the preferences.")
+        icon = "changes-prevent-symbolic"
+    else:
+        title = _("The drive with your backups is not connected")
+        subtitle = _("Connect it to {location}. The next backup runs by itself when it is back.")
+        icon = "drive-removable-media-symbolic"
+    return StatusView(
+        Health.UNAVAILABLE, title, subtitle.format(location=where), icon, Action.BACK_UP, _("Check again")
+    )
+
+
 def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
     schedule = describe_schedule(snapshot.schedule)
     back_up = (Action.BACK_UP, _("Back up now"))
@@ -139,16 +168,7 @@ def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
             action_enabled=False,
         )
     if snapshot.status == "unavailable":
-        return StatusView(
-            Health.UNAVAILABLE,
-            _("The drive with your backups is not connected"),
-            _("Connect it to {location}. The next backup runs by itself when it is back.").format(
-                location=snapshot.repository
-            ),
-            "drive-removable-media-symbolic",
-            Action.BACK_UP,
-            _("Check again"),
-        )
+        return unavailable_view(snapshot)
     if snapshot.last_error and is_lock_message(snapshot.last_error):
         return StatusView(
             Health.LOCKED,

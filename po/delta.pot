@@ -1359,3 +1359,66 @@ msgstr ""
 
 msgid "Delta will keep using the backups that are there."
 msgstr ""
+
+msgid "The place where your backups are kept is full: {location}"
+msgstr ""
+
+msgid "The place where your backups are kept is read-only: {location}"
+msgstr ""
+
+msgid "You cannot write in the place where your backups are kept: {location}"
+msgstr ""
+
+msgid "There is no room left there. Free some space, or choose another place in the preferences."
+msgstr ""
+
+msgid "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences."
+msgstr ""
+
+msgid "You do not have permission to write there. Change its permissions, or choose another place in the preferences."
+msgstr ""
+
+msgid "Backup place is full"
+msgstr ""
+
+msgid "Backup place is read-only"
+msgstr ""
+
+msgid "Cannot write where backups are kept"
+msgstr ""
+
+msgid "The place with your backups is full"
+msgstr ""
+
+msgid "There is no room left in {location}. Free some space, or choose another place in the preferences."
+msgstr ""
+
+msgid "The place with your backups is read-only"
+msgstr ""
+
+msgid "{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences."
+msgstr ""
+
+msgid "You cannot write where your backups are kept"
+msgstr ""
+
+msgid "You do not have permission to write in {location}. Change its permissions, or choose another place in the preferences."
+msgstr ""
+
+msgid "That place is read-only: nothing can be written to it. Choose another."
+msgstr ""
+
+msgid "You cannot write in that folder. Choose another, or change its permissions."
+msgstr ""
+
+msgid "A drive is connected where your backups were kept, but they are not on it: {location}"
+msgstr ""
+
+msgid "This is not the drive that holds your backups. Connect that one, or choose another place in the preferences."
+msgstr ""
+
+msgid "Your backups are not on this drive"
+msgstr ""
+
+msgid "A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences."
+msgstr ""

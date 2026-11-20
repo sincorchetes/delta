@@ -156,7 +156,7 @@ class Probe:
     def __init__(self, *states):
         self.states, self.asked = list(states), []
 
-    def state(self, repo):
+    def state(self, repo, out_of_space=False):
         self.asked.append(repo)
         return self.states.pop(0) if len(self.states) > 1 else self.states[0]
 

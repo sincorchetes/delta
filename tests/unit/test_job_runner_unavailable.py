@@ -108,3 +108,22 @@ def test_a_job_that_is_not_a_backup_leaves_the_state_alone(runner):
     finish(runner, done, records_backup=False)
 
     assert runner.status == "unavailable"
+
+
+@pytest.mark.parametrize("state", list(DestinationState)[1:])
+def test_the_reason_is_kept_for_the_window_to_say_it(runner, state):
+    def blocked(on_progress):
+        raise DestinationUnavailable("/media/disk/delta", state)
+
+    finish(runner, blocked)
+
+    assert (runner.status, runner.unavailable_reason) == ("unavailable", state.value)
+
+
+def test_the_reason_goes_with_the_state(runner):
+    finish(runner, away)
+    assert runner.unavailable_reason == "missing"
+
+    finish(runner, done)
+
+    assert runner.unavailable_reason == ""
