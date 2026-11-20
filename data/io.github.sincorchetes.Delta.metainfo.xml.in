@@ -60,6 +60,11 @@
   </supports>
 
   <releases>
+    <release version="0.1.3" date="2026-11-20">
+      <description>
+        <p>The daemon starts again on Fedora 43, Debian 13, Rocky Linux 10 and AlmaLinux 10. A drive that is not connected, is another one, is full or is read-only is told for what it is, and you can change where backups are kept.</p>
+      </description>
+    </release>
     <release version="0.1.2" date="2026-11-19">
       <description>
         <p>A backup folder inside the folders you back up is no longer copied into itself, and there is a module for NixOS.</p>

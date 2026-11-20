@@ -1,3 +1,11 @@
+delta-backup (0.1.3-1) unstable; urgency=medium
+
+  * The daemon starts on a GLib without GLibUnix.signal_add (it died at startup on Debian 13).
+  * A destination that cannot be used is told apart from a failed backup.
+  * Change where backups are kept from the preferences.
+
+ -- Álvaro Castillo <sincorchetes@gmail.com>  Fri, 20 Nov 2026 12:00:00 +0100
+
 delta-backup (0.1.2-1) unstable; urgency=medium
 
   * The backup repository is never copied into itself.

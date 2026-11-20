@@ -5,6 +5,8 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-20
+
 ### Added
 
 - **Change where backups are kept**, from Preferences → Destination → *Change…*. What is backed up and how long it is kept
@@ -103,6 +105,7 @@ The first release.
   and a Flatpak (the Delta window, with its own timer started through the Background portal).
 - **Documentation** at <https://delta.sincorchetes.tech>, in English and Spanish.
 
+[0.1.3]: https://github.com/sincorchetes/delta/releases/tag/v0.1.3
 [0.1.2]: https://github.com/sincorchetes/delta/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sincorchetes/delta/releases/tag/v0.1.1
 [0.1.0]: https://github.com/sincorchetes/delta/releases/tag/v0.1.0
