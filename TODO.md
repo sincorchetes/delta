@@ -48,14 +48,17 @@ the website builds and is deployed from `main`.
 - [x] **Distributions, the Nix job** builds the package, checks the flake and builds a minimal NixOS system with the module, as a
       flake module and imported by path with no flake, and checks its user units, its profile and the settings schema
       (`scripts/ci/check_nixos_module.sh`). It does not start the session: that needs a VM (`nixosTest`).
-- [ ] **GStreamer in the packages:** the RPM, the `.deb` and the PKGBUILD do not declare the GStreamer plugins that the preview of
-      a video or audio needs (only the Nix package lists them), and without them GTK aborts the process. Declare them as
-      recommended (`Recommends:`, `optdepends`) once the names are checked in each distribution.
+- [x] **GStreamer in the packages:** the RPM, the `.deb` and the PKGBUILD recommend the base and good plugins that the preview of a
+      video or audio needs (the Nix package already listed them). The Fedora, Debian and Ubuntu names were tried by the
+      workflow; the openSUSE and Arch ones are the usual names, not tried.
+- [ ] **GStreamer, when it is missing:** a recommendation can be skipped, and then GTK ends the whole program when the preview of
+      a video is made, which Python cannot catch. A check before the player is made (is `playbin3` there?) would turn that into
+      the fallback that already exists for a codec that is missing.
 - [ ] **GTK 4.16** (Rocky and AlmaLinux 10) measures the `FlowBox` of the rows of buttons as one button wide, so two tests of how
       the row wraps are skipped before GTK 4.18; look at how it behaves in a real window with a long translation.
-- [ ] **The widget tests print 52 GTK and libadwaita criticals** on every distribution (windows created before the application
-      starts up, a widget added twice to a `PreferencesGroup`): the output was hidden until the workflow stopped capturing it. Some
-      may point at a real mistake.
+- [x] **The widget tests printed 52 GTK and libadwaita criticals** on every distribution: 51 were windows given to an application
+      that had not started up, and one a test that laid a page out twice. Neither was a fault of the application; both are fixed,
+      and the workflow now prints none.
 - [ ] The two issue forms show up under *Issues → New issue*.
 
 ## 4. Release channels

@@ -4,8 +4,8 @@ import time
 from types import SimpleNamespace
 
 import pytest
-from gtk_helpers import of_type
-from gi.repository import Adw, GLib, Gtk
+from gtk_helpers import of_type, started_application
+from gi.repository import GLib, Gtk
 
 from delta.ui import application as application_module
 from delta.ui import window as window_module
@@ -45,7 +45,7 @@ def fresh_recorder():
 
 @pytest.fixture
 def app():
-    return Adw.Application(application_id="io.github.sincorchetes.DeltaTests")
+    return started_application("DeltaTests")
 
 
 def open_window(app, client, settings=None, with_settings=True):
