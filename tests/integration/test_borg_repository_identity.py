@@ -115,4 +115,6 @@ def test_an_older_copy_of_the_same_repository_is_not_written_in_either(world):
     job = run(backup)
 
     assert job.state is not JobState.SUCCEEDED
-    assert len(runner.list_snapshots(repo)) in (0, 1)  # whatever it says, nothing was added to the old copy
+    # looked at with a Borg that remembers nothing of the repository: the old copy still has its one backup
+    fresh = BorgRunner(env={"BORG_PASSPHRASE": "x", "BORG_BASE_DIR": str(tmp_path / "another-borg-home")})
+    assert len(fresh.list_snapshots(repo)) == 1
