@@ -63,7 +63,8 @@ Long operations return a `job_id` at once and end with a signal. **There is only
   backup, which runs by itself when the drive is mounted again (and at the next hourly try otherwise). A backup that is
   `running` is `running` whatever the previous one found.
 - `UnavailableReason` s: why, while `Status` is `unavailable`; else empty. `missing` (the folder is not there: a drive that is
-  not connected), `empty` (the mount point of a drive that is not mounted), `full` (less than 1 MiB free, or the engine said a disk
+  not connected), `empty` (the mount point of a drive that is not mounted), `other-drive` (a drive is mounted where the backups
+  were kept, and they are not on it: another disk, or a wiped one), `full` (less than 1 MiB free, or the engine said a disk
   had no room and the destination has less than 256 MiB), `read-only` (mounted so that nothing can be written) or `denied` (no
   permission to write in it).
 - `LastBackup` t: the epoch of the last successful backup (0 = none). When the daemon starts, it takes it from the most recent

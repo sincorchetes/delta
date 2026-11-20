@@ -105,7 +105,11 @@ def describe_schedule(expression: str) -> str:
 def unavailable_view(snapshot: DaemonSnapshot) -> StatusView:
     """The place of the backups cannot be used, and each cause says what to do about it (none of them is a failed backup)."""
     where = snapshot.repository
-    if snapshot.reason == "full":
+    if snapshot.reason == "other-drive":
+        title = _("Your backups are not on this drive")
+        subtitle = _("A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences.")
+        icon = "drive-harddisk-symbolic"
+    elif snapshot.reason == "full":
         title = _("The place with your backups is full")
         subtitle = _("There is no room left in {location}. Free some space, or choose another place in the preferences.")
         icon = "drive-harddisk-symbolic"

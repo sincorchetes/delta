@@ -15,6 +15,7 @@ REMINDER_AFTER = 7 * 24 * 3600  # a place that stays unusable is told once, and 
 DESTINATION_KINDS = {
     DestinationState.MISSING: NotificationKind.DESTINATION_UNAVAILABLE,
     DestinationState.EMPTY: NotificationKind.DESTINATION_UNAVAILABLE,
+    DestinationState.OTHER_DRIVE: NotificationKind.DESTINATION_OTHER_DRIVE,
     DestinationState.FULL: NotificationKind.DESTINATION_FULL,
     DestinationState.READ_ONLY: NotificationKind.DESTINATION_READ_ONLY,
     DestinationState.DENIED: NotificationKind.DESTINATION_DENIED,

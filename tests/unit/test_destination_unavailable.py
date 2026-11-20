@@ -194,12 +194,14 @@ def test_with_no_repository_that_is_what_is_said_and_the_destination_is_not_aske
 # --- the other causes: full, read-only, no permission ---------------------------------------------------
 
 FULL, READ_ONLY, DENIED = DestinationState.FULL, DestinationState.READ_ONLY, DestinationState.DENIED
+OTHER_DRIVE = DestinationState.OTHER_DRIVE
 NO_ROOM = "/h/test.flac: read: [Errno 28] No space left on device"
 
 
 @pytest.mark.parametrize(
     "state, message",
     [
+        (OTHER_DRIVE, "A drive is connected where your backups were kept, but they are not on it: /media/disk/delta"),
         (FULL, "The place where your backups are kept is full: /media/disk/delta"),
         (READ_ONLY, "The place where your backups are kept is read-only: /media/disk/delta"),
         (DENIED, "You cannot write in the place where your backups are kept: /media/disk/delta"),
@@ -214,6 +216,10 @@ def test_each_cause_says_what_is_wrong_with_the_place(state, message):
 @pytest.mark.parametrize(
     "state, hint",
     [
+        (
+            OTHER_DRIVE,
+            "This is not the drive that holds your backups. Connect that one, or choose another place in the preferences.",
+        ),
         (FULL, "There is no room left there. Free some space, or choose another place in the preferences."),
         (
             READ_ONLY,

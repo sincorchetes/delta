@@ -157,3 +157,16 @@ def test_a_read_only_place_is_seen_by_the_wizard_before_anything_is_made_there(t
     monkeypatch.setattr("delta.ui.disk.unwritable", lambda path: PathState.READ_ONLY)
 
     assert inspect_path(str(tmp_path / "delta")) is PathState.READ_ONLY
+
+
+def test_what_a_file_system_puts_in_an_empty_drive_does_not_make_it_not_empty(tmp_path):
+    (tmp_path / "lost+found").mkdir()
+
+    assert inspect_path(str(tmp_path)) is PathState.EMPTY_DIR
+
+
+def test_but_anything_next_to_it_does(tmp_path):
+    (tmp_path / "lost+found").mkdir()
+    (tmp_path / "holiday.jpg").write_text("x")
+
+    assert inspect_path(str(tmp_path)) is PathState.NOT_EMPTY

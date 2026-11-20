@@ -250,6 +250,7 @@ def test_without_a_repository_it_is_not_a_drive_that_is_missing():
 @pytest.mark.parametrize(
     "reason, title, icon",
     [
+        ("other-drive", "Your backups are not on this drive", "drive-harddisk-symbolic"),
         ("full", "The place with your backups is full", "drive-harddisk-symbolic"),
         ("read-only", "The place with your backups is read-only", "changes-prevent-symbolic"),
         ("denied", "You cannot write where your backups are kept", "changes-prevent-symbolic"),

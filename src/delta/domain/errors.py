@@ -45,6 +45,8 @@ class DestinationUnavailable(DeltaError):
         super().__init__(self._message().format(location=location))
 
     def _message(self) -> str:
+        if self.state is DestinationState.OTHER_DRIVE:
+            return _("A drive is connected where your backups were kept, but they are not on it: {location}")
         if self.state is DestinationState.FULL:
             return _("The place where your backups are kept is full: {location}")
         if self.state is DestinationState.READ_ONLY:
@@ -56,6 +58,8 @@ class DestinationUnavailable(DeltaError):
     @property
     def hint(self) -> str:
         """What to do about it, in a sentence."""
+        if self.state is DestinationState.OTHER_DRIVE:
+            return _("This is not the drive that holds your backups. Connect that one, or choose another place in the preferences.")
         if self.state is DestinationState.FULL:
             return _("There is no room left there. Free some space, or choose another place in the preferences.")
         if self.state is DestinationState.READ_ONLY:

@@ -129,3 +129,43 @@ def test_a_place_whose_file_system_cannot_be_asked_is_judged_by_what_can_be_writ
 
     assert probed(tmp_path, statvfs=fail) is DestinationState.AVAILABLE
     assert probed(tmp_path, statvfs=fail, access=False) is DestinationState.DENIED
+
+
+# --- another drive in the place of the one with the backups --------------------------------------------
+
+
+def test_a_drive_is_connected_where_the_folder_is_not_there_it_is_another_drive(tmp_path):
+    destination = LocalDestination(is_mount=lambda path: path == "/run/media/u/DISK")
+
+    assert destination.state(Repository("/run/media/u/DISK/delta")) is DestinationState.OTHER_DRIVE
+
+
+def test_with_the_drive_not_mounted_the_folder_is_just_not_there():
+    destination = LocalDestination(is_mount=lambda path: False)
+
+    assert destination.state(Repository("/run/media/u/DISK/delta")) is DestinationState.MISSING
+
+
+def test_a_folder_that_is_empty_on_a_drive_that_is_mounted_is_another_drive_too(tmp_path, monkeypatch):
+    monkeypatch.setattr(local_destination, "drive_mounted", lambda location, is_mount: True)
+
+    assert state(tmp_path) is DestinationState.OTHER_DRIVE
+
+
+def test_a_folder_that_is_empty_where_no_drive_is_mounted_is_empty(tmp_path, monkeypatch):
+    monkeypatch.setattr(local_destination, "drive_mounted", lambda location, is_mount: False)
+
+    assert state(tmp_path) is DestinationState.EMPTY
+
+
+def test_what_a_file_system_puts_in_an_empty_drive_does_not_make_it_hold_anything(tmp_path):
+    (tmp_path / "lost+found").mkdir()
+
+    assert state(tmp_path) is DestinationState.EMPTY
+
+
+def test_but_anything_else_next_to_it_does(tmp_path):
+    (tmp_path / "lost+found").mkdir()
+    (tmp_path / "config").write_text("[repository]")
+
+    assert state(tmp_path) is DestinationState.AVAILABLE

@@ -1466,3 +1466,15 @@ msgstr "Ese sitio es de solo lectura: no se puede escribir en él. Elige otro."
 
 msgid "You cannot write in that folder. Choose another, or change its permissions."
 msgstr "No puedes escribir en esa carpeta. Elige otra o cambia sus permisos."
+
+msgid "A drive is connected where your backups were kept, but they are not on it: {location}"
+msgstr "Hay un disco conectado donde estaban tus copias, pero no están en él: {location}"
+
+msgid "This is not the drive that holds your backups. Connect that one, or choose another place in the preferences."
+msgstr "Este no es el disco que tiene tus copias. Conecta ese, o elige otro sitio en las preferencias."
+
+msgid "Your backups are not on this drive"
+msgstr "Tus copias no están en este disco"
+
+msgid "A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences."
+msgstr "Hay un disco conectado en {location}, pero no tiene tus copias. Conecta el que las tiene, o elige otro sitio en las preferencias."
