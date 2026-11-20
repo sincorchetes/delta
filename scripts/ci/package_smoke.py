@@ -3,7 +3,10 @@
 
 Not the source tree and not the test suite: the installed daemon (`/usr/libexec/delta-daemon`), with its own keyring, session
 bus, HOME and settings (see scripts/smoke_session.py, whose session it reuses), asked over D-Bus to make a repository, back up
-a few files, list them and restore one as a copy. Usage: python3 scripts/ci/package_smoke.py [PREFIX]   (default /usr)
+a few files, list them and restore one as a copy.
+
+    python3 scripts/ci/package_smoke.py [PREFIX]   the package installed under PREFIX (default /usr)
+    python3 scripts/ci/package_smoke.py --source   what `meson install` puts in a prefix of its own, from this source tree
 """
 
 import shutil
@@ -52,9 +55,11 @@ def restore(session, home: Path) -> bool:
 
 
 def main() -> int:
-    prefix = Path(sys.argv[1] if len(sys.argv) > 1 else "/usr")
+    arguments = sys.argv[1:]
+    from_source = "--source" in arguments
+    prefix = Path(next((argument for argument in arguments if argument != "--source"), "/usr"))
     work = Path(tempfile.mkdtemp(prefix="delta-package-smoke-"))
-    session = smoke.Session(work, 0, prefix)
+    session = smoke.Session(work, 0, None if from_source else prefix)
     bus = Gio.TestDBus.new(Gio.TestDBusFlags.NONE)
     bus.up()
     keyring = daemon = None
