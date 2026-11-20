@@ -130,11 +130,30 @@ def test_a_backup_with_warnings_also_ends_the_absence():
     assert [n.kind for n in recorder.sent].count(NotificationKind.DESTINATION_UNAVAILABLE) == 2
 
 
-def test_a_drive_lost_during_a_backup_always_replaces_the_one_in_progress_and_counts_as_told():
+def test_a_drive_lost_during_a_backup_counts_as_told_so_the_next_try_does_not_tell_again():
     notes, recorder, _clock = absent_notes()
-    notes.destination_unavailable(missing())
 
     notes.destination_lost(missing())
     notes.destination_unavailable(missing())
 
+    assert len(recorder.sent) == 1
+
+
+def test_a_drive_lost_during_a_backup_is_always_told_even_when_it_was_told_before():
+    notes, recorder, _clock = absent_notes()
+    notes.destination_unavailable(missing())
+
+    notes.destination_lost(missing())
+
     assert len(recorder.sent) == 2
+
+
+def test_what_is_told_of_a_drive_is_its_kind_and_what_to_do():
+    error = missing()
+    notes, recorder, _clock = absent_notes()
+
+    notes.destination_unavailable(error)
+    notes.destination_lost(error)
+
+    expected = Notification(NotificationKind.DESTINATION_UNAVAILABLE, error.hint)
+    assert recorder.sent == [expected, expected]

@@ -268,7 +268,8 @@ def test_a_folder_that_holds_a_repository_is_a_place_to_reopen_not_a_folder_that
 def test_a_place_on_a_drive_that_is_not_connected_is_not_a_place_to_make_folders():
     location, error = check_destination("/run/media/u/DISK/delta", HOME, lambda path: PathState.UNMOUNTED)
 
-    assert location is None and "not connected" in error
+    assert location is None
+    assert error == "That place is on a drive that is not connected. Connect it first."
 
 
 def test_reopening_a_repository_skips_the_recovery_key_and_says_what_protects_it():

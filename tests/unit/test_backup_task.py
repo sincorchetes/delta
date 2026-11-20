@@ -154,9 +154,10 @@ class Journal:
 
 class Probe:
     def __init__(self, *states):
-        self.states = list(states)
+        self.states, self.asked = list(states), []
 
     def state(self, repo):
+        self.asked.append(repo)
         return self.states.pop(0) if len(self.states) > 1 else self.states[0]
 
 
@@ -238,3 +239,18 @@ def test_a_drive_that_is_not_there_waits_without_notifications_too():
         task(lambda event: None)
 
     assert job.state is JobState.UNAVAILABLE
+
+
+def test_the_probe_is_asked_about_the_repository_of_the_backup_and_the_error_says_where_it_is():
+    probe = Probe(DestinationState.EMPTY)
+    backup = BackupService(FakeEngine(), Repository("/media/disk/delta"), ("/home",), destination=probe)
+
+    error = backup.unreachable()
+
+    assert probe.asked == [Repository("/media/disk/delta")]
+    assert (error.location, error.state) == ("/media/disk/delta", DestinationState.EMPTY)
+
+
+def test_with_nothing_to_probe_with_or_no_repository_nothing_is_unreachable():
+    assert BackupService(FakeEngine(), Repository("/r"), ("/home",)).unreachable() is None
+    assert BackupService(FakeEngine(), None, ("/home",), destination=Probe(DestinationState.MISSING)).unreachable() is None
