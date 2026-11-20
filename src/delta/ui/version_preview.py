@@ -16,6 +16,7 @@ from delta.i18n import _
 from delta.ui.client import DeltaClient
 from delta.ui.id3 import copy_without_id3v2
 from delta.ui.job_tracker import JobTracker
+from delta.ui.media_probe import SHARED, MediaProbe
 from delta.ui.preview_kind import Kind, icon_for, kind_of, needs_confirmation, needs_untagged_copy
 from delta.ui.preview_pane import PreviewPane
 from delta.ui.status import summarise
@@ -47,11 +48,13 @@ class VersionPreviewer:
         on_change: Callable[[], None],
         toast: Callable[[str], None],
         scratch_root: str | None = None,
+        media: MediaProbe | None = None,
     ) -> None:
         self._client, self._tracker = client, tracker
         self._pane, self._window = pane, window
         self._current, self._on_change, self._toast = current, on_change, toast
         self._scratch_root = scratch_root
+        self._media = media or SHARED
         self._scratch: str | None = None  # copies made for the player; removed on close()
         self._unpacked: dict[tuple[str, str], str] = {}  # (snapshot, path) -> where it was unpacked
         self._confirmed: set[tuple[str, str]] = set()  # big ones the user agreed to unpack
@@ -155,13 +158,19 @@ class VersionPreviewer:
         if kind is Kind.TEXT and self._pane.show_text(path):
             return
         if kind in (Kind.VIDEO, Kind.AUDIO):
-            playable = self._playable(target, path)
-            if playable is None:
-                self._offer_to_open(target)
-            else:
-                self._pane.show_media(playable, lambda: self._media_failed(target))
+            self._media.check(lambda supported: self._play(target, path, supported))
             return
         self._offer_to_open(target)
+
+    def _play(self, target: Target, path: str, supported: bool) -> None:
+        """Called when it is known whether the player can be made here; without it the file goes to its own application."""
+        if self._current() != target:
+            return  # another version was chosen while that was being found out
+        playable = self._playable(target, path) if supported else None
+        if playable is None:
+            self._offer_to_open(target)
+        else:
+            self._pane.show_media(playable, lambda: self._media_failed(target))
 
     def _playable(self, target: Target, path: str) -> str | None:
         """What to hand the player: the file itself, or for an mp3 a copy without its ID3 tag.
