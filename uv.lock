@@ -162,6 +162,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-dbusmock" },
+    { name = "pyyaml" },
 ]
 
 [package.metadata]
@@ -174,6 +175,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8" },
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=5" },
     { name = "python-dbusmock", marker = "extra == 'dev'", specifier = ">=0.32" },
+    { name = "pyyaml", marker = "extra == 'dev'", specifier = ">=6" },
 ]
 provides-extras = ["dev"]
 
