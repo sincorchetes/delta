@@ -6,13 +6,13 @@
 #     KIND               fedora | el (Rocky, AlmaLinux) | suse | deb (Debian, Ubuntu)
 #     OBS_DIRECTORY      the name of the repository: Fedora_44, RockyLinux_10, openSUSE_Tumbleweed, Debian_13, xUbuntu_26.04...
 #     EXPECTED_VERSION   after a release: keep trying until the repository has this version (OBS builds it after the tag),
-#                        for up to WAIT_MINUTES (default 90). Without it, whatever the repository has.
+#                        for up to WAIT_MINUTES (default 180). Without it, whatever the repository has.
 set -eu
 
 kind=${1:?usage: package_smoke.sh KIND OBS_DIRECTORY [EXPECTED_VERSION]}
 directory=${2:?usage: package_smoke.sh KIND OBS_DIRECTORY [EXPECTED_VERSION]}
 expected=${3:-}
-wait_minutes=${WAIT_MINUTES:-90}
+wait_minutes=${WAIT_MINUTES:-180}
 base=https://download.opensuse.org/repositories/home:/sincorchetes:/delta/$directory
 
 installed_version() {
