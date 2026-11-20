@@ -34,7 +34,7 @@ The first release.
 def notes(version: str, tmp_path: Path, text: str = CHANGELOG) -> subprocess.CompletedProcess:
     changelog = tmp_path / "CHANGELOG.md"
     changelog.write_text(text, encoding="utf-8")
-    return subprocess.run(["sh", str(SCRIPT), version, str(changelog)], capture_output=True, text=True)
+    return subprocess.run(["sh", str(SCRIPT), version, str(changelog)], capture_output=True, encoding="utf-8")
 
 
 def test_the_notes_are_the_section_of_the_version_without_its_heading(tmp_path):
@@ -62,6 +62,6 @@ def test_the_version_of_the_build_has_notes_in_the_real_changelog():
     found = re.search(r"^\s+version: '([^']+)',", (ROOT / "meson.build").read_text(encoding="utf-8"), re.M)
     assert found is not None
     changelog = ROOT / "CHANGELOG.md"
-    done = subprocess.run(["sh", str(SCRIPT), found.group(1), str(changelog)], capture_output=True, text=True)
+    done = subprocess.run(["sh", str(SCRIPT), found.group(1), str(changelog)], capture_output=True, encoding="utf-8")
 
     assert done.returncode == 0 and done.stdout.strip() and "## [" not in done.stdout
