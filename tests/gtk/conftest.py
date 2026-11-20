@@ -24,28 +24,16 @@ def display():
     Adw.init()
 
 
-CRITICALS: list[str] = []
-# The log domains of the libraries that are run: GLib keeps a handler for each domain, and none for "all of them".
-DOMAINS = (None, "GLib", "GLib-GObject", "GLib-GIO", "Gdk", "Gsk", "Gtk", "Adwaita", "Pango", "GdkPixbuf", "Graphene")
-
-
-def _remember_critical(domain, _level, message, _data) -> None:
-    CRITICALS.append(f"{domain}: {message}")
-
-
-@pytest.fixture(scope="session", autouse=True)
-def watch_criticals():
-    for domain in DOMAINS:
-        GLib.log_set_handler(domain, GLib.LogLevelFlags.LEVEL_CRITICAL, _remember_critical, None)
-
-
 @pytest.fixture(autouse=True)
-def no_glib_criticals(watch_criticals):
-    """The criticals of this test, as a list; the test fails at its end if any is left in it."""
-    CRITICALS.clear()
-    yield CRITICALS
-    found = list(CRITICALS)
-    CRITICALS.clear()
+def no_glib_criticals(capfd):
+    """A test fails if GLib, GTK or libadwaita printed a CRITICAL while it ran.
+
+    GTK reports them with GLib's structured logging, which `GLib.log_set_handler` does not see and PyGObject cannot
+    intercept, so what is looked at is what GLib writes to the standard error (to the file descriptor, as C writes it).
+    A test that provokes one on purpose reads it with `capfd.readouterr()`, which takes it out of what is checked here.
+    """
+    yield
+    found = [line for line in capfd.readouterr().err.splitlines() if "-CRITICAL **" in line]
     assert not found, "GLib criticals during the test:\n" + "\n".join(found)
 
 
