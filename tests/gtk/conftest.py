@@ -25,18 +25,18 @@ def display():
 
 
 CRITICALS: list[str] = []
+# The log domains of the libraries that are run: GLib keeps a handler for each domain, and none for "all of them".
+DOMAINS = (None, "GLib", "GLib-GObject", "GLib-GIO", "Gdk", "Gsk", "Gtk", "Adwaita", "Pango", "GdkPixbuf", "Graphene")
 
 
-def _remember_criticals(domain, level, message, _data) -> None:
-    if level & GLib.LogLevelFlags.LEVEL_CRITICAL:
-        CRITICALS.append(f"{domain}: {message}")
-    else:
-        GLib.log_default_handler(domain, level, message, None)
+def _remember_critical(domain, _level, message, _data) -> None:
+    CRITICALS.append(f"{domain}: {message}")
 
 
 @pytest.fixture(scope="session", autouse=True)
 def watch_criticals():
-    GLib.log_set_default_handler(_remember_criticals, None)
+    for domain in DOMAINS:
+        GLib.log_set_handler(domain, GLib.LogLevelFlags.LEVEL_CRITICAL, _remember_critical, None)
 
 
 @pytest.fixture(autouse=True)
