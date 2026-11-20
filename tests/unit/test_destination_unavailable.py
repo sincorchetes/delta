@@ -198,37 +198,48 @@ NO_ROOM = "/h/test.flac: read: [Errno 28] No space left on device"
 
 
 @pytest.mark.parametrize(
-    "state, words",
+    "state, message",
     [
-        (FULL, "is full"),
-        (READ_ONLY, "is read-only"),
-        (DENIED, "You cannot write"),
-        (MISSING, "is not available"),
-        (EMPTY, "is not available"),
+        (FULL, "The place where your backups are kept is full: /media/disk/delta"),
+        (READ_ONLY, "The place where your backups are kept is read-only: /media/disk/delta"),
+        (DENIED, "You cannot write in the place where your backups are kept: /media/disk/delta"),
+        (MISSING, "The place where your backups are kept is not available: /media/disk/delta"),
+        (EMPTY, "The place where your backups are kept is not available: /media/disk/delta"),
     ],
 )
-def test_each_cause_says_what_is_wrong_with_the_place(state, words):
-    error = DestinationUnavailable("/media/disk/delta", state)
-
-    assert words in str(error) and "/media/disk/delta" in str(error)
+def test_each_cause_says_what_is_wrong_with_the_place(state, message):
+    assert str(DestinationUnavailable("/media/disk/delta", state)) == message
 
 
-def test_each_cause_has_a_hint_of_its_own_and_none_is_the_hint_of_another():
-    hints = {state: DestinationUnavailable("/x", state).hint for state in (MISSING, EMPTY, FULL, READ_ONLY, DENIED)}
-
-    assert len(set(hints.values())) == 5
-    assert "room" in hints[FULL]
-    assert "written" in hints[READ_ONLY]
-    assert "permission" in hints[DENIED]
+@pytest.mark.parametrize(
+    "state, hint",
+    [
+        (FULL, "There is no room left there. Free some space, or choose another place in the preferences."),
+        (
+            READ_ONLY,
+            "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences.",
+        ),
+        (
+            DENIED,
+            "You do not have permission to write there. Change its permissions, or choose another place in the preferences.",
+        ),
+        (EMPTY, "The folder is empty. Connect the drive that was there."),
+        (MISSING, "The folder is not there. Connect the drive that holds your backups."),
+    ],
+)
+def test_each_cause_has_a_hint_of_its_own(state, hint):
+    assert DestinationUnavailable("/x", state).hint == hint
 
 
 @pytest.mark.parametrize(
     "text, is_full",
     [
         (NO_ROOM, True),
-        ("OSError: [Errno 28] no space left on device", True),
+        ("No space left on device", True),  # each of the four ways of saying it, alone
+        ("[Errno 28] something", True),
         ("Disk quota exceeded", True),
         ("[Errno 122] something", True),
+        ("NO SPACE LEFT", True),
         ("Input/output error", False),
         ("Repository /x does not exist.", False),
         ("", False),

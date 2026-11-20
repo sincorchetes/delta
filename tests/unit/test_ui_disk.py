@@ -104,6 +104,15 @@ def test_the_real_check_asks_the_system_and_a_path_under_the_media_roots_that_is
     assert is_unmounted("/media/delta-test-nobody-mounts-this") and inspect_path("/media/delta-test-nobody-mounts-this") is PathState.UNMOUNTED
 
 
+def test_a_folder_that_is_writable_but_cannot_be_listed_is_never_offered(tmp_path, monkeypatch):
+    def refuse(path):
+        raise PermissionError(13, "Permission denied", path)
+
+    monkeypatch.setattr("delta.ui.disk.os.scandir", refuse)
+
+    assert inspect_path(str(tmp_path)) is PathState.NOT_EMPTY
+
+
 class Usage:
     def __init__(self, flag):
         self.f_flag = flag
