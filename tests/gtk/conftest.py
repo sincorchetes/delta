@@ -1,7 +1,9 @@
 """Widget tests: real GTK objects on whatever display the session has, built and driven but never shown.
 
 They are skipped when GTK finds no display. Windows and dialogs are not presented and file choosers
-are replaced, so nothing flashes on the desktop of whoever runs the tests.
+are replaced, so nothing flashes on the desktop of whoever runs the tests. A GLib, GTK or libadwaita CRITICAL during a test
+fails it: it is a mistake of ours (a widget added twice, a window made before its application starts), and until it
+was a failure it only showed up as noise in a log.
 """
 
 import time
@@ -20,6 +22,19 @@ def display():
     if not Gtk.init_check():
         pytest.skip("GTK found no display")
     Adw.init()
+
+
+@pytest.fixture(autouse=True)
+def no_glib_criticals(capfd):
+    """A test fails if GLib, GTK or libadwaita printed a CRITICAL while it ran.
+
+    GTK reports them with GLib's structured logging, which `GLib.log_set_handler` does not see and PyGObject cannot
+    intercept, so what is looked at is what GLib writes to the standard error (to the file descriptor, as C writes it).
+    A test that provokes one on purpose reads it with `capfd.readouterr()`, which takes it out of what is checked here.
+    """
+    yield
+    found = [line for line in capfd.readouterr().err.splitlines() if "-CRITICAL **" in line]
+    assert not found, "GLib criticals during the test:\n" + "\n".join(found)
 
 
 @pytest.fixture(autouse=True)
