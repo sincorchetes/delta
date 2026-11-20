@@ -41,7 +41,7 @@
 
   languages.python = {
     enable = true;
-    package = pkgs.python313; # same interpreter as the Nix package (nix/package.nix)
+    package = pkgs.python313;
     uv.enable = true;
     poetry = {
       enable = true;

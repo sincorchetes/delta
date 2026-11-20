@@ -67,3 +67,12 @@ def test_what_a_session_finds_through_the_system_profile_is_in_the_nixos_module(
     assert "services.dbus.packages = [ cfg.package ];" in NIXOS
     assert "pkgs.nautilus-python" in NIXOS
     assert "gsettings-schemas/${cfg.package.name}" in NIXOS
+
+
+def test_the_nix_package_uses_the_python_of_the_nixpkgs_it_is_built_with_and_not_the_pins_of_the_lock():
+    # Like every other distribution: its channel's interpreter and its PyGObject, with no version or hash of ours.
+    python = (ROOT / "nix" / "python.nix").read_text(encoding="utf-8")
+
+    assert "pygobject3" in python
+    for pinned in ("fetchurl", "overridePythonAttrs", "packageOverrides", "pythonhosted", "sha256", "python313"):
+        assert pinned not in python.replace("The pins of uv.lock", ""), pinned

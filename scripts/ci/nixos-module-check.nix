@@ -3,12 +3,14 @@
 #   withFlake = true   the flake of this repository, as `delta.nixosModules.default`;
 #   withFlake = false  the file imported by path from a plain configuration.nix, with no flake.
 #
-#   nix build --impure --expr 'import ./scripts/ci/nixos-module-check.nix { withFlake = true; }'
-{ withFlake }:
+# `channel` is the branch of nixpkgs to build with (null: the one the flake locks).
+#
+#   nix build --impure --expr 'import ./scripts/ci/nixos-module-check.nix { withFlake = true; channel = "nixos-26.05"; }'
+{ withFlake, channel ? null }:
 
 let
   flake = builtins.getFlake (toString ../..);
-  nixpkgs = flake.inputs.nixpkgs;
+  nixpkgs = if channel == null then flake.inputs.nixpkgs else builtins.getFlake "github:NixOS/nixpkgs/${channel}";
   system = "x86_64-linux";
 
   host = { ... }: {

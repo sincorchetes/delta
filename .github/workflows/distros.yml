@@ -91,25 +91,29 @@ jobs:
   # The flake builds Delta with the libraries of nixpkgs, the "system" libraries of Nix, and its NixOS module gives a system
   # what a session needs to find (scripts/ci/nixos-module-check.nix builds a minimal one, and check_nixos_module.sh looks at it).
   nix:
-    name: Nix (flake)
+    name: Nix (${{ matrix.channel }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        channel: [nixos-unstable, nixos-26.05]
     steps:
       - uses: actions/checkout@v7
 
       - uses: cachix/install-nix-action@3dc140bfc76c49fbd4dd958429132e3746bcb086 # v31
 
       - name: Build the package
-        run: nix build --print-build-logs
+        run: nix build --print-build-logs --override-input nixpkgs github:NixOS/nixpkgs/${{ matrix.channel }}
 
       - name: Check the flake
-        run: nix flake check --print-build-logs
+        run: nix flake check --print-build-logs --override-input nixpkgs github:NixOS/nixpkgs/${{ matrix.channel }}
 
       - name: The NixOS module, as a flake module
         run: |
-          result=$(nix build --no-link --print-out-paths --impure --expr 'import ./scripts/ci/nixos-module-check.nix { withFlake = true; }')
+          result=$(nix build --no-link --print-out-paths --impure --expr 'import ./scripts/ci/nixos-module-check.nix { withFlake = true; channel = "${{ matrix.channel }}"; }')
           sh scripts/ci/check_nixos_module.sh "$result"
 
       - name: The NixOS module, imported by path from a configuration.nix with no flake
         run: |
-          result=$(nix build --no-link --print-out-paths --impure --expr 'import ./scripts/ci/nixos-module-check.nix { withFlake = false; }')
+          result=$(nix build --no-link --print-out-paths --impure --expr 'import ./scripts/ci/nixos-module-check.nix { withFlake = false; channel = "${{ matrix.channel }}"; }')
           sh scripts/ci/check_nixos_module.sh "$result"
