@@ -5,6 +5,26 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Change where backups are kept**, from Preferences → Destination → *Change…*. What is backed up and how long it is kept
+  stay as they are, and the backups already made are left where they were: the password of each repository stays in your
+  keyring, so going back to it needs nothing.
+
+### Changed
+
+- **A folder that already holds your backups is reopened, not refused.** If you set Delta up again (the settings were
+  deleted, a new computer) and choose the folder of an existing repository, the wizard asks for its passphrase and keeps
+  using it instead of saying «That folder is not empty». It also says when the place is on a drive that is not connected,
+  rather than creating the folders on the disk of the computer.
+
+- **A drive with your backups that is not connected is no longer a failed backup.** It has its own state, error and messages:
+  the window says «The drive with your backups is not connected» and where it has to be, in your language and not with Borg's
+  text, and nothing is started or announced for a drive that is not there. The place counts as unreachable when its folder is not
+  there or is empty (the mount point of a drive that is not mounted). A folder that is there but holds no repository is still a
+  different error. You are told once, not at every hourly try, and reminded after a week; a good
+  backup starts the count again. When you connect the drive, the backup that was waiting for it is made at once.
+
 ### Fixed
 
 - **A system without GStreamer no longer closes Delta when a video or audio is previewed.** The preview plays through

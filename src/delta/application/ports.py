@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Protocol
 
 from delta.domain.backup_job import BackupJob
+from delta.domain.destination import DestinationState
 from delta.domain.file_version import FileEntry, FolderEntry
 from delta.domain.notification import Notification
 from delta.domain.progress import ProgressEvent
@@ -62,6 +63,12 @@ class SnapshotMounter(Protocol):
         ...
 
 
+class DestinationProbe(Protocol):
+    """Tells whether the place where the repository lives can be reached (a drive that is connected, a folder that is there)."""
+
+    def state(self, repo: Repository) -> DestinationState: ...
+
+
 class MountUsage(Protocol):
     """Tells which programs are still using an open snapshot folder."""
 
@@ -80,6 +87,12 @@ class SessionEvents(Protocol):
         ...
 
     def release(self) -> None: ...
+
+
+class MountEvents(Protocol):
+    """Tells when a drive or a folder gets mounted."""
+
+    def watch(self, callback: Callable[[], None]) -> None: ...
 
 
 class SnapshotSource(Protocol):

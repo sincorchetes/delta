@@ -9,6 +9,7 @@ from gi.repository import Adw, GLib, Gtk
 from delta.i18n import _
 from delta.ui.a11y import named
 from delta.ui.path_list import PathListGroup
+from delta.ui.wizard_window import SetupWizard
 from delta.ui.preferences import (
     ComboModel,
     exclusion_problem,
@@ -30,9 +31,9 @@ def _combo(title: str, model: ComboModel) -> Adw.ComboRow:
 
 
 class PreferencesDialog(Adw.PreferencesDialog):
-    def __init__(self, settings, home: str, parent) -> None:
+    def __init__(self, settings, home: str, parent, client=None) -> None:
         super().__init__(title=_("Preferences"), content_width=620, content_height=760)
-        self._settings, self._home, self._parent = settings, home, parent
+        self._settings, self._home, self._parent, self._client = settings, home, parent, client
         page = Adw.PreferencesPage()
         page.add(self._destination_group())
         page.add(self._schedule_group())
@@ -46,13 +47,25 @@ class PreferencesDialog(Adw.PreferencesDialog):
     def _destination_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup(title=_("Destination"))
         location = self._settings.get_string("repository-location")
-        row = Adw.ActionRow(
+        self._location_row = Adw.ActionRow(
             title=_("Backups are kept in"),
             subtitle=GLib.markup_escape_text(location or _("Not set up yet")),
         )
-        row.set_subtitle_selectable(True)
-        group.add(row)
+        self._location_row.set_subtitle_selectable(True)
+        if self._client is not None and location:
+            change = Gtk.Button(label=_("Change…"), valign=Gtk.Align.CENTER)
+            change.connect("clicked", self._on_change_destination)
+            self._location_row.add_suffix(change)
+        group.add(self._location_row)
         return group
+
+    def _on_change_destination(self, button) -> None:
+        """The backups already made stay where they are; what is backed up and how long it is kept do not change."""
+        SetupWizard(self._parent, self._client, self._settings, self._show_destination, change=True).present()
+
+    def _show_destination(self) -> None:
+        location = self._settings.get_string("repository-location")
+        self._location_row.set_subtitle(GLib.markup_escape_text(location))
 
     def _schedule_group(self) -> Adw.PreferencesGroup:
         group = Adw.PreferencesGroup(title=_("Schedule"))

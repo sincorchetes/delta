@@ -19,6 +19,7 @@ from delta.application.restore_service import RestoreService
 from delta.application.snapshot_service import SnapshotService
 from delta.application.unlock_service import UnlockService
 from delta.application.version_service import VersionService
+from delta.infrastructure.local_destination import LocalDestination
 from delta.infrastructure.runtime import in_flatpak
 from delta.infrastructure.settings import (
     configured_excludes,
@@ -106,6 +107,7 @@ def build_services(engine: BackupEngine, mounter: SnapshotMounter | None = None)
             repo,
             sources=resolve_sources(configured_sources(), home),
             excludes=resolve_excludes(configured_excludes(), home),
+            destination=LocalDestination(),
         ),
         restore=restore,
         versions=VersionService(engine, repo, home),

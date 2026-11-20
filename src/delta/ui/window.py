@@ -115,7 +115,7 @@ class StatusWindow(Adw.ApplicationWindow):
 
     def _on_preferences(self, action, parameter) -> None:
         if self._settings is not None:
-            PreferencesDialog(self._settings, os.path.expanduser("~"), self).present(self)
+            PreferencesDialog(self._settings, os.path.expanduser("~"), self, self._client).present(self)
 
     def _confirm_unlock(self) -> None:
         """Breaking a lock that is really held can damage the backups, so the user must say yes."""

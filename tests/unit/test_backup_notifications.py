@@ -64,3 +64,96 @@ def test_warning_state_is_distinct_from_success_and_failure():
     assert job.state is JobState.WARNINGS and job.message == "file vanished"
     with pytest.raises(ValueError):
         job.fail("again")
+
+
+# --- a drive that stays away is told once -------------------------------------------------------
+
+
+class Clock:
+    def __init__(self):
+        self.now = 1_000_000.0
+
+    def __call__(self):
+        return self.now
+
+
+def missing():
+    from delta.domain.destination import DestinationState
+    from delta.domain.errors import DestinationUnavailable
+
+    return DestinationUnavailable("/media/disk/delta", DestinationState.MISSING)
+
+
+def absent_notes():
+    recorder, clock = Recorder(), Clock()
+    return BackupNotifications(recorder, clock), recorder, clock
+
+
+def test_the_hourly_tries_while_the_drive_is_away_tell_it_once():
+    notes, recorder, clock = absent_notes()
+
+    for _hour in range(24):
+        notes.destination_unavailable(missing())
+        clock.now += 3600
+
+    assert [n.kind for n in recorder.sent] == [NotificationKind.DESTINATION_UNAVAILABLE]
+
+
+def test_a_week_later_it_is_a_reminder():
+    from delta.application.backup_notifications import REMINDER_AFTER
+
+    notes, recorder, clock = absent_notes()
+    notes.destination_unavailable(missing())
+    clock.now += REMINDER_AFTER - 1
+    notes.destination_unavailable(missing())
+    clock.now += 1
+    notes.destination_unavailable(missing())
+
+    assert len(recorder.sent) == 2
+
+
+def test_a_good_backup_ends_the_absence_so_the_next_one_is_told_again():
+    notes, recorder, clock = absent_notes()
+    notes.destination_unavailable(missing())
+    notes.succeeded()
+    notes.destination_unavailable(missing())
+
+    assert [n.kind for n in recorder.sent].count(NotificationKind.DESTINATION_UNAVAILABLE) == 2
+
+
+def test_a_backup_with_warnings_also_ends_the_absence():
+    notes, recorder, _clock = absent_notes()
+    notes.destination_unavailable(missing())
+    notes.warned("1 unreadable")
+    notes.destination_unavailable(missing())
+
+    assert [n.kind for n in recorder.sent].count(NotificationKind.DESTINATION_UNAVAILABLE) == 2
+
+
+def test_a_drive_lost_during_a_backup_counts_as_told_so_the_next_try_does_not_tell_again():
+    notes, recorder, _clock = absent_notes()
+
+    notes.destination_lost(missing())
+    notes.destination_unavailable(missing())
+
+    assert len(recorder.sent) == 1
+
+
+def test_a_drive_lost_during_a_backup_is_always_told_even_when_it_was_told_before():
+    notes, recorder, _clock = absent_notes()
+    notes.destination_unavailable(missing())
+
+    notes.destination_lost(missing())
+
+    assert len(recorder.sent) == 2
+
+
+def test_what_is_told_of_a_drive_is_its_kind_and_what_to_do():
+    error = missing()
+    notes, recorder, _clock = absent_notes()
+
+    notes.destination_unavailable(error)
+    notes.destination_lost(error)
+
+    expected = Notification(NotificationKind.DESTINATION_UNAVAILABLE, error.hint)
+    assert recorder.sent == [expected, expected]

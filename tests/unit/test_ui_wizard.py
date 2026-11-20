@@ -227,3 +227,65 @@ def test_the_summary_describes_destination_folders_and_protection():
 
 def test_the_summary_says_personal_folder_when_none_chosen():
     assert dict(model(destination="~/B").summary())["Folders"] == "Your personal folder"
+
+
+# --- changing the destination: what is backed up stays as it is -----------------------------------
+
+
+def changing(**fields):
+    return WizardModel(home=HOME, inspect=lambda path: PathState.MISSING, keep_folders=True, recovery_key="AAAAA-BBBBB", **fields)
+
+
+def test_changing_the_destination_skips_the_folders_step():
+    model = changing(destination="/media/disk/delta", recovery_saved=True)
+
+    assert model.steps == [Step.DESTINATION, Step.RECOVERY, Step.SUMMARY]
+    assert model.next() and model.step is Step.RECOVERY
+    assert model.next() and model.step is Step.SUMMARY and model.is_last
+    assert model.back() and model.back() and model.step is Step.DESTINATION and not model.back()
+
+
+def test_the_summary_of_a_change_does_not_list_the_folders():
+    model = changing(destination="/media/disk/delta")
+
+    assert [label for label, _value in model.summary()] == ["Destination", "Protection"]
+
+
+def test_a_first_set_up_has_every_step():
+    model = WizardModel(home=HOME, inspect=lambda path: PathState.MISSING)
+
+    assert model.steps == list(Step)
+
+
+def with_state(state, **fields):
+    return WizardModel(home=HOME, inspect=lambda path: state, recovery_key="AAAAA-BBBBB", **fields)
+
+
+def test_a_folder_that_holds_a_repository_is_a_place_to_reopen_not_a_folder_that_is_not_empty():
+    assert check_destination("/media/disk/delta", HOME, lambda path: PathState.REPOSITORY) == ("/media/disk/delta", None)
+
+
+def test_a_place_on_a_drive_that_is_not_connected_is_not_a_place_to_make_folders():
+    location, error = check_destination("/run/media/u/DISK/delta", HOME, lambda path: PathState.UNMOUNTED)
+
+    assert location is None
+    assert error == "That place is on a drive that is not connected. Connect it first."
+
+
+def test_reopening_a_repository_skips_the_recovery_key_and_says_what_protects_it():
+    model = with_state(PathState.REPOSITORY, destination="/media/disk/delta")
+
+    assert model.reuses_repository and model.steps == [Step.DESTINATION, Step.FOLDERS, Step.SUMMARY]
+    assert model.summary()[-1] == ("Protection", "The passphrase it already has")
+    assert model.next() and model.next() and model.is_last and model.can_continue()
+
+
+def test_a_new_folder_does_not_reuse_anything_and_nothing_chosen_does_not_either():
+    assert not with_state(PathState.MISSING, destination="/media/disk/delta").reuses_repository
+    assert not with_state(PathState.REPOSITORY).reuses_repository
+
+
+def test_changing_to_where_the_backups_are_now_is_refused_whatever_is_typed_around_it():
+    model = with_state(PathState.REPOSITORY, destination="/media/disk//delta/", keep_folders=True, current="/media/disk/delta")
+
+    assert model.errors() == ["Your backups are already kept there."]

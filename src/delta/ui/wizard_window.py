@@ -18,13 +18,20 @@ from delta.ui.wizard_pages import FoldersPage, RecoveryPage, SummaryPage
 
 
 class SetupWizard(Adw.Window):
-    def __init__(self, parent, client: DeltaClient, settings, on_done: Callable[[], None]) -> None:
+    def __init__(
+        self, parent, client: DeltaClient, settings, on_done: Callable[[], None], change: bool = False
+    ) -> None:
         super().__init__(
-            transient_for=parent, modal=True, title=_("Set up backups"),
+            transient_for=parent, modal=True,
+            title=_("Change where backups are kept") if change else _("Set up backups"),
             default_width=560, default_height=640,
         )
         self._client, self._settings, self._on_done = client, settings, on_done
-        self._model = WizardModel(home=os.path.expanduser("~"), inspect=inspect_path)
+        self._change = change
+        self._model = WizardModel(
+            home=os.path.expanduser("~"), inspect=inspect_path, keep_folders=change,
+            current=settings.get_string("repository-location") if change and settings is not None else "",
+        )
         self._touched: set[Step] = set()
         self._busy = False
         self._adopting = False
@@ -65,6 +72,11 @@ class SetupWizard(Adw.Window):
     def _show(self) -> None:
         if self._model.step is Step.SUMMARY:
             self._pages[Step.SUMMARY].refresh()
+            if self._model.reuses_repository:
+                self._request = self._model.request()
+                self._pages[Step.SUMMARY].offer_existing(self._use_existing)
+            else:
+                self._pages[Step.SUMMARY].hide_existing()
         self._stack.set_visible_child_name(self._model.step.value)
         self._sync()
 
@@ -72,9 +84,11 @@ class SetupWizard(Adw.Window):
         step = self._model.step
         problems = self._model.errors() if step in self._touched else []
         self._pages[step].show_problems(problems)
-        self._back.set_sensitive(step is not Step.DESTINATION and not self._busy)
+        self._back.set_sensitive(step is not self._model.steps[0] and not self._busy)
         self._next.set_sensitive(self._model.can_continue() and not self._busy)
-        self._next.set_label(_("Create backups") if self._model.is_last else _("Next"))
+        self._next.set_visible(not (self._model.is_last and self._model.reuses_repository))  # it has its own button
+        last = _("Use this destination") if self._change else _("Create backups")
+        self._next.set_label(last if self._model.is_last else _("Next"))
 
     def _on_change(self) -> None:
         self._touched.add(self._model.step)
@@ -133,7 +147,7 @@ class SetupWizard(Adw.Window):
         if not ok:
             self._fail(message)
             return
-        if self._settings is not None and self._request is not None:
+        if self._settings is not None and self._request is not None and not self._change:
             self._settings.set_strv("backup-sources", list(self._request.folders))
         self._model.own_passphrase = self._model.own_confirmation = ""
         self._on_done()

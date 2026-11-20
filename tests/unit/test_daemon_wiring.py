@@ -117,6 +117,14 @@ class Immediately:
         self.target(*self.args)
 
 
+class MountEvents:
+    def __init__(self):
+        self.callbacks = []
+
+    def watch(self, callback):
+        self.callbacks.append(callback)
+
+
 class Control:
     """Stands in for BrowseController: remembers what it was given."""
 
@@ -140,6 +148,7 @@ def daemon(monkeypatch):
     monkeypatch.setattr(main, "BorgRunner", Engine)
     monkeypatch.setattr(main, "BorgMounter", lambda engine: ("mounter", engine))
     monkeypatch.setattr(main, "LogindSessionEvents", lambda: "session events")
+    monkeypatch.setattr(main, "GioMountEvents", MountEvents)
     monkeypatch.setattr(main, "ProcMountUsage", lambda: "usage")
     monkeypatch.setattr(main, "BrowseController", Control)
 
@@ -449,3 +458,16 @@ def test_the_next_run_is_looked_up_on_a_background_thread_by_default():
     NextRunCache(Scheduler()).value()
 
     assert asked.wait(5)
+
+
+def test_a_drive_that_is_mounted_starts_the_backup_that_was_waiting_for_it(daemon):
+    daemon._on_bus_acquired("connection", "io.github.sincorchetes.Delta.Service1")
+    (on_mounted,) = daemon._mount_events.callbacks
+    service = Service.built[0]
+
+    on_mounted()  # nothing is waiting: the status is idle
+    assert not hasattr(service, "scheduled")
+
+    daemon._jobs.unavailable = "/media/disk/delta"
+    on_mounted()
+    assert service.scheduled == 1

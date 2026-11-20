@@ -11,6 +11,7 @@ class NotificationKind(str, Enum):
     BACKUP_INTERRUPTED = "backup-interrupted"
     BACKUP_POSTPONED = "backup-postponed"
     BACKUP_FAILED = "backup-failed"
+    DESTINATION_UNAVAILABLE = "destination-unavailable"
     REPOSITORY_FAILED = "repository-failed"
 
 

@@ -18,6 +18,8 @@ class PathState(str, Enum):
     EMPTY_DIR = "empty-dir"
     NOT_EMPTY = "not-empty"
     FILE = "file"
+    REPOSITORY = "repository"  # a folder that already holds a backup repository: it can be reopened
+    UNMOUNTED = "unmounted"  # inside the place of a drive that is not connected
 
 
 Inspect = Callable[[str], PathState]
@@ -71,6 +73,8 @@ def check_destination(text: str, home: str, inspect: Inspect) -> tuple[str | Non
     state = inspect(path)
     if state is PathState.FILE:
         return None, _("That path is a file, not a folder.")
+    if state is PathState.UNMOUNTED:
+        return None, _("That place is on a drive that is not connected. Connect it first.")
     if state is PathState.NOT_EMPTY:
         return None, _("That folder is not empty. Choose a new or empty folder.")
     return path, None
@@ -121,6 +125,21 @@ class WizardModel:
     own_passphrase: str = ""
     own_confirmation: str = ""
     recovery_saved: bool = False  # saved to a file, copied, or the risk accepted
+    keep_folders: bool = False  # changing the destination: what is backed up stays as it is
+    current: str = ""  # changing the destination: where the backups are kept now
+
+    @property
+    def reuses_repository(self) -> bool:
+        """The folder already holds a repository: it is reopened with its passphrase, not created again."""
+        location, _error = check_destination(self.destination, self.home, self.inspect)
+        return location is not None and self.inspect(location) is PathState.REPOSITORY
+
+    @property
+    def steps(self) -> list[Step]:
+        skipped = {Step.FOLDERS} if self.keep_folders else set()
+        if self.reuses_repository:
+            skipped.add(Step.RECOVERY)  # the passphrase is the one it already has
+        return [step for step in Step if step not in skipped]
 
     def destination_text(self) -> str:
         """What the user typed or chose, before it is checked."""
@@ -138,10 +157,12 @@ class WizardModel:
             return check_folders(self.folders, self.home, self.inspect)[1]
         if step is Step.RECOVERY:
             return self._protection_errors()
-        return [e for earlier in list(Step)[:-1] for e in self.errors(earlier)]
+        return [e for earlier in self.steps[:-1] for e in self.errors(earlier)]
 
     def _destination_errors(self) -> list[str]:
-        _location, error = check_destination(self.destination, self.home, self.inspect)
+        location, error = check_destination(self.destination, self.home, self.inspect)
+        if location is not None and location == _normal(self.current):
+            return [_("Your backups are already kept there.")]
         return [error] if error else []
 
     def _protection_errors(self) -> list[str]:
@@ -160,14 +181,14 @@ class WizardModel:
         return self.step is Step.SUMMARY
 
     def next(self) -> bool:
-        steps = list(Step)
+        steps = self.steps
         if self.is_last or not self.can_continue():
             return False
         self.step = steps[steps.index(self.step) + 1]
         return True
 
     def back(self) -> bool:
-        steps = list(Step)
+        steps = self.steps
         if self.step is steps[0]:
             return False
         self.step = steps[steps.index(self.step) - 1]
@@ -184,13 +205,13 @@ class WizardModel:
     def summary(self) -> list[tuple[str, str]]:
         location, _error = check_destination(self.destination_text(), self.home, self.inspect)
         folders, _problems = check_folders(self.folders, self.home, self.inspect)
-        protection = (
-            _("Recovery key, saved by you")
-            if self.protection is Protection.GENERATED
-            else _("Your own passphrase")
-        )
-        return [
-            (_("Destination"), location or ""),
-            (_("Folders"), ", ".join(folders) or _("Your personal folder")),
-            (_("Protection"), protection),
-        ]
+        if self.reuses_repository:
+            protection = _("The passphrase it already has")
+        elif self.protection is Protection.GENERATED:
+            protection = _("Recovery key, saved by you")
+        else:
+            protection = _("Your own passphrase")
+        rows = [(_("Destination"), location or "")]
+        if not self.keep_folders:
+            rows.append((_("Folders"), ", ".join(folders) or _("Your personal folder")))
+        return [*rows, (_("Protection"), protection)]

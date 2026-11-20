@@ -1306,3 +1306,56 @@ msgstr ""
 #: src/delta/ui/restore_deleted.py:69
 msgid "Restore"
 msgstr ""
+
+#: src/delta/domain/errors.py:36
+msgid "The place where your backups are kept is not available: {location}"
+msgstr ""
+
+#: src/delta/domain/errors.py:42
+msgid "The folder is empty. Connect the drive that was there."
+msgstr ""
+
+#: src/delta/domain/errors.py:43
+msgid "The folder is not there. Connect the drive that holds your backups."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:46
+msgid "Connect the drive that holds your backups."
+msgstr ""
+
+#: src/delta/infrastructure/gio_notifier.py:47
+msgid "Backup drive not connected"
+msgstr ""
+
+#: src/delta/ui/status.py:141
+msgid "The drive with your backups is not connected"
+msgstr ""
+
+#: src/delta/ui/status.py:142
+msgid "Connect it to {location}. The next backup runs by itself when it is back."
+msgstr ""
+
+#: src/delta/ui/status.py:147
+msgid "Check again"
+msgstr ""
+
+msgid "Change where backups are kept"
+msgstr ""
+
+msgid "Use this destination"
+msgstr ""
+
+msgid "Change…"
+msgstr ""
+
+msgid "That place is on a drive that is not connected. Connect it first."
+msgstr ""
+
+msgid "Your backups are already kept there."
+msgstr ""
+
+msgid "The passphrase it already has"
+msgstr ""
+
+msgid "Delta will keep using the backups that are there."
+msgstr ""

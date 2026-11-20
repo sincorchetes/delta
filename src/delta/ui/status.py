@@ -13,6 +13,7 @@ class Health(str, Enum):
     NOT_CONFIGURED = "not-configured"
     RUNNING = "running"
     BROWSING = "browsing"
+    UNAVAILABLE = "unavailable"
     FAILED = "failed"
     LOCKED = "locked"
     PENDING = "pending"
@@ -136,6 +137,17 @@ def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
             "folder-symbolic",
             *back_up,
             action_enabled=False,
+        )
+    if snapshot.status == "unavailable":
+        return StatusView(
+            Health.UNAVAILABLE,
+            _("The drive with your backups is not connected"),
+            _("Connect it to {location}. The next backup runs by itself when it is back.").format(
+                location=snapshot.repository
+            ),
+            "drive-removable-media-symbolic",
+            Action.BACK_UP,
+            _("Check again"),
         )
     if snapshot.last_error and is_lock_message(snapshot.last_error):
         return StatusView(

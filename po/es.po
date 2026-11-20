@@ -1360,5 +1360,58 @@ msgstr "¿Restaurar todo lo eliminado?"
 msgid "Restore"
 msgstr "Restaurar"
 
+#: src/delta/domain/errors.py:36
+msgid "The place where your backups are kept is not available: {location}"
+msgstr "El lugar donde se guardan tus copias no está disponible: {location}"
+
+#: src/delta/domain/errors.py:42
+msgid "The folder is empty. Connect the drive that was there."
+msgstr "La carpeta está vacía. Conecta el disco que estaba ahí."
+
+#: src/delta/domain/errors.py:43
+msgid "The folder is not there. Connect the drive that holds your backups."
+msgstr "La carpeta no está. Conecta el disco que guarda tus copias."
+
+#: src/delta/infrastructure/gio_notifier.py:46
+msgid "Connect the drive that holds your backups."
+msgstr "Conecta el disco que guarda tus copias."
+
+#: src/delta/infrastructure/gio_notifier.py:47
+msgid "Backup drive not connected"
+msgstr "Disco de copias no conectado"
+
+#: src/delta/ui/status.py:141
+msgid "The drive with your backups is not connected"
+msgstr "El disco con tus copias no está conectado"
+
+#: src/delta/ui/status.py:142
+msgid "Connect it to {location}. The next backup runs by itself when it is back."
+msgstr "Conéctalo en {location}. La próxima copia se hará sola cuando vuelva."
+
+#: src/delta/ui/status.py:147
+msgid "Check again"
+msgstr "Comprobar de nuevo"
+
 #~ msgid "First release."
 #~ msgstr "Primera versión."
+
+msgid "Change where backups are kept"
+msgstr "Cambiar dónde se guardan las copias"
+
+msgid "Use this destination"
+msgstr "Usar este destino"
+
+msgid "Change…"
+msgstr "Cambiar…"
+
+msgid "That place is on a drive that is not connected. Connect it first."
+msgstr "Ese sitio está en un disco que no está conectado. Conéctalo primero."
+
+msgid "Your backups are already kept there."
+msgstr "Tus copias ya se guardan ahí."
+
+msgid "The passphrase it already has"
+msgstr "La contraseña que ya tiene"
+
+msgid "Delta will keep using the backups that are there."
+msgstr "Delta seguirá usando las copias que hay ahí."

@@ -58,7 +58,10 @@ Long operations return a `job_id` at once and end with a signal. **There is only
 
 - `CanMount` b: whether this installation can open backups as a folder (false in a Flatpak); the UI hides "Browse as a folder"
   when it is false.
-- `Status` s: `idle` | `running`.
+- `Status` s: `idle` | `running` | `browsing` | `unavailable`. `unavailable` is that the latest backup found the place of the
+  repository unreachable (a drive that is not connected, a folder that is gone, the empty mount point of a drive that is not
+  mounted): it is not a failure, `LastError` stays empty, and it ends with the next backup, which runs by itself when the place is
+  back. A backup that is `running` is `running` whatever the previous one found.
 - `LastBackup` t: the epoch of the last successful backup (0 = none). When the daemon starts, it takes it from the most recent
   snapshot of the repository.
 - `NextBackup` t: the epoch of the next scheduled backup (0 = unknown or not scheduled). It is read from the scheduler's timer and
