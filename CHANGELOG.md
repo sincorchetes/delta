@@ -5,6 +5,8 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-20
+
 ### Added
 
 - **Another repository in the place of yours is noticed.** Delta remembers the identifier of the repository it made or adopted
@@ -112,6 +114,7 @@ The first release.
   and a Flatpak (the Delta window, with its own timer started through the Background portal).
 - **Documentation** at <https://delta.sincorchetes.tech>, in English and Spanish.
 
+[0.2.0]: https://github.com/sincorchetes/delta/releases/tag/v0.2.0
 [0.1.3]: https://github.com/sincorchetes/delta/releases/tag/v0.1.3
 [0.1.2]: https://github.com/sincorchetes/delta/releases/tag/v0.1.2
 [0.1.1]: https://github.com/sincorchetes/delta/releases/tag/v0.1.1

@@ -2,7 +2,7 @@
 %global appid io.github.sincorchetes.Delta
 
 Name:           delta-backup
-Version:        0.1.3
+Version:        0.2.0
 Release:        1%{?dist}
 Summary:        Time travel for your files in GNOME, with BorgBackup
 License:        GPL-3.0-or-later
@@ -108,6 +108,10 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_userunitdir}/delta.timer
 
 %changelog
+* Fri Nov 20 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.2.0-1
+- Another repository in the place of the one Delta made is noticed: nothing is written in it and the window says so
+- The wizard no longer refuses the place where the backups already are, so that a repository can be accepted on purpose
+
 * Fri Nov 20 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.1.3-1
 - The daemon starts on a GLib without GLibUnix.signal_add (it died at startup on Fedora 43, Debian 13 and Enterprise Linux 10)
 - A destination that cannot be used (drive not connected, another drive, full, read-only, no permission) is told apart from a failed backup
