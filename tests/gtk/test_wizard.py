@@ -457,6 +457,7 @@ def test_going_back_from_a_repository_to_a_new_folder_creates_again(setup):
 
 
 def test_changing_to_the_folder_where_the_backups_already_are_is_refused(change):
+    change.wizard._model.inspect = lambda path: PathState.REPOSITORY
     change.wizard._model.destination = "/media/current/delta"
 
     assert not change.wizard._next.get_sensitive()
