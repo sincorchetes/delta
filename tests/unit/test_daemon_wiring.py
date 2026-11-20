@@ -1,6 +1,7 @@
 """How the daemon is put together and shut down, with every collaborator replaced by a stand-in."""
 
 import logging
+import signal
 import threading
 from types import SimpleNamespace
 
@@ -182,9 +183,7 @@ def daemon(monkeypatch):
 
 def test_startup_holds_the_app_follows_the_stop_signals_and_owns_the_bus_name(daemon, monkeypatch):
     seen = {"signals": [], "bus": []}
-    monkeypatch.setattr(
-        main, "GLibUnix", SimpleNamespace(signal_add=lambda priority, signum, handler: seen["signals"].append(signum))
-    )
+    monkeypatch.setattr(main, "watch_signal", lambda signum, handler: seen["signals"].append((signum, handler)))
     monkeypatch.setattr(
         main,
         "Gio",
@@ -198,7 +197,8 @@ def test_startup_holds_the_app_follows_the_stop_signals_and_owns_the_bus_name(da
     daemon._on_startup(daemon._app)
 
     assert daemon._app.calls == ["hold"]
-    assert len(seen["signals"]) == 2
+    assert [signum for signum, _handler in seen["signals"]] == [signal.SIGTERM, signal.SIGINT]
+    assert all(handler == daemon._on_terminate for _signum, handler in seen["signals"])
     assert seen["bus"][0][1] == "io.github.sincorchetes.Delta.Service1"
 
 

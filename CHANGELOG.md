@@ -27,6 +27,11 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **The daemon did not start on Fedora 43, Debian 13, Rocky Linux 10 and AlmaLinux 10** (version 0.1.2), so Delta did nothing
+  there: it called `GLibUnix.signal_add`, which only the newest GLib has (`AttributeError` at startup). It now watches the stop
+  signals with a source, which every GLib that has `GLibUnix` supports. The tests never saw it because the one for the startup
+  replaced GLib with a stand-in; now one uses the real GLib.
+
 - **A system without GStreamer no longer closes Delta when a video or audio is previewed.** The preview plays through
   GStreamer, and when it cannot find what it needs (the plugins, a GL library) GTK ends the whole program, which cannot be
   caught. Delta now tries to make the player in a process of its own, once, and where that fails it offers the file to its own

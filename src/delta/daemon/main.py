@@ -7,8 +7,7 @@ import threading
 import gi
 
 gi.require_version("Gio", "2.0")
-gi.require_version("GLibUnix", "2.0")
-from gi.repository import Gio, GLib, GLibUnix
+from gi.repository import Gio, GLib
 
 from delta import i18n
 from delta.application.backup_notifications import BackupNotifications
@@ -21,6 +20,7 @@ from delta.daemon.introspection import INTERFACE_NAME
 from delta.daemon.job_runner import JobRunner
 from delta.daemon.next_run import NextRunCache
 from delta.daemon.service import DeltaService
+from delta.daemon.stop_signals import watch_signal
 from delta.domain.errors import DeltaError
 from delta.infrastructure.background_portal import BackgroundPortal
 from delta.infrastructure.background_scheduler import BackgroundScheduler
@@ -69,7 +69,7 @@ class DeltaDaemon:
     def _on_startup(self, app) -> None:
         app.hold()
         for signum in (signal.SIGTERM, signal.SIGINT):
-            GLibUnix.signal_add(GLib.PRIORITY_DEFAULT, signum, self._on_terminate)
+            watch_signal(signum, self._on_terminate)
         Gio.bus_own_name(
             Gio.BusType.SESSION,
             INTERFACE_NAME,
