@@ -190,8 +190,8 @@ def test_nothing_that_fires_is_skipped_between_a_moment_and_the_next(recurrence,
 def test_the_latest_moment_is_not_after_and_the_one_that_follows_it_is_after(recurrence, moment):
     latest = recurrence.latest_up_to(moment)
 
-    assert latest <= moment < recurrence.next_after(latest) or recurrence.next_after(latest) > moment
-    assert recurrence.next_after(latest) > latest
+    assert latest <= moment
+    assert recurrence.next_after(latest) > moment
 
 
 @CHECKED
