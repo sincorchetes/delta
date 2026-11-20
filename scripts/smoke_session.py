@@ -75,7 +75,8 @@ class Session:
             (self.xdg / sub).mkdir(parents=True, exist_ok=True)
         (self.xdg / "run").chmod(0o700)
         self.home.mkdir(exist_ok=True)
-        site = glob.glob(str(self.prefix / "lib" / "python3*" / "site-packages"))
+        # where Meson put the Python package: site-packages, or dist-packages (Debian), under lib or lib64
+        site = glob.glob(str(self.prefix / "lib*" / "python3*" / "*-packages"))
         env = {k: v for k, v in os.environ.items() if not k.startswith("BORG_")}
         env.update(
             HOME=str(self.home),

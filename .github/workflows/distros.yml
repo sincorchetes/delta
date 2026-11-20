@@ -90,6 +90,12 @@ jobs:
             python3 -m pytest -q --capture=sys --ignore=tests/gtk
           fi
 
+      # The tests run the code with stand-ins for GLib and the bus. This starts the daemon that Meson installs, for real, with the
+      # distribution's own GLib, keyring and Borg: it makes a repository, backs up a few files and restores one. A daemon that
+      # died at startup on Fedora 43, Debian 13 and Enterprise Linux 10 (version 0.1.2) passed every test above.
+      - name: The daemon starts, makes a backup and restores a file
+        run: python3 scripts/ci/package_smoke.py --source
+
   # A system where GTK cannot make its player: GStreamer without its plugins. Making the player ends the whole process there
   # (a GLib error that Python cannot catch), so Delta tries it in a process of its own; the check proves that premise first
   # and then that Delta's probe says "no player" and goes on.
