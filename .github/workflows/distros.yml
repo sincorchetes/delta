@@ -3,13 +3,34 @@ name: Distributions
 # Delta on the system libraries of each distribution, and on Nix: the packages the distribution ships (`python3-gobject`,
 # GTK, libadwaita, BorgBackup) with its own Python. No uv and nothing from PyPI: it is what a user of its package gets.
 #
-# It is a check, not a gate: it does not block a pull request. Run it by hand from the Actions tab, or wait for the weekly run
-# (a failure of the weekly run reaches your e-mail). Flatpak is another story: it brings its own runtime.
+# It is a check, not a gate: it does not block a pull request. It runs on the pull requests that touch what a distribution's
+# packages build and run (the code, the tests, the data, the packaging and the CI scripts), by hand from the Actions tab, and
+# every week (a failure of the weekly run reaches your e-mail). Flatpak is another story: it brings its own runtime.
 
 on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "data/**"
+      - "po/**"
+      - "nix/**"
+      - "flake.*"
+      - "packaging/**"
+      - "debian/**"
+      - "scripts/ci/**"
+      - "meson.build"
+      - "meson_options.txt"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/distros.yml"
   workflow_dispatch:
   schedule:
     - cron: "43 5 * * 1"
+
+concurrency:
+  group: distributions-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
