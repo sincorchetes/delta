@@ -1,0 +1,84 @@
+name: Package smoke
+
+# A real backup and a real restore with the package a user gets from the repository of each distribution: it is installed as the
+# installation page says (the repository of the openSUSE Build Service), in a clean container, and the daemon it installs makes a
+# repository, backs up a few files and restores one (scripts/ci/package_smoke.py). The tests of the other workflows run the
+# source tree, so they cannot say that the package that was published works.
+#
+# After a release it waits for the Build Service to finish building the version of the tag (it takes some minutes after the push),
+# and it does not hold the release back: the publication is already done, and the distributions are checked in parallel, each in
+# its own job. By hand, every week, or on a pull request that changes it, it takes whatever the repositories have. It is a check
+# and not a gate.
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/package-smoke.yml"
+      - "scripts/ci/package_smoke.*"
+      - "scripts/smoke_session.py"
+  workflow_run:
+    workflows: ["Publish packages"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Wait until the repositories have this version (empty: whatever they have)"
+        required: false
+  schedule:
+    - cron: "17 6 * * 2"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: package-smoke-${{ github.event.workflow_run.head_sha || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    name: ${{ matrix.name }}
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    container:
+      image: ${{ matrix.image }}
+      options: --cap-add=IPC_LOCK
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { name: "Fedora 43", image: "fedora:43", kind: fedora, directory: Fedora_43 }
+          - { name: "Fedora 44", image: "fedora:44", kind: fedora, directory: Fedora_44 }
+          - { name: "Rocky Linux 10", image: "rockylinux/rockylinux:10", kind: el, directory: RockyLinux_10 }
+          - { name: "AlmaLinux 10", image: "almalinux:10", kind: el, directory: AlmaLinux_10 }
+          - { name: "openSUSE Tumbleweed", image: "opensuse/tumbleweed:latest", kind: suse, directory: openSUSE_Tumbleweed }
+          - { name: "Debian 13", image: "debian:trixie", kind: deb, directory: Debian_13 }
+          - { name: "Ubuntu 26.04", image: "ubuntu:26.04", kind: deb, directory: xUbuntu_26.04 }
+          - { name: "Ubuntu 26.10", image: "ubuntu:26.10", kind: deb, directory: xUbuntu_26.10 }
+    steps:
+      # The scripts come from the default branch (or from the pull request that changes them), never from the commit that
+      # triggered a workflow_run: code from another commit does not run here with this workflow's permissions.
+      - uses: actions/checkout@v7
+
+      - name: The version that must be published
+        id: version
+        env:
+          REQUESTED: ${{ inputs.version }}
+          EVENT: ${{ github.event_name }}
+          TAG: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          expected=
+          if [ -n "$REQUESTED" ]; then
+            expected=$REQUESTED
+          elif [ "$EVENT" = workflow_run ]; then
+            expected=${TAG#v}  # a release is made by pushing a tag called vX.Y.Z
+          fi
+          if [ -n "$expected" ] && ! printf '%s\n' "$expected" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::'$expected' is not a version like 0.1.3"
+            exit 1
+          fi
+          echo "expected=$expected" >> "$GITHUB_OUTPUT"
+
+      - name: Install the package from the repository and make a backup and a restore with it
+        env:
+          EXPECTED: ${{ steps.version.outputs.expected }}
+        run: sh scripts/ci/package_smoke.sh ${{ matrix.kind }} ${{ matrix.directory }} "$EXPECTED"

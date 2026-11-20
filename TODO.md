@@ -62,6 +62,10 @@ the website builds and is deployed from `main`.
 - [ ] **Nix on two channels:** the Distributions workflow builds the package and the NixOS module on `nixos-unstable` and
       `nixos-26.05` with the libraries of each (no `uv.lock` pins): see that both are green. When `nixos-26.11` is out, move
       the stable leg to it.
+- [ ] **Package smoke** (`package-smoke.yml`): run it by hand once (*Actions → Package smoke*) and see the eight distributions
+      install the package from the repository, make a backup and restore a file. It does not cover the AUR (Arch builds its
+      package from source, so there is nothing to install from a repository) or the Flatpak. After a release it waits for OBS
+      to build the version of the tag. See `scripts/ci/package_smoke.sh` for how.
 - [ ] The two issue forms show up under *Issues → New issue*.
 
 ## 4. Release channels
