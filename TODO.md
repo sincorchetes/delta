@@ -90,6 +90,10 @@ Building and importing in a clean container is not the same as running it.
 - [x] A pass with a screen reader (Orca): it works.
 - [x] A pass with the keyboard only: it works.
 - [ ] Flatpak: the background permission with the portals active (`services.flatpak.enable = true` on NixOS).
+- [ ] **A drive that is not connected, with a real drive:** unmount or unplug the drive of a real backup and see the window
+      ("The drive with your backups is not connected"), that there is one notification and not one an hour, and that mounting
+      the drive starts the backup that was waiting. In the wizard: a folder that holds a repository is reopened with its passphrase,
+      and a path under `/run/media` of a drive that is away is refused. In *Preferences → Destination → Change…* too.
 - [ ] The Nautilus menu entry appears only once after `home-manager switch` (the extension used to be loaded twice).
 
 ## 6. Cleanup
@@ -110,6 +114,9 @@ Building and importing in a clean container is not the same as running it.
 - **Faster `ListVersions`** with many backups: a batch query or a persistent SQLite index (`docs/plan.md` §12).
 - **Mutation tests** over `daemon/` and `infrastructure/` too (it needs a decision on which tests to run: many need a real Borg
   or D-Bus).
+- **A drive that goes away while Borg is copying** is told as "not connected" when the place cannot be reached afterwards, but it
+  was only tried with fakes, not by pulling a real drive in the middle of a copy. Unmounted places under `/mnt` are not
+  recognized (anybody makes folders there by hand), only those under `/run/media` and `/media`.
 - **Run backups as transient units** (`systemd-run --user`): they survive the daemon, with `Nice` and `IOSchedulingClass`, and log to
   the journal.
 - **Borg 2:** review its API policy before migrating.
