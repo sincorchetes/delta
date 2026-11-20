@@ -5,6 +5,13 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **Another repository in the place of yours is noticed.** Delta remembers the identifier of the repository it made or adopted
+  (in the setting `repository-id`, learnt at the first backup for those who already had one) and, before a backup, compares it
+  with the one it finds: if it is another, even with the same passphrase, nothing is written in it and the window says «These
+  are not your backups». To accept it, choose that folder again in *Preferences → Destination → Change…* and give its passphrase.
+
 ## [0.1.3] - 2026-11-20
 
 ### Added
@@ -15,10 +22,6 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
-- **Another repository in the place of yours is noticed.** Delta remembers the identifier of the repository it made or adopted
-  (in the setting `repository-id`, learnt at the first backup for those who already had one) and, before a backup, compares it
-  with the one it finds: if it is another, even with the same passphrase, nothing is written in it and the window says «These
-  are not your backups». To accept it, choose that folder again in *Preferences → Destination → Change…* and give its passphrase.
 - **A drive that is connected but is not the one with your backups says so**, instead of «not connected»: another disk (or a
   wiped one) in the same place gets «Your backups are not on this drive». The root of a freshly formatted drive (which holds only
   the `lost+found` that the file system makes) is a folder you can use in the wizard, not «not empty».
