@@ -16,6 +16,7 @@ dev = [
     "pytest>=8",
     "pytest-cov>=5",
     "python-dbusmock>=0.32",
+    "pyyaml>=6",  # so that a workflow that is not valid YAML fails here and not as an empty run on GitHub
     "hypothesis>=6",  # properties that must hold for any input (tests/unit/test_properties.py)
     "mutmut>=3",  # mutation testing: `uv run mutmut run` shows which tests do not really watch the code
     # Build backend for the meson-based source distributions (PyGObject,
@@ -83,6 +84,7 @@ pytest_add_cli_args = [
     "--ignore=tests/unit/test_packaging.py",
     "--ignore=tests/unit/test_release_notes.py",
     "--ignore=tests/unit/test_website_pages.py",
+    "--ignore=tests/unit/test_workflows_yaml.py",
 ]
 # Workers are forked from a clean server, not from the process that already ran the suite: a test
 # that starts a real process (Gio.Subprocess) hangs forever in a fork of a process GLib has threads in.

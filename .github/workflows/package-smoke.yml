@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Wait until the repositories have this version (empty: whatever they have)
+        description: "Wait until the repositories have this version (empty: whatever they have)"
         required: false
   schedule:
     - cron: "17 6 * * 2"
