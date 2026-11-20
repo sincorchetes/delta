@@ -59,6 +59,9 @@ the website builds and is deployed from `main`.
 - [x] **The widget tests printed 52 GTK and libadwaita criticals** on every distribution: 51 were windows given to an application
       that had not started up, and one a test that laid a page out twice. Neither was a fault of the application; both are fixed,
       and the workflow now prints none.
+- [ ] **Nix on two channels:** the Distributions workflow builds the package and the NixOS module on `nixos-unstable` and
+      `nixos-26.05` with the libraries of each (no `uv.lock` pins): see that both are green. When `nixos-26.11` is out, move
+      the stable leg to it.
 - [ ] The two issue forms show up under *Issues → New issue*.
 
 ## 4. Release channels

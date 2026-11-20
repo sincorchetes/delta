@@ -79,9 +79,11 @@ and changing it would leave people without access to their backups.
 
 ### The Nix package (`flake.nix`, `nix/`)
 
-It is for **installing** Delta, not for developing it (that is devenv). The Python libraries (PyGObject, pycairo) are pinned in
-`nix/python.nix` to the same versions and hashes as `uv.lock`; nixpkgs's are not used. If `uv.lock` changes, update
-`nix/python.nix`. New files have to be added to git so that the flake sees them.
+It is for **installing** Delta, not for developing it (that is devenv). Like every other distribution, it uses what the
+packaging of its channel ships: the `python3` of the nixpkgs it is built with and its `pygobject3`, **not** the pins of `uv.lock`
+(`nix/python.nix` has no versions or hashes, and `tests/unit/test_nix_module.py` keeps it so). The CI builds it on `nixos-unstable`
+and on the current stable release (`nixos-26.05` today: raise it when a new one comes out). New files have to be added to git so
+that the flake sees them.
 
 ### Known traps (do not "fix" what already works)
 
@@ -111,8 +113,8 @@ Rocky 10, Ubuntu 26.04 and 26.10 and Debian 13, plus a build of the Nix flake an
 `python3-gobject`, GTK, libadwaita, BorgBackup) with `scripts/ci/install-deps.sh`, with **no uv and nothing from PyPI**: it is what
 a user of that distribution's package gets. It checks the minimum base with `scripts/ci/check_base.py` (GNOME 46: GTK 4.10,
 libadwaita 1.5, Python 3.12), builds with Meson, validates the GSettings schema, the `.desktop` file and the AppStream
-(`meson test`) and runs `python3 -m pytest`. The `pyproject.toml` and `uv.lock` pins are only for development (devenv), the Nix
-package and the Flatpak; a Flatpak brings its own runtime and is not part of that check. Toolchain changes must keep devenv and the
+(`meson test`) and runs `python3 -m pytest`. The `pyproject.toml` and `uv.lock` pins are only for development (devenv) and the
+Flatpak; a Flatpak brings its own runtime and is not part of that check. Toolchain changes must keep devenv and the
 distributions in parity; when you add a system dependency, add it to `install-deps.sh` too.
 
 ## Workflow

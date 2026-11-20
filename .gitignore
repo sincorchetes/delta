@@ -21,3 +21,4 @@ delta-recovery-key*.txt
 
 # Disks of the virtual machines of `nixos-rebuild build-vm`
 *.qcow2
+.hypothesis/

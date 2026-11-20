@@ -13,6 +13,8 @@ and the versions follow [Semantic Versioning](https://semver.org/).
   application, as it does for a file it cannot play.
 - **The packages recommend the GStreamer plugins** that the preview needs: the RPM, the `.deb` and the Arch package (the Nix
   package already included them).
+- **The Nix package uses the Python libraries of its own nixpkgs**, not the versions of `uv.lock`, as the other distributions use
+  what their packaging ships. It is built and checked, with its NixOS module, on `nixos-unstable` and on `nixos-26.05`.
 
 ## [0.1.2] - 2026-11-19
 
