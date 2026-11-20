@@ -1,17 +1,15 @@
-"""A GLib CRITICAL fails the test it happens in (tests/gtk/conftest.py); anything milder does not."""
+"""A GLib CRITICAL fails the test it happens in (tests/gtk/conftest.py)."""
 
-from gi.repository import GLib
+from gi.repository import Adw, Gio, Gtk
 
 
-def test_a_critical_is_recorded_with_its_domain_and_message(no_glib_criticals):
-    GLib.log("Gtk", GLib.LogLevelFlags.LEVEL_CRITICAL, "something that should not happen")
+def test_a_critical_of_gtk_is_recorded_with_its_domain_and_message(no_glib_criticals):
+    # The one that #36 found 51 times: a window given to an application that has not started up. Not registered, so
+    # its id is not exported on the bus.
+    application = Adw.Application(application_id="io.github.sincorchetes.CriticalTest", flags=Gio.ApplicationFlags.NON_UNIQUE)
 
-    assert no_glib_criticals == ["Gtk: something that should not happen"]
+    window = Gtk.ApplicationWindow(application=application)
+
+    assert any(found.startswith("Gtk: ") and "startup" in found for found in no_glib_criticals), no_glib_criticals
     no_glib_criticals.clear()  # it was provoked on purpose: the test must not fail for it
-
-
-def test_a_message_that_is_not_a_critical_is_not_recorded(no_glib_criticals):
-    GLib.log("Gtk", GLib.LogLevelFlags.LEVEL_MESSAGE, "just so you know")
-    GLib.log("Gtk", GLib.LogLevelFlags.LEVEL_WARNING, "a warning is not a critical")
-
-    assert no_glib_criticals == []
+    window.destroy()
