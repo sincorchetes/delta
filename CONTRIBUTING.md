@@ -27,7 +27,10 @@ cov      # run the tests with coverage
 
 The widget tests need a display. Where there is none, run them under a virtual one: `xvfb-run -a uv run pytest`. They never show a window.
 
-## Before you open the pull request
+## Before you push
+
+**Run all the tests before any push**, not only those of what you changed: a push is not a way to let the CI try it. If something
+fails here, it is fixed here.
 
 ```sh
 xvfb-run -a uv run pytest --cov     # must stay at 100 % of lines and branches
