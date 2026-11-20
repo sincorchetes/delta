@@ -7,7 +7,7 @@ from collections.abc import Callable
 from delta.application.ports import BackupEngine, DestinationProbe
 from delta.domain.backup_job import BackupJob
 from delta.domain.destination import DestinationState
-from delta.domain.errors import BackupInterrupted, BackupWarning, DeltaError, DestinationUnavailable
+from delta.domain.errors import BackupInterrupted, BackupWarning, DeltaError, DestinationUnavailable, is_full_message
 from delta.domain.progress import ProgressEvent
 from delta.domain.repository import Repository
 from delta.i18n import _
@@ -52,7 +52,7 @@ class BackupService:
         except BackupWarning as err:
             job.warn(str(err))
         except DeltaError as err:
-            missing = self.unreachable()  # the drive may have gone while the engine worked: that is not its failure either
+            missing = self.unreachable(is_full_message(str(err)))  # the drive may have gone or filled up: not its failure either
             if missing is not None:
                 job.wait_for_destination(missing)
             else:
@@ -61,11 +61,11 @@ class BackupService:
             job.succeed()
         return job
 
-    def unreachable(self) -> DestinationUnavailable | None:
-        """The error to wait with when the place of the repository cannot be reached, else None."""
+    def unreachable(self, out_of_space: bool = False) -> DestinationUnavailable | None:
+        """The error to wait with when the place of the repository cannot be used, else None."""
         if self._destination is None or self._repo is None:
             return None
-        state = self._destination.state(self._repo)
+        state = self._destination.state(self._repo, out_of_space)
         if state is DestinationState.AVAILABLE:
             return None
         return DestinationUnavailable(self._repo.location, state)

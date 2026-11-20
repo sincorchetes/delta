@@ -26,13 +26,32 @@ def is_repository(path: str) -> bool:
         return False
 
 
+def unwritable(path: str, statvfs=os.statvfs, access=os.access) -> PathState | None:
+    """READ_ONLY or NOT_WRITABLE when a backup could not be written at `path`, or where it would be made, else None."""
+    folder = path
+    while not os.path.isdir(folder):
+        parent = os.path.dirname(folder)
+        if parent == folder:
+            return None
+        folder = parent
+    try:
+        if statvfs(folder).f_flag & os.ST_RDONLY:
+            return PathState.READ_ONLY
+    except OSError:
+        pass
+    return None if access(folder, os.W_OK | os.X_OK) else PathState.NOT_WRITABLE
+
+
 def inspect_path(path: str) -> PathState:
     if is_unmounted(path):
         return PathState.UNMOUNTED
+    if os.path.lexists(path) and not os.path.isdir(path):
+        return PathState.FILE
+    problem = unwritable(path)
+    if problem is not None:
+        return problem
     if not os.path.lexists(path):
         return PathState.MISSING
-    if not os.path.isdir(path):
-        return PathState.FILE
     if is_repository(path):
         return PathState.REPOSITORY
     try:

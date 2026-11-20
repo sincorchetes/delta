@@ -101,6 +101,7 @@ INTERFACE_XML = """
     <property name="LastBackup" type="t" access="read"/>
     <property name="NextBackup" type="t" access="read"/>
     <property name="LastError" type="s" access="read"/>
+    <property name="UnavailableReason" type="s" access="read"/>
     <property name="CanMount" type="b" access="read"/>
   </interface>
 </node>

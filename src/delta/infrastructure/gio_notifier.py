@@ -45,6 +45,15 @@ def render(notification: Notification) -> tuple[str, str, Gio.NotificationPriori
     if kind is NotificationKind.DESTINATION_UNAVAILABLE:
         body = detail or _("Connect the drive that holds your backups.")
         return _("Backup drive not connected"), body, Gio.NotificationPriority.NORMAL
+    if kind is NotificationKind.DESTINATION_FULL:
+        body = detail or _("There is no room left there. Free some space, or choose another place in the preferences.")
+        return _("Backup place is full"), body, Gio.NotificationPriority.NORMAL
+    if kind is NotificationKind.DESTINATION_READ_ONLY:
+        body = detail or _("It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences.")
+        return _("Backup place is read-only"), body, Gio.NotificationPriority.NORMAL
+    if kind is NotificationKind.DESTINATION_DENIED:
+        body = detail or _("You do not have permission to write there. Change its permissions, or choose another place in the preferences.")
+        return _("Cannot write where backups are kept"), body, Gio.NotificationPriority.NORMAL
     if kind is NotificationKind.REPOSITORY_FAILED:
         body = detail or _("The backup destination could not be created.")
         return _("Could not set up backups"), body, Gio.NotificationPriority.HIGH

@@ -1415,3 +1415,54 @@ msgstr "La contraseña que ya tiene"
 
 msgid "Delta will keep using the backups that are there."
 msgstr "Delta seguirá usando las copias que hay ahí."
+
+msgid "The place where your backups are kept is full: {location}"
+msgstr "El sitio donde se guardan tus copias está lleno: {location}"
+
+msgid "The place where your backups are kept is read-only: {location}"
+msgstr "El sitio donde se guardan tus copias es de solo lectura: {location}"
+
+msgid "You cannot write in the place where your backups are kept: {location}"
+msgstr "No puedes escribir en el sitio donde se guardan tus copias: {location}"
+
+msgid "There is no room left there. Free some space, or choose another place in the preferences."
+msgstr "No queda espacio ahí. Libera espacio o elige otro sitio en las preferencias."
+
+msgid "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences."
+msgstr "Está montado de forma que no se puede escribir en él. Móntalo de nuevo para escribir, o elige otro sitio en las preferencias."
+
+msgid "You do not have permission to write there. Change its permissions, or choose another place in the preferences."
+msgstr "No tienes permiso para escribir ahí. Cambia sus permisos o elige otro sitio en las preferencias."
+
+msgid "Backup place is full"
+msgstr "El sitio de las copias está lleno"
+
+msgid "Backup place is read-only"
+msgstr "El sitio de las copias es de solo lectura"
+
+msgid "Cannot write where backups are kept"
+msgstr "No se puede escribir donde se guardan las copias"
+
+msgid "The place with your backups is full"
+msgstr "El sitio con tus copias está lleno"
+
+msgid "There is no room left in {location}. Free some space, or choose another place in the preferences."
+msgstr "No queda espacio en {location}. Libera espacio o elige otro sitio en las preferencias."
+
+msgid "The place with your backups is read-only"
+msgstr "El sitio con tus copias es de solo lectura"
+
+msgid "{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences."
+msgstr "{location} está montado de forma que no se puede escribir en él. Móntalo de nuevo para escribir, o elige otro sitio en las preferencias."
+
+msgid "You cannot write where your backups are kept"
+msgstr "No puedes escribir donde se guardan tus copias"
+
+msgid "You do not have permission to write in {location}. Change its permissions, or choose another place in the preferences."
+msgstr "No tienes permiso para escribir en {location}. Cambia sus permisos o elige otro sitio en las preferencias."
+
+msgid "That place is read-only: nothing can be written to it. Choose another."
+msgstr "Ese sitio es de solo lectura: no se puede escribir en él. Elige otro."
+
+msgid "You cannot write in that folder. Choose another, or change its permissions."
+msgstr "No puedes escribir en esa carpeta. Elige otra o cambia sus permisos."

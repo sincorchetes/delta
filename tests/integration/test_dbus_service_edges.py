@@ -60,6 +60,7 @@ def test_an_unknown_property_has_no_value(bus):
     service = bare_service(bus)
 
     assert service._on_get_property(None, None, None, None, "Nope") is None
+    assert service._on_get_property(None, None, None, None, "UnavailableReason").unpack() == ""
     service.unregister()
 
 

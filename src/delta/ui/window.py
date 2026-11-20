@@ -86,6 +86,7 @@ class StatusWindow(Adw.ApplicationWindow):
             last_backup=props.get("LastBackup", 0),
             next_backup=props.get("NextBackup", 0),
             last_error=props.get("LastError", ""),
+            reason=props.get("UnavailableReason", ""),
             repository=self._setting("repository-location", ""),
             schedule=self._setting("schedule", "hourly"),
         )

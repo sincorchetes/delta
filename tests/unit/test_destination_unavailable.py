@@ -11,6 +11,7 @@ from delta.domain.errors import (
     DestinationUnavailable,
     EngineError,
     RepositoryNotFound,
+    is_full_message,
 )
 from delta.domain.repository import Repository
 from delta.i18n import _ as translate
@@ -23,10 +24,11 @@ class Probe:
     """Answers with each state in turn, and with the last one from then on."""
 
     def __init__(self, *states):
-        self.states, self.asked = list(states), []
+        self.states, self.asked, self.out_of_space = list(states), [], []
 
-    def state(self, repo):
+    def state(self, repo, out_of_space=False):
         self.asked.append(repo)
+        self.out_of_space.append(out_of_space)
         return self.states.pop(0) if len(self.states) > 1 else self.states[0]
 
 
@@ -187,3 +189,93 @@ def test_with_no_repository_that_is_what_is_said_and_the_destination_is_not_aske
 
     assert unset.state is JobState.FAILED and unset.message == translate("no repository configured")
     assert probe.asked == [] and backup.unreachable() is None
+
+
+# --- the other causes: full, read-only, no permission ---------------------------------------------------
+
+FULL, READ_ONLY, DENIED = DestinationState.FULL, DestinationState.READ_ONLY, DestinationState.DENIED
+NO_ROOM = "/h/test.flac: read: [Errno 28] No space left on device"
+
+
+@pytest.mark.parametrize(
+    "state, words",
+    [
+        (FULL, "is full"),
+        (READ_ONLY, "is read-only"),
+        (DENIED, "You cannot write"),
+        (MISSING, "is not available"),
+        (EMPTY, "is not available"),
+    ],
+)
+def test_each_cause_says_what_is_wrong_with_the_place(state, words):
+    error = DestinationUnavailable("/media/disk/delta", state)
+
+    assert words in str(error) and "/media/disk/delta" in str(error)
+
+
+def test_each_cause_has_a_hint_of_its_own_and_none_is_the_hint_of_another():
+    hints = {state: DestinationUnavailable("/x", state).hint for state in (MISSING, EMPTY, FULL, READ_ONLY, DENIED)}
+
+    assert len(set(hints.values())) == 5
+    assert "room" in hints[FULL]
+    assert "written" in hints[READ_ONLY]
+    assert "permission" in hints[DENIED]
+
+
+@pytest.mark.parametrize(
+    "text, is_full",
+    [
+        (NO_ROOM, True),
+        ("OSError: [Errno 28] no space left on device", True),
+        ("Disk quota exceeded", True),
+        ("[Errno 122] something", True),
+        ("Input/output error", False),
+        ("Repository /x does not exist.", False),
+        ("", False),
+    ],
+)
+def test_the_engine_saying_that_a_disk_has_no_room_is_recognised(text, is_full):
+    assert is_full_message(text) is is_full
+
+
+def test_a_failure_that_says_no_room_asks_the_probe_whether_it_was_the_destination_that_ran_out():
+    probe = Probe(AVAILABLE, FULL)
+    backup = BackupService(Engine(EngineError(NO_ROOM)), REPO, ("/home",), destination=probe)
+    working = backup.new_job()
+
+    backup.run(working)
+
+    assert probe.out_of_space == [False, True]
+    assert working.state is JobState.UNAVAILABLE and working.unavailable.state is FULL
+
+
+def test_a_failure_that_does_not_say_so_asks_the_ordinary_question():
+    probe = Probe(AVAILABLE)
+    backup = BackupService(Engine(EngineError("Input/output error")), REPO, ("/home",), destination=probe)
+    working = backup.new_job()
+
+    backup.run(working)
+
+    assert probe.out_of_space == [False, False] and working.state is JobState.FAILED
+
+
+def test_no_room_somewhere_else_is_still_a_failure_of_the_backup():
+    # the home folder, where the engine keeps its cache, ran out: the destination has room
+    probe = Probe(AVAILABLE)
+    backup = BackupService(Engine(EngineError(NO_ROOM)), REPO, ("/home",), destination=probe)
+    working = backup.new_job()
+
+    backup.run(working)
+
+    assert working.state is JobState.FAILED and working.message == NO_ROOM
+
+
+@pytest.mark.parametrize("state", [FULL, READ_ONLY, DENIED])
+def test_a_place_that_cannot_be_written_to_at_the_start_waits_and_asks_the_engine_nothing(state):
+    engine = Engine()
+    backup = BackupService(engine, REPO, ("/home",), destination=Probe(state))
+    waiting = backup.new_job()
+
+    backup.run(waiting)
+
+    assert waiting.state is JobState.UNAVAILABLE and waiting.unavailable.state is state and engine.calls == 0

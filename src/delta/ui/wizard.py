@@ -20,6 +20,8 @@ class PathState(str, Enum):
     FILE = "file"
     REPOSITORY = "repository"  # a folder that already holds a backup repository: it can be reopened
     UNMOUNTED = "unmounted"  # inside the place of a drive that is not connected
+    READ_ONLY = "read-only"  # on a file system that is mounted so that nothing can be written to it
+    NOT_WRITABLE = "not-writable"  # a place the person has no permission to write in
 
 
 Inspect = Callable[[str], PathState]
@@ -75,6 +77,10 @@ def check_destination(text: str, home: str, inspect: Inspect) -> tuple[str | Non
         return None, _("That path is a file, not a folder.")
     if state is PathState.UNMOUNTED:
         return None, _("That place is on a drive that is not connected. Connect it first.")
+    if state is PathState.READ_ONLY:
+        return None, _("That place is read-only: nothing can be written to it. Choose another.")
+    if state is PathState.NOT_WRITABLE:
+        return None, _("You cannot write in that folder. Choose another, or change its permissions.")
     if state is PathState.NOT_EMPTY:
         return None, _("That folder is not empty. Choose a new or empty folder.")
     return path, None

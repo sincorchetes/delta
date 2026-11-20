@@ -66,7 +66,9 @@ class SnapshotMounter(Protocol):
 class DestinationProbe(Protocol):
     """Tells whether the place where the repository lives can be reached (a drive that is connected, a folder that is there)."""
 
-    def state(self, repo: Repository) -> DestinationState: ...
+    def state(self, repo: Repository, out_of_space: bool = False) -> DestinationState:
+        """`out_of_space`: the engine has just said that a disk has no room; is it this one?"""
+        ...
 
 
 class MountUsage(Protocol):

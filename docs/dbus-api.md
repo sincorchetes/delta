@@ -58,10 +58,14 @@ Long operations return a `job_id` at once and end with a signal. **There is only
 
 - `CanMount` b: whether this installation can open backups as a folder (false in a Flatpak); the UI hides "Browse as a folder"
   when it is false.
-- `Status` s: `idle` | `running` | `browsing` | `unavailable`. `unavailable` is that the latest backup found the place of the
-  repository unreachable (a drive that is not connected, a folder that is gone, the empty mount point of a drive that is not
-  mounted): it is not a failure, `LastError` stays empty, and it ends with the next backup, which runs by itself when the place is
-  back. A backup that is `running` is `running` whatever the previous one found.
+- `Status` s: `idle` | `running` | `browsing` | `unavailable`. `unavailable` is that the latest backup found that the place of
+  the repository cannot be used (see `UnavailableReason`): it is not a failure, `LastError` stays empty, and it ends with the next
+  backup, which runs by itself when the drive is mounted again (and at the next hourly try otherwise). A backup that is
+  `running` is `running` whatever the previous one found.
+- `UnavailableReason` s: why, while `Status` is `unavailable`; else empty. `missing` (the folder is not there: a drive that is
+  not connected), `empty` (the mount point of a drive that is not mounted), `full` (less than 1 MiB free, or the engine said a disk
+  had no room and the destination has less than 256 MiB), `read-only` (mounted so that nothing can be written) or `denied` (no
+  permission to write in it).
 - `LastBackup` t: the epoch of the last successful backup (0 = none). When the daemon starts, it takes it from the most recent
   snapshot of the repository.
 - `NextBackup` t: the epoch of the next scheduled backup (0 = unknown or not scheduled). It is read from the scheduler's timer and
