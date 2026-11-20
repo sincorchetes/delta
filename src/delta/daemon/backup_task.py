@@ -32,7 +32,7 @@ def make_backup_task(
     journal: JobJournal | None,
 ) -> Task:
     def task(on_progress) -> tuple[bool, str]:
-        missing = backup.unreachable()
+        missing = backup.cannot_back_up()
         if missing is not None:
             # Nothing was started, so there is nothing to withdraw; the user is told once, not at every hourly try.
             job.wait_for_destination(missing)
@@ -43,7 +43,7 @@ def make_backup_task(
             _journal(journal.begin)
         if notes is not None:
             notes.started()
-        backup.run(job, on_progress)
+        backup.run(job, on_progress, checked=True)
 
         if job.state is JobState.INTERRUPTED:
             # Keep the journal mark: the backup is resumed on the next start.

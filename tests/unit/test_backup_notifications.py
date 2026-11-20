@@ -175,6 +175,7 @@ def of(state):
         ("missing", NotificationKind.DESTINATION_UNAVAILABLE),
         ("empty", NotificationKind.DESTINATION_UNAVAILABLE),
         ("other-drive", NotificationKind.DESTINATION_OTHER_DRIVE),
+        ("other-repository", NotificationKind.DESTINATION_OTHER_REPOSITORY),
         ("full", NotificationKind.DESTINATION_FULL),
         ("read-only", NotificationKind.DESTINATION_READ_ONLY),
         ("denied", NotificationKind.DESTINATION_DENIED),
@@ -213,13 +214,14 @@ def test_another_cause_is_news_even_before_the_reminder():
     ]
 
 
-@pytest.mark.parametrize("state", ["other-drive", "full", "read-only", "denied"])
+@pytest.mark.parametrize("state", ["other-drive", "other-repository", "full", "read-only", "denied"])
 def test_the_notification_of_each_cause_has_a_title_and_is_not_an_alarm(state):
     from gi.repository import Gio
 
     error = of(state)
     kind = {
         "other-drive": NotificationKind.DESTINATION_OTHER_DRIVE,
+        "other-repository": NotificationKind.DESTINATION_OTHER_REPOSITORY,
         "full": NotificationKind.DESTINATION_FULL,
         "read-only": NotificationKind.DESTINATION_READ_ONLY,
         "denied": NotificationKind.DESTINATION_DENIED,

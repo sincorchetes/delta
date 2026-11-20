@@ -1351,8 +1351,6 @@ msgstr ""
 msgid "That place is on a drive that is not connected. Connect it first."
 msgstr ""
 
-msgid "Your backups are already kept there."
-msgstr ""
 
 msgid "The passphrase it already has"
 msgstr ""
@@ -1421,4 +1419,16 @@ msgid "Your backups are not on this drive"
 msgstr ""
 
 msgid "A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences."
+msgstr ""
+
+msgid "The repository at {location} is not the one your backups were made in"
+msgstr ""
+
+msgid "Connect the drive that holds your backups. If this repository is the right one, choose it again in the preferences, with its passphrase."
+msgstr ""
+
+msgid "These are not your backups"
+msgstr ""
+
+msgid "The repository at {location} is not the one your backups were made in. Connect the drive that holds them. If this one is the right one, choose it again in the preferences, with its passphrase."
 msgstr ""

@@ -30,6 +30,11 @@ def list_archives(repo: Repository) -> list[str]:
     return ["borg", "list", "--json", repo.location]
 
 
+def repository_id(repo: Repository) -> list[str]:
+    """One archive is enough: the answer carries the identifier of the repository, and a long list is slow."""
+    return ["borg", "list", "--json", "--last", "1", repo.location]
+
+
 def list_path(repo: Repository, archive: str, path: str) -> list[str]:
     return ["borg", "list", "--json-lines", f"{repo.location}::{archive}", path.lstrip("/")]
 

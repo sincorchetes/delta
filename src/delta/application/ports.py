@@ -91,6 +91,16 @@ class SessionEvents(Protocol):
     def release(self) -> None: ...
 
 
+class RepositoryIdentity(Protocol):
+    """Where the identifier of the repository that Delta made or adopted is kept, to notice another one in its place."""
+
+    def expected(self) -> str:
+        """Empty until a repository has been made, adopted, or backed up to once."""
+        ...
+
+    def remember(self, repo_id: str) -> None: ...
+
+
 class MountEvents(Protocol):
     """Tells when a drive or a folder gets mounted."""
 
@@ -125,6 +135,10 @@ class BackupEngine(VersionSource, Protocol):
     ) -> str: ...
 
     def list_snapshots(self, repo: Repository) -> list[Snapshot]: ...
+
+    def repository_id(self, repo: Repository) -> str:
+        """The identifier the engine gave the repository when it was made: the same for every copy of it."""
+        ...
 
     def extract(
         self, repo: Repository, snapshot: str, paths: tuple[str, ...], destination: str

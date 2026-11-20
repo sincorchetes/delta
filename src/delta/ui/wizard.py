@@ -132,7 +132,6 @@ class WizardModel:
     own_confirmation: str = ""
     recovery_saved: bool = False  # saved to a file, copied, or the risk accepted
     keep_folders: bool = False  # changing the destination: what is backed up stays as it is
-    current: str = ""  # changing the destination: where the backups are kept now
 
     @property
     def reuses_repository(self) -> bool:
@@ -166,9 +165,7 @@ class WizardModel:
         return [e for earlier in self.steps[:-1] for e in self.errors(earlier)]
 
     def _destination_errors(self) -> list[str]:
-        location, error = check_destination(self.destination, self.home, self.inspect)
-        if location is not None and location == _normal(self.current):
-            return [_("Your backups are already kept there.")]
+        _location, error = check_destination(self.destination, self.home, self.inspect)
         return [error] if error else []
 
     def _protection_errors(self) -> list[str]:

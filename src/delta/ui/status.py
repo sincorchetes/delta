@@ -109,6 +109,10 @@ def unavailable_view(snapshot: DaemonSnapshot) -> StatusView:
         title = _("Your backups are not on this drive")
         subtitle = _("A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences.")
         icon = "drive-harddisk-symbolic"
+    elif snapshot.reason == "other-repository":
+        title = _("These are not your backups")
+        subtitle = _("The repository at {location} is not the one your backups were made in. Connect the drive that holds them. If this one is the right one, choose it again in the preferences, with its passphrase.")
+        icon = "dialog-warning-symbolic"
     elif snapshot.reason == "full":
         title = _("The place with your backups is full")
         subtitle = _("There is no room left in {location}. Free some space, or choose another place in the preferences.")

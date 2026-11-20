@@ -47,6 +47,8 @@ class DestinationUnavailable(DeltaError):
     def _message(self) -> str:
         if self.state is DestinationState.OTHER_DRIVE:
             return _("A drive is connected where your backups were kept, but they are not on it: {location}")
+        if self.state is DestinationState.OTHER_REPOSITORY:
+            return _("The repository at {location} is not the one your backups were made in")
         if self.state is DestinationState.FULL:
             return _("The place where your backups are kept is full: {location}")
         if self.state is DestinationState.READ_ONLY:
@@ -58,6 +60,8 @@ class DestinationUnavailable(DeltaError):
     @property
     def hint(self) -> str:
         """What to do about it, in a sentence."""
+        if self.state is DestinationState.OTHER_REPOSITORY:
+            return _("Connect the drive that holds your backups. If this repository is the right one, choose it again in the preferences, with its passphrase.")
         if self.state is DestinationState.OTHER_DRIVE:
             return _("This is not the drive that holds your backups. Connect that one, or choose another place in the preferences.")
         if self.state is DestinationState.FULL:

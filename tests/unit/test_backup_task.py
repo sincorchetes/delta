@@ -186,8 +186,8 @@ def test_a_drive_that_is_not_there_starts_nothing_and_is_told_without_a_backup_i
 
 def test_a_drive_that_goes_while_the_engine_works_replaces_the_notification_of_the_start():
 
-    # the task asks, then the service asks, then the service asks again when the engine fails
-    task, job, journal, notifier = waiting(EngineError("Input/output error"), "AVAILABLE", "AVAILABLE", "MISSING")
+    # the task asks (and tells the service so), then the service asks again when the engine fails
+    task, job, journal, notifier = waiting(EngineError("Input/output error"), "AVAILABLE", "MISSING")
 
     with pytest.raises(DestinationUnavailable):
         task(lambda event: None)
@@ -219,7 +219,7 @@ def test_the_notification_of_a_drive_that_is_not_connected_says_what_to_do_and_i
 
 
 def test_a_drive_that_goes_while_the_engine_works_is_still_unavailable_without_notifications():
-    probe = Probe(DestinationState.AVAILABLE, DestinationState.AVAILABLE, DestinationState.MISSING)
+    probe = Probe(DestinationState.AVAILABLE, DestinationState.MISSING)
     backup = BackupService(FakeEngine(EngineError("Input/output error")), Repository("/media/disk/delta"), ("/home",), destination=probe)
     job = backup.new_job()
     task = make_backup_task(job, backup, None, None, None)

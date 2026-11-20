@@ -6,6 +6,11 @@
       <summary>Borg repository location</summary>
       <description>Local path of the Borg repository. Empty means not configured yet.</description>
     </key>
+    <key name="repository-id" type="s">
+      <default>''</default>
+      <summary>Identifier of the Borg repository</summary>
+      <description>The identifier of the repository that Delta made or adopted, to notice when a different one is found at the same place. Empty until the first backup after it was set up.</description>
+    </key>
     <key name="backup-sources" type="as">
       <default>[]</default>
       <summary>Folders to back up</summary>

@@ -163,7 +163,8 @@ def daemon(monkeypatch):
     monkeypatch.setattr(main, "TimerScheduler", lambda trigger, last_backup: ("timer", trigger, last_backup))
     monkeypatch.setattr(main, "BackgroundPortal", lambda connection: ("portal", connection))
     monkeypatch.setattr(main, "BackgroundScheduler", lambda inner, portal: ("background", inner, portal))
-    monkeypatch.setattr(main, "RepositorySetup", lambda engine, store: ("setup", store))
+    monkeypatch.setattr(main, "RepositorySetup", lambda engine, store, identity: ("setup", store, identity))
+    monkeypatch.setattr(main, "SettingsRepositoryIdentity", lambda: "identity")
     monkeypatch.setattr(main, "BackupNotifications", lambda notifier: Notes(("notifications", notifier)))
     monkeypatch.setattr(main, "GioNotifier", lambda app, opener: ("notifier", app, opener))
     monkeypatch.setattr(main, "FileJobJournal", lambda: "journal")
@@ -207,7 +208,7 @@ def test_the_bus_is_served_with_the_services_the_configuration_builds(daemon):
 
     service = Service.built[0]
     assert service.connection == "connection" and service.services is daemon.services
-    assert service.extras["setup"] == ("setup", "keyring")
+    assert service.extras["setup"] == ("setup", "keyring", "identity")
     assert service.extras["journal"] == "journal" and service.extras["next_runs"] == ("next", "scheduler")
     assert service.extras["notifications"][1][2] is main.open_ui
     assert Engine.instances[0].secrets == "keyring"

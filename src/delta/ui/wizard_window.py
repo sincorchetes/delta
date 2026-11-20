@@ -28,10 +28,7 @@ class SetupWizard(Adw.Window):
         )
         self._client, self._settings, self._on_done = client, settings, on_done
         self._change = change
-        self._model = WizardModel(
-            home=os.path.expanduser("~"), inspect=inspect_path, keep_folders=change,
-            current=settings.get_string("repository-location") if change and settings is not None else "",
-        )
+        self._model = WizardModel(home=os.path.expanduser("~"), inspect=inspect_path, keep_folders=change)
         self._touched: set[Step] = set()
         self._busy = False
         self._adopting = False

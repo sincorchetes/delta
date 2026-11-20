@@ -1407,8 +1407,6 @@ msgstr "Cambiar…"
 msgid "That place is on a drive that is not connected. Connect it first."
 msgstr "Ese sitio está en un disco que no está conectado. Conéctalo primero."
 
-msgid "Your backups are already kept there."
-msgstr "Tus copias ya se guardan ahí."
 
 msgid "The passphrase it already has"
 msgstr "La contraseña que ya tiene"
@@ -1478,3 +1476,15 @@ msgstr "Tus copias no están en este disco"
 
 msgid "A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences."
 msgstr "Hay un disco conectado en {location}, pero no tiene tus copias. Conecta el que las tiene, o elige otro sitio en las preferencias."
+
+msgid "The repository at {location} is not the one your backups were made in"
+msgstr "El repositorio de {location} no es aquel en el que se hicieron tus copias"
+
+msgid "Connect the drive that holds your backups. If this repository is the right one, choose it again in the preferences, with its passphrase."
+msgstr "Conecta el disco que tiene tus copias. Si este repositorio es el correcto, vuelve a elegirlo en las preferencias, con su contraseña."
+
+msgid "These are not your backups"
+msgstr "Estas no son tus copias"
+
+msgid "The repository at {location} is not the one your backups were made in. Connect the drive that holds them. If this one is the right one, choose it again in the preferences, with its passphrase."
+msgstr "El repositorio de {location} no es aquel en el que se hicieron tus copias. Conecta el disco que las tiene. Si este es el correcto, vuelve a elegirlo en las preferencias, con su contraseña."

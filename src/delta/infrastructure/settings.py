@@ -61,6 +61,19 @@ def save_repository(repo: Repository) -> None:
         settings.set_string("repository-location", repo.location)
 
 
+class SettingsRepositoryIdentity:
+    """The identifier of the repository that Delta made or adopted, in GSettings next to where it is."""
+
+    def expected(self) -> str:
+        settings = open_settings()
+        return settings.get_string("repository-id") if settings is not None else ""
+
+    def remember(self, repo_id: str) -> None:
+        settings = open_settings()
+        if settings is not None:
+            settings.set_string("repository-id", repo_id)
+
+
 def _schema_installed() -> bool:
     source = Gio.SettingsSchemaSource.get_default()
     return source is not None and source.lookup(SCHEMA_ID, True) is not None
