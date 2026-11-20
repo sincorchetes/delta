@@ -3,11 +3,14 @@
 What is missing, and what was deferred on purpose. The design is in [`docs/plan.md`](docs/plan.md) and the status of each
 milestone in [`docs/roadmap.md`](docs/roadmap.md).
 
-**Done and verified (2026-11-19):** milestones M0–M6, and M7 except for what is listed below. Version 0.1.2 is published: the
+**Done and verified (2026-11-20):** milestones M0–M6, and M7 except for what is listed below. Version 0.1.3 is published: the
 GitHub Release with its Flatpak bundle, the AUR and the openSUSE Build Service repositories (Fedora 43 and 44, Rocky 10,
-AlmaLinux 10, openSUSE Tumbleweed, Debian 13 and Ubuntu 26.04 and 26.10) are all made by pushing the tag, and the packages were
-installed in clean containers. The tests pass at 100 % of lines and branches; the mutation tests leave one equivalent survivor;
-the website builds and is deployed from `main`.
+AlmaLinux 10, openSUSE Tumbleweed, Debian 13 and Ubuntu 26.04 and 26.10) are all made by pushing the tag, and on each of the
+eight distributions the package is installed from its repository in a clean container and its daemon makes a backup and restores a
+file (*Package smoke*). That check found that 0.1.2 did not start its daemon on Fedora 43, Debian 13, Rocky 10 and AlmaLinux 10
+(`GLibUnix.signal_add` only exists in the newest GLib), which every test missed because they replace GLib with a stand-in: it is
+what 0.1.3 fixes. The tests pass at 100 % of lines and branches; the mutation tests leave one equivalent survivor; the website
+builds and is deployed from `main`.
 
 ## 1. Publish the repository (the maintainer)
 
@@ -51,21 +54,33 @@ the website builds and is deployed from `main`.
 - [x] **GStreamer in the packages:** the RPM, the `.deb` and the PKGBUILD recommend the base and good plugins that the preview of a
       video or audio needs (the Nix package already listed them). The Fedora, Debian and Ubuntu names were tried by the
       workflow; the openSUSE and Arch ones are the usual names, not tried.
-- [ ] **GStreamer, when it is missing:** a recommendation can be skipped, and then GTK ends the whole program when the preview of
-      a video is made, which Python cannot catch. A check before the player is made (is `playbin3` there?) would turn that into
-      the fallback that already exists for a codec that is missing.
+- [x] **GStreamer, when it is missing:** a recommendation can be skipped, and then GTK ends the whole program when the preview of
+      a video is made, which Python cannot catch. Delta tries to make the player in a process of its own, once, and offers the file
+      to its own application where that fails; the job *Ubuntu without the GStreamer plugins* proves both halves (the premise
+      and the probe).
 - [ ] **GTK 4.16** (Rocky and AlmaLinux 10) measures the `FlowBox` of the rows of buttons as one button wide, so two tests of how
       the row wraps are skipped before GTK 4.18; look at how it behaves in a real window with a long translation.
 - [x] **The widget tests printed 52 GTK and libadwaita criticals** on every distribution: 51 were windows given to an application
       that had not started up, and one a test that laid a page out twice. Neither was a fault of the application; both are fixed,
       and the workflow now prints none.
-- [ ] **Nix on two channels:** the Distributions workflow builds the package and the NixOS module on `nixos-unstable` and
-      `nixos-26.05` with the libraries of each (no `uv.lock` pins): see that both are green. When `nixos-26.11` is out, move
-      the stable leg to it.
-- [ ] **Package smoke** (`package-smoke.yml`): run it by hand once (*Actions → Package smoke*) and see the eight distributions
-      install the package from the repository, make a backup and restore a file. It does not cover the AUR (Arch builds its
-      package from source, so there is nothing to install from a repository) or the Flatpak. After a release it waits for OBS
-      to build the version of the tag. See `scripts/ci/package_smoke.sh` for how.
+- [x] **Nix on two channels:** the Distributions workflow builds the package and the NixOS module on `nixos-unstable` and
+      `nixos-26.05` with the libraries of each (no `uv.lock` pins), and both are green. When `nixos-26.11` is out, move the stable
+      leg to it.
+- [x] **Package smoke** (`package-smoke.yml`): the eight distributions install the package from its repository, make a backup and
+      restore a file, and all pass with 0.1.3. After a release it waits (up to three hours: Fedora, with two architectures, took more
+      than 90 minutes to publish) for OBS to build the version of the tag. It does not cover the AUR (Arch builds its package from
+      source, so there is nothing to install from a repository) or the Flatpak.
+- [ ] **Distributions, start the daemon for real:** the tests replace GLib and the bus with stand-ins, so a daemon that dies at
+      startup passes them. Run `scripts/ci/package_smoke.py --source` (the daemon that Meson installs, with the distribution's own
+      GLib, keyring and Borg) in each job of Distributions, so that it is found before a release and not after.
+- [ ] **Package smoke, the window:** open `delta-ui` under a virtual display against the installed daemon and check that it opens
+      without criticals or exceptions and lists a version. A `delta-ui` that is installed and does not open passes today.
+- [ ] **Flatpak smoke:** the bundle is built and attached, never run. Install it in a job and make a backup and a restore.
+- [ ] **Type checking** in the CI (the IDE already shows what Pyright says): fix a baseline first, then keep it from growing.
+- [x] **Checks that keep bugs out:** the widget tests fail on any GLib critical (`tests/gtk/conftest.py`); names that break careless
+      code are backed up and restored with a real Borg; properties of the paths, the readers of Borg's output and the schedule
+      are tested with `hypothesis`; every workflow is read as YAML (`tests/unit/test_workflows_yaml.py`); Distributions runs on the
+      pull requests that touch what a package builds.
 - [ ] The two issue forms show up under *Issues → New issue*.
 
 ## 4. Release channels
@@ -93,14 +108,21 @@ the website builds and is deployed from `main`.
 
 Building and importing in a clean container is not the same as running it.
 
-- [ ] Install each package and run it: the service starts, the window opens, and a backup and a restore work.
+- [ ] Install each package and run it: the window opens and Files shows its menu. (The service, a backup and a restore are
+      checked by *Package smoke*.)
 - [x] A pass with a screen reader (Orca): it works.
 - [x] A pass with the keyboard only: it works.
 - [ ] Flatpak: the background permission with the portals active (`services.flatpak.enable = true` on NixOS).
-- [ ] **A drive that is not connected, with a real drive:** unmount or unplug the drive of a real backup and see the window
-      ("The drive with your backups is not connected"), that there is one notification and not one an hour, and that mounting
-      the drive starts the backup that was waiting. In the wizard: a folder that holds a repository is reopened with its passphrase,
-      and a path under `/run/media` of a drive that is away is refused. In *Preferences → Destination → Change…* too.
+- [x] **A drive that is not connected, with a drive** (a loop device mounted with `udisksctl`, 2026-11-20): the window says "The
+      drive with your backups is not connected", and another drive in the same place says "Your backups are not on this drive". The
+      root of a freshly formatted ext4 drive (it holds only `lost+found`) is accepted by the wizard.
+- [ ] **The other causes, with a drive:** a full one (`dd` into it until "No space left"), a read-only one (`sudo mount -o
+      remount,ro`) and one without permission (`chmod 500` on the folder of the repository): the window and the single notification
+      of each, and that the backup goes on by itself when it is put right. Also that mounting the drive starts the waiting backup,
+      and a pull of a drive in the middle of a copy.
+- [ ] **The identity of the repository** (written, not yet in a release): Delta remembers the identifier of the repository it made
+      or adopted and notices another one in its place, even with the same passphrase, instead of backing up into it. Tested with a
+      real Borg (another repository with the same and with another passphrase, and an older copy of the same one).
 - [ ] The Nautilus menu entry appears only once after `home-manager switch` (the extension used to be loaded twice).
 
 ## 6. Cleanup
@@ -130,4 +152,4 @@ Building and importing in a clean container is not the same as running it.
 - **A `SourceSnapshot` port** to back up from a read-only BTRFS or ZFS snapshot (2.0).
 - **A backup destination reached through a bind mount** inside the folders that are backed up: the repository is skipped by its
   path (and Borg skips its own by inode), so a second path to the same folder is not recognized.
-- After each Dependabot pull request that touches `uv.lock`, update `nix/python.nix` in step with it.
+- **Nix on a channel that is not tried:** only `nixos-unstable` and the current stable are built; an older one may not work.
