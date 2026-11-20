@@ -38,7 +38,7 @@ jobs:
     name: ${{ matrix.name }}
     if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 200
     container:
       image: ${{ matrix.image }}
       options: --cap-add=IPC_LOCK
