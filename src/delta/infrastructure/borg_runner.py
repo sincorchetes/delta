@@ -32,6 +32,7 @@ from delta.infrastructure.borg_parsing import (
     parse_folder_search,
     parse_folder_tree,
     parse_progress,
+    parse_repository_id,
     parse_snapshots,
 )
 
@@ -118,6 +119,9 @@ class BorgRunner:
         with self._lock:
             self._snapshot_lists[repo.location] = (now, snapshots)
         return list(snapshots)
+
+    def repository_id(self, repo: Repository) -> str:
+        return parse_repository_id(self._run(commands.repository_id(repo), repo))
 
     def _forget_snapshots(self, repo: Repository) -> None:
         with self._lock:

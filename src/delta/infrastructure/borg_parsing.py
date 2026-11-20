@@ -39,6 +39,13 @@ def parse_snapshots(stdout: str) -> list[Snapshot]:
     return sorted(snapshots, key=lambda s: s.created)
 
 
+def parse_repository_id(stdout: str) -> str:
+    try:
+        return str(json.loads(stdout)["repository"]["id"])
+    except (ValueError, KeyError, TypeError) as err:
+        raise EngineError(_("unexpected borg list output: {error}").format(error=err)) from err
+
+
 def parse_file_entry(stdout: str, path: str) -> FileEntry | None:
     """Entry for exactly `path` from `borg list --json-lines`, or None if absent.
 

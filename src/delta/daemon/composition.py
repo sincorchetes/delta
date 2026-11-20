@@ -22,6 +22,7 @@ from delta.application.version_service import VersionService
 from delta.infrastructure.local_destination import LocalDestination
 from delta.infrastructure.runtime import in_flatpak
 from delta.infrastructure.settings import (
+    SettingsRepositoryIdentity,
     configured_excludes,
     configured_repository,
     configured_retention,
@@ -108,6 +109,7 @@ def build_services(engine: BackupEngine, mounter: SnapshotMounter | None = None)
             sources=resolve_sources(configured_sources(), home),
             excludes=resolve_excludes(configured_excludes(), home),
             destination=LocalDestination(),
+            identity=SettingsRepositoryIdentity(),
         ),
         restore=restore,
         versions=VersionService(engine, repo, home),

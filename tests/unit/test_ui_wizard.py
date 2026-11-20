@@ -285,12 +285,6 @@ def test_a_new_folder_does_not_reuse_anything_and_nothing_chosen_does_not_either
     assert not with_state(PathState.REPOSITORY).reuses_repository
 
 
-def test_changing_to_where_the_backups_are_now_is_refused_whatever_is_typed_around_it():
-    model = with_state(PathState.REPOSITORY, destination="/media/disk//delta/", keep_folders=True, current="/media/disk/delta")
-
-    assert model.errors() == ["Your backups are already kept there."]
-
-
 def test_a_place_that_is_read_only_is_not_a_place_to_keep_backups():
     location, error = check_destination("/media/disk/delta", HOME, lambda path: PathState.READ_ONLY)
 

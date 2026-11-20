@@ -33,7 +33,12 @@ from delta.infrastructure.proc_mount_usage import ProcMountUsage
 from delta.infrastructure.runtime import in_flatpak
 from delta.infrastructure.mount_events import GioMountEvents
 from delta.infrastructure.session_events import LogindSessionEvents
-from delta.infrastructure.settings import configured_repository, open_settings, save_repository
+from delta.infrastructure.settings import (
+    SettingsRepositoryIdentity,
+    configured_repository,
+    open_settings,
+    save_repository,
+)
 from delta.infrastructure.systemd_scheduler import SystemdScheduler
 from delta.infrastructure.timer_scheduler import TimerScheduler
 from delta.infrastructure.ui_launcher import open_ui
@@ -108,7 +113,7 @@ class DeltaDaemon:
                 on_postponed=notifications.postponed,
                 usage=ProcMountUsage(),
             ),
-            setup=RepositorySetup(self._engine, store),
+            setup=RepositorySetup(self._engine, store, SettingsRepositoryIdentity()),
             on_repository_created=save_repository,
             notifications=notifications,
             journal=FileJobJournal(),
