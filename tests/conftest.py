@@ -6,6 +6,7 @@ the tests that start their own keyring end up talking to a bus that does not hav
 the person running the tests). One private bus is started before the first test and pinned as that connection.
 """
 
+import importlib.util
 import os
 import shutil
 import subprocess
@@ -15,6 +16,11 @@ import pytest
 
 gi.require_version("Gio", "2.0")
 from gi.repository import Gio
+
+
+# `hypothesis` is a development dependency (uv.lock). The distributions test with what their packaging ships, so where it is
+# not there the property tests are left out; in devenv and its CI it always is, and they run.
+collect_ignore = [] if importlib.util.find_spec("hypothesis") else ["unit/test_properties.py"]
 
 
 def session_bus_options() -> list[str]:

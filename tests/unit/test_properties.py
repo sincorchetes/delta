@@ -1,4 +1,7 @@
-"""Properties that must hold for any input, not for the handful an example thought of."""
+"""Properties that must hold for any input, not for the handful an example thought of.
+
+Left out (tests/conftest.py) where `hypothesis` is not installed: the distributions test with what their packaging ships.
+"""
 
 import json
 import posixpath
