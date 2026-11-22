@@ -120,7 +120,7 @@ Building and importing in a clean container is not the same as running it.
       remount,ro`) and one without permission (`chmod 500` on the folder of the repository): the window and the single notification
       of each, and that the backup goes on by itself when it is put right. Also that mounting the drive starts the waiting backup,
       and a pull of a drive in the middle of a copy.
-- [ ] **The identity of the repository** (written, not yet in a release): Delta remembers the identifier of the repository it made
+- [ ] **The identity of the repository** (in 0.2.0, tried with a real Borg but not with real drives): Delta remembers the identifier of the repository it made
       or adopted and notices another one in its place, even with the same passphrase, instead of backing up into it. Tested with a
       real Borg (another repository with the same and with another passphrase, and an older copy of the same one).
 - [ ] The Nautilus menu entry appears only once after `home-manager switch` (the extension used to be loaded twice).
