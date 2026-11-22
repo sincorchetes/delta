@@ -40,6 +40,9 @@ jobs:
           ref: ${{ inputs.tag || github.ref_name }}
           path: tag
 
+      - name: The tag says what the tree says
+        run: sh scripts/ci/check_tag.sh "$TAG" tag
+
       - name: Publish
         env:
           AUR_SSH_PRIVATE_KEY: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
@@ -63,6 +66,9 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.ref_name }}
           path: tag
+
+      - name: The tag says what the tree says
+        run: sh scripts/ci/check_tag.sh "$TAG" tag
 
       - name: Publish
         env:
