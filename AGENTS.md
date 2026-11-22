@@ -114,7 +114,8 @@ Rocky 10, Ubuntu 26.04 and 26.10 and Debian 13, plus a build of the Nix flake an
 a user of that distribution's package gets. It checks the minimum base with `scripts/ci/check_base.py` (GNOME 46: GTK 4.10,
 libadwaita 1.5, Python 3.12), builds with Meson, validates the GSettings schema, the `.desktop` file and the AppStream
 (`meson test`) and runs `python3 -m pytest`. The `pyproject.toml` and `uv.lock` pins are only for development (devenv); the
-Flatpak pins only BorgBackup (`flatpak/python3-borgbackup.json`), brings its own runtime and is not part of that check. Toolchain changes must keep devenv and the
+Flatpak pins only BorgBackup (`flatpak/python3-borgbackup.json`), brings its own runtime and is not part of that check: its own
+workflow (`flatpak.yml`) builds it, installs the bundle and runs it (`scripts/ci/flatpak_smoke.sh`). Toolchain changes must keep devenv and the
 distributions in parity; when you add a system dependency, add it to `install-deps.sh` too.
 
 **The published packages** are checked in `.github/workflows/package-smoke.yml`: one parallel job for each distribution installs

@@ -76,7 +76,11 @@ builds and is deployed from `main`.
       file against it (`--window`, under `xvfb-run` or `xwfb-run`): it must stay open with no traceback and no GLib critical.
 - [ ] **Package smoke, the window of the installed package:** the same `--window` in *Package smoke*, against the package of the
       repository. It needs a virtual display in each clean container (Xvfb is not in Enterprise Linux 10: `xwfb-run`, from EPEL).
-- [ ] **Flatpak smoke:** the bundle is built and attached, never run. Install it in a job and make a backup and a restore.
+- [x] **Flatpak smoke** (`scripts/ci/flatpak_smoke.sh`, in `flatpak.yml`): the bundle is installed and run, and BorgBackup works in the
+      sandbox, the application is the version of the tree, the daemon owns its name on the bus and the window stays open without
+      criticals.
+- [ ] **A backup inside the Flatpak, in CI:** the smoke does not make one, because the passphrase goes to the keyring through the
+      Secret portal, which a runner does not have (it would need `xdg-desktop-portal` with a keyring backend).
 - [ ] **Type checking** in the CI (the IDE already shows what Pyright says): fix a baseline first, then keep it from growing.
 - [x] **Checks that keep bugs out:** the widget tests fail on any GLib critical (`tests/gtk/conftest.py`); names that break careless
       code are backed up and restored with a real Borg; properties of the paths, the readers of Borg's output and the schedule
