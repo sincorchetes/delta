@@ -59,6 +59,15 @@ def restore(session, home: Path) -> bool:
     return ok and Path(copy).read_text() == "version 1" and (home / "notes.txt").read_text() == "version 2"
 
 
+# What GTK itself prints when it draws with the software renderer on a virtual display (openSUSE Tumbleweed: `Gdk-CRITICAL ...
+# gdk_cairo_format_for_content: should not be reached`): not a fault of Delta, and the other distributions do not print it.
+KNOWN_GTK_CRITICALS = ("gdk_cairo_format_for_content",)
+
+
+def known(line: str) -> bool:
+    return any(marker in line for marker in KNOWN_GTK_CRITICALS)
+
+
 def window(session, notes: Path, seconds: float = 10.0) -> bool:
     """The window opens, and stays open: a `delta-ui` that is installed and dies on opening passes everything else."""
     executable = session.prefix / "bin" / "delta-ui"
@@ -72,9 +81,12 @@ def window(session, notes: Path, seconds: float = 10.0) -> bool:
         gone = smoke.pump(lambda: process.poll() is not None, seconds)
         smoke.stop(process)
     lines = log_path.read_text(errors="replace").splitlines()
-    problems = [line for line in lines if "Traceback" in line or "-CRITICAL" in line]
+    problems = [line for line in lines if ("Traceback" in line or "-CRITICAL" in line) and not known(line)]
+    ignored = sum(1 for line in lines if "-CRITICAL" in line and known(line))
     ok = not gone and not problems
-    detail = "" if ok else f"{'it exited' if gone else 'it printed a problem'}:\n" + "\n".join(lines[-12:])
+    detail = f"({ignored} known GTK criticals of the software renderer ignored)" if ok and ignored else ""
+    if not ok:
+        detail = f"{'it exited' if gone else 'it printed a problem'}:\n" + "\n".join(lines[-12:])
     return smoke.record("the window of the versions of a file opens and stays open", ok, detail)
 
 
