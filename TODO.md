@@ -70,11 +70,12 @@ builds and is deployed from `main`.
       restore a file, and all pass with 0.1.3. After a release it waits (up to three hours: Fedora, with two architectures, took more
       than 90 minutes to publish) for OBS to build the version of the tag. It does not cover the AUR (Arch builds its package from
       source, so there is nothing to install from a repository) or the Flatpak.
-- [ ] **Distributions, start the daemon for real:** the tests replace GLib and the bus with stand-ins, so a daemon that dies at
-      startup passes them. Run `scripts/ci/package_smoke.py --source` (the daemon that Meson installs, with the distribution's own
-      GLib, keyring and Borg) in each job of Distributions, so that it is found before a release and not after.
-- [ ] **Package smoke, the window:** open `delta-ui` under a virtual display against the installed daemon and check that it opens
-      without criticals or exceptions and lists a version. A `delta-ui` that is installed and does not open passes today.
+- [x] **Distributions, start the daemon for real:** the tests replace GLib and the bus with stand-ins, so a daemon that dies at
+      startup passed them. Each job now runs `scripts/ci/package_smoke.py --source` (the daemon that Meson installs, with the
+      distribution's own GLib, keyring and Borg: a repository, a backup and a restore), and then the window of the versions of a
+      file against it (`--window`, under `xvfb-run` or `xwfb-run`): it must stay open with no traceback and no GLib critical.
+- [ ] **Package smoke, the window of the installed package:** the same `--window` in *Package smoke*, against the package of the
+      repository. It needs a virtual display in each clean container (Xvfb is not in Enterprise Linux 10: `xwfb-run`, from EPEL).
 - [ ] **Flatpak smoke:** the bundle is built and attached, never run. Install it in a job and make a backup and a restore.
 - [ ] **Type checking** in the CI (the IDE already shows what Pyright says): fix a baseline first, then keep it from growing.
 - [x] **Checks that keep bugs out:** the widget tests fail on any GLib critical (`tests/gtk/conftest.py`); names that break careless

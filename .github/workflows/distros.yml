@@ -93,8 +93,18 @@ jobs:
       # The tests run the code with stand-ins for GLib and the bus. This starts the daemon that Meson installs, for real, with the
       # distribution's own GLib, keyring and Borg: it makes a repository, backs up a few files and restores one. A daemon that
       # died at startup on Fedora 43, Debian 13 and Enterprise Linux 10 (version 0.1.2) passed every test above.
-      - name: The daemon starts, makes a backup and restores a file
-        run: python3 scripts/ci/package_smoke.py --source
+      # And the window of the versions of a file, which is what Files opens, against that daemon (it needs a display, like the widget
+      # tests: xvfb-run, or xwfb-run where there is no Xvfb).
+      - name: The daemon starts, makes a backup and restores a file, and the window opens against it
+        run: |
+          if command -v xvfb-run > /dev/null; then
+            xvfb-run -a python3 scripts/ci/package_smoke.py --source --window
+          elif command -v xwfb-run > /dev/null; then
+            xwfb-run -- python3 scripts/ci/package_smoke.py --source --window
+          else
+            echo "::warning::no xvfb-run on this distribution: the window was not opened"
+            python3 scripts/ci/package_smoke.py --source
+          fi
 
   # A system where GTK cannot make its player: GStreamer without its plugins. Making the player ends the whole process there
   # (a GLib error that Python cannot catch), so Delta tries it in a process of its own; the check proves that premise first

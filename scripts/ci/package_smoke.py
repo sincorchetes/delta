@@ -7,9 +7,14 @@ a few files, list them and restore one as a copy.
 
     python3 scripts/ci/package_smoke.py [PREFIX]   the package installed under PREFIX (default /usr)
     python3 scripts/ci/package_smoke.py --source   what `meson install` puts in a prefix of its own, from this source tree
+
+With `--window` it also opens the versions window of a file (`delta-ui --versions FILE`, what Files does) against the daemon that
+made the backup, and checks that it stays open with no traceback and no GLib critical. That needs a display: run it under
+`xvfb-run -a` (or `xwfb-run --` where there is no Xvfb).
 """
 
 import shutil
+import subprocess
 import sys
 import tempfile
 from pathlib import Path
@@ -54,10 +59,29 @@ def restore(session, home: Path) -> bool:
     return ok and Path(copy).read_text() == "version 1" and (home / "notes.txt").read_text() == "version 2"
 
 
+def window(session, notes: Path, seconds: float = 10.0) -> bool:
+    """The window opens, and stays open: a `delta-ui` that is installed and dies on opening passes everything else."""
+    executable = session.prefix / "bin" / "delta-ui"
+    argv = [str(executable)] if session.package else [sys.executable, str(executable)]
+    log_path = session.work / "window.log"
+    with log_path.open("w") as log:
+        process = subprocess.Popen(
+            [*argv, "--versions", str(notes)], env={**session.env, "GSK_RENDERER": "cairo"},
+            stdout=log, stderr=subprocess.STDOUT, start_new_session=True,
+        )
+        gone = smoke.pump(lambda: process.poll() is not None, seconds)
+        smoke.stop(process)
+    lines = log_path.read_text(errors="replace").splitlines()
+    problems = [line for line in lines if "Traceback" in line or "-CRITICAL" in line]
+    ok = not gone and not problems
+    detail = "" if ok else f"{'it exited' if gone else 'it printed a problem'}:\n" + "\n".join(lines[-12:])
+    return smoke.record("the window of the versions of a file opens and stays open", ok, detail)
+
+
 def main() -> int:
     arguments = sys.argv[1:]
-    from_source = "--source" in arguments
-    prefix = Path(next((argument for argument in arguments if argument != "--source"), "/usr"))
+    from_source, with_window = "--source" in arguments, "--window" in arguments
+    prefix = Path(next((argument for argument in arguments if not argument.startswith("--")), "/usr"))
     work = Path(tempfile.mkdtemp(prefix="delta-package-smoke-"))
     session = smoke.Session(work, 0, None if from_source else prefix)
     bus = Gio.TestDBus.new(Gio.TestDBusFlags.NONE)
@@ -82,6 +106,8 @@ def main() -> int:
         steps = (create_repository, backup)
         if all(step(session) for step in steps):
             smoke.record("the restored copy is the old version and the file is as it is today", restore(session, session.home))
+            if with_window:
+                window(session, session.home / "notes.txt")
     finally:
         smoke.stop(daemon)
         smoke.stop(keyring)
