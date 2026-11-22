@@ -89,6 +89,8 @@ builds and is deployed from `main`.
       `CHANGELOG.md` and the Flatpak bundle, the AUR (the real checksum and `.SRCINFO`) and OBS (the branch `release` and a token
       that can only run the source service, which fetches the spec, the dsc, `debian/` and the tarball from git). How it is set up
       is in `packaging/obs/README.md` and `CONTRIBUTING.md`.
+- [x] **The publication checks the tag first** (`scripts/ci/check_tag.sh`, in `release.yml` and `flatpak.yml`): a tag pushed before
+      the version PR was merged (v0.2.0, once) made the AUR and the GitHub Release fail and OBS try to build it.
 - [ ] **OBS, Ubuntu 24.04:** its repository built but was never published, so it was left out. Try it again.
 - [x] **OBS, the test project** `home:sincorchetes:delta-test` was deleted, with its token.
 - [x] **Flatpak:** built offline from pinned sources and attached to each release (`flatpak/`).

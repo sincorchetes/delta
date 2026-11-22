@@ -25,6 +25,10 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
+      - name: The tag says what the tree says
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: sh scripts/ci/check_tag.sh "$GITHUB_REF_NAME"
+
       # Directly on the runner, not in the container of the Flatpak actions: updating a GNOME 51 runtime
       # inside that container fails with "Invalid cross-device link". Ubuntu restricts the user namespaces
       # that the sandbox of flatpak-builder needs.
