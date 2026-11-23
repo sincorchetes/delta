@@ -1,7 +1,8 @@
 name: Flatpak
 
-# Builds the Flatpak offline (BorgBackup from pinned sources) on every change to what goes into it, and
-# attaches the bundle to the GitHub Release when a version tag is pushed.
+# Builds the Flatpak offline (BorgBackup from pinned sources) on every change to what goes into it, installs the bundle and runs it
+# (scripts/ci/flatpak_smoke.sh: BorgBackup, the version, the daemon and the window), and attaches the bundle to the GitHub Release
+# when a version tag is pushed.
 on:
   pull_request:
     paths:
@@ -11,6 +12,7 @@ on:
       - po/**
       - meson.build
       - .github/workflows/flatpak.yml
+      - scripts/ci/flatpak_smoke.sh
   push:
     tags: ["v*"]
   workflow_dispatch:
@@ -36,7 +38,7 @@ jobs:
         run: |
           sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
           sudo apt-get update
-          sudo apt-get install -y flatpak flatpak-builder
+          sudo apt-get install -y flatpak flatpak-builder xvfb dbus
           flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
       - name: Build
@@ -48,6 +50,10 @@ jobs:
         run: |
           flatpak build-bundle --runtime-repo=https://dl.flathub.org/repo/flathub.flatpakrepo \
             repo delta.flatpak io.github.sincorchetes.Delta
+
+      # The bundle is installed and run, not just built: what a person who installs it gets.
+      - name: Install the bundle and run it
+        run: sh scripts/ci/flatpak_smoke.sh delta.flatpak
 
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:

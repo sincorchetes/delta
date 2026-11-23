@@ -41,6 +41,11 @@ The workflow `.github/workflows/flatpak.yml` builds this manifest on every chang
   OpenSSL, lz4 and zstd that BorgBackup builds against come from the SDK. Regenerate it when BorgBackup changes.
 - **Checks.** `flatpak run --command=flatpak-builder-lint org.flatpak.Builder manifest <manifest>` and `... repo <repo>`.
   On a local build the repository check reports the screenshots as not mirrored: only Flathub mirrors them.
+- **A smoke test.** `scripts/ci/flatpak_smoke.sh delta.flatpak` installs the bundle and runs it: BorgBackup works in the sandbox, the
+  application is the version of the tree, the daemon starts and owns its name on the bus, and the window opens and stays open with
+  no traceback and no GLib critical. The workflow runs it on every build; after `flatpak-build` in devenv, run it by hand with
+  `sh scripts/ci/flatpak_smoke.sh --installed`. It does not make a backup: the passphrase goes to the keyring through a portal that a
+  CI runner does not have.
 - **Permissions.** `--filesystem=home` is wide, because a backup program has to read what it backs up and
   write what it restores.
 
