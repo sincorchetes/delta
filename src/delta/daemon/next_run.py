@@ -42,7 +42,7 @@ class NextRunCache:
     def _refresh(self) -> None:
         try:
             moment = self._scheduler.next_run()
-            self._epoch = int(moment.timestamp()) if moment else 0
+            self._epoch = 0 if moment is None else int(moment.timestamp())
         except Exception:  # a broken scheduler must not take the daemon down
             self._epoch = 0
         finally:

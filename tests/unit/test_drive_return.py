@@ -37,3 +37,7 @@ def test_the_adapter_calls_back_without_the_arguments_of_the_signal():
 
 def test_the_adapter_follows_the_volume_monitor_of_the_session_by_default():
     assert GioMountEvents() is not None
+
+
+def test_the_adapter_follows_the_real_monitor_by_default_and_can_be_watched():
+    GioMountEvents().watch(lambda: None)  # it connects to the monitor of the session: nothing else is needed

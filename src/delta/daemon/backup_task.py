@@ -2,7 +2,6 @@
 
 import logging
 from collections.abc import Callable
-from typing import cast
 
 from delta.application.backup_notifications import BackupNotifications
 from delta.application.backup_service import BackupService
@@ -10,7 +9,7 @@ from delta.application.ports import JobJournal
 from delta.application.prune_service import PruneService
 from delta.daemon.job_runner import Task
 from delta.domain.backup_job import BackupJob, JobState
-from delta.domain.errors import DeltaError, DestinationUnavailable
+from delta.domain.errors import DeltaError
 from delta.i18n import _
 
 log = logging.getLogger(__name__)
@@ -55,7 +54,7 @@ def make_backup_task(
 
         if job.state is JobState.UNAVAILABLE:
             # The drive went while the engine worked: the notification of the start gives way to this one.
-            error = cast(DestinationUnavailable, job.unavailable)
+            error = job.why_unavailable()
             if notes is not None:
                 notes.destination_lost(error)
             raise error

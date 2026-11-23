@@ -56,9 +56,13 @@ fail_under = 100  # lines and branches; the GTK widget tests need a display (xvf
 # No "pragma: no cover" and no omitted files: what the tests do not run is reported, not hidden.
 
 [tool.mutmut]
-# Mutation testing (`uv run mutmut run`, then `mutmut results`): only the logic that decides what is
-# restored, kept, refused or parsed. Widgets, the daemon and the platform adapters are covered by
-# tests that check wiring, not rules.
+# Mutation testing (`uv run mutmut run`, then `mutmut results`): the logic that decides what is restored, kept, refused, parsed,
+# told, scheduled or reported on the bus. mutmut runs only tests/unit/, so what is left out is what those tests cannot judge:
+# the handlers of the D-Bus calls (`job_calls`, `query_calls`, `service`, `introspection`) and the wiring (`composition`, `main`,
+# `stop_signals`), tested through a real bus in tests/integration/; the adapters of the platform (`borg_runner`, `borg_mounter`,
+# `libsecret_store`, `systemd_scheduler`, `background_portal`, `session_events`, `ui_launcher`, `gio_notifier`), tested with the
+# real Borg, keyring and session; and `browse_controller` (a state machine over the bus: next on the list, see TODO.md).
+# `sh scripts/ci/mutants_by_module.sh` says where the survivors are after a run.
 source_paths = ["src/"]
 only_mutate = [
     "src/delta/domain/*",
@@ -66,6 +70,19 @@ only_mutate = [
     "src/delta/infrastructure/borg_parsing.py",
     "src/delta/infrastructure/borg_commands.py",
     "src/delta/infrastructure/timer_scheduler.py",
+    "src/delta/infrastructure/local_destination.py",
+    "src/delta/infrastructure/drive_mounts.py",
+    "src/delta/infrastructure/mount_events.py",
+    "src/delta/infrastructure/file_job_journal.py",
+    "src/delta/infrastructure/proc_mount_usage.py",
+    "src/delta/infrastructure/listing_cache.py",
+    "src/delta/infrastructure/background_scheduler.py",
+    "src/delta/infrastructure/settings.py",
+    "src/delta/daemon/next_run.py",
+    "src/delta/daemon/backup_task.py",
+    "src/delta/daemon/job_runner.py",
+    "src/delta/daemon/config_reloader.py",
+    "src/delta/daemon/drive_return.py",
     "src/delta/ui/wizard.py",
 ]
 pytest_add_cli_args_test_selection = ["tests/unit/"]
