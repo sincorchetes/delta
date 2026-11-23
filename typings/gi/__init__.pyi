@@ -1,0 +1,3 @@
+"""What Delta uses of PyGObject, which has no type stubs: `gi.repository` is untyped (see repository/__init__.pyi)."""
+
+def require_version(namespace: str, version: str) -> None: ...
