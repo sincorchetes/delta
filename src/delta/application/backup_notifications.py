@@ -17,6 +17,7 @@ DESTINATION_KINDS = {
     DestinationState.EMPTY: NotificationKind.DESTINATION_UNAVAILABLE,
     DestinationState.OTHER_DRIVE: NotificationKind.DESTINATION_OTHER_DRIVE,
     DestinationState.OTHER_REPOSITORY: NotificationKind.DESTINATION_OTHER_REPOSITORY,
+    DestinationState.IO_ERROR: NotificationKind.DESTINATION_IO_ERROR,
     DestinationState.FULL: NotificationKind.DESTINATION_FULL,
     DestinationState.READ_ONLY: NotificationKind.DESTINATION_READ_ONLY,
     DestinationState.DENIED: NotificationKind.DESTINATION_DENIED,

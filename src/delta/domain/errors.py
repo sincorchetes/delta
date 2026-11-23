@@ -1,13 +1,29 @@
 """Domain errors raised by backup engines and surfaced to users."""
 
+import errno
+import re
+
 from delta.domain.destination import DestinationState
 from delta.i18n import _
 
+DEVICE_ERRORS = frozenset({errno.EIO, errno.ENXIO, errno.ENODEV, errno.ESTALE})
+PERMISSION_ERRORS = frozenset({errno.EACCES, errno.EPERM})
+
+
+def engine_errno(text: str) -> int | None:
+    """The number of the error of the system that an engine message carries («[Errno 30] Read-only file system»), if any."""
+    found = re.search(r"\[Errno (\d+)\]", text)
+    return int(found.group(1)) if found else None
+
 
 def is_lock_message(text: str) -> bool:
-    """Whether an engine message says the repository could not be locked."""
+    """Whether an engine message says the repository is locked, by another program or by an interrupted backup.
+
+    A failure to make the lock that carries an error of the system («… the lock … ([Errno 30] Read-only file system)») is not
+    that: the repository is not locked, the place cannot be written to.
+    """
     lowered = text.lower()
-    return "lock" in lowered and ("failed" in lowered or "timeout" in lowered)
+    return "lock" in lowered and ("failed" in lowered or "timeout" in lowered) and engine_errno(text) is None
 
 
 def is_full_message(text: str) -> bool:
@@ -23,6 +39,26 @@ def says_repository_is_full(text: str) -> bool:
     refuses to commit when what is free is less than what it needs («Insufficient free space to complete transaction»).
     """
     return "insufficient free space" in text.lower()
+
+
+def state_from_error(text: str, location: str) -> DestinationState | None:
+    """What a failure of the engine says about the place of the repository, when it says something; else None.
+
+    Borg's own judgement that the repository has not enough room counts, and so does an error of the device (a disk that answers
+    with I/O errors). A read-only or a permission error counts when it names the folder of the repository: Borg keeps a cache in
+    the home folder, and a problem there is not the destination's. «No space left» is left to the probe, for the same reason.
+    """
+    if says_repository_is_full(text):
+        return DestinationState.FULL
+    number = engine_errno(text)
+    if number in DEVICE_ERRORS:
+        return DestinationState.IO_ERROR
+    if location in text:
+        if number == errno.EROFS:
+            return DestinationState.READ_ONLY
+        if number in PERMISSION_ERRORS:
+            return DestinationState.DENIED
+    return None
 
 
 class DeltaError(Exception):
@@ -58,6 +94,8 @@ class DestinationUnavailable(DeltaError):
             return _("A drive is connected where your backups were kept, but they are not on it: {location}")
         if self.state is DestinationState.OTHER_REPOSITORY:
             return _("The repository at {location} is not the one your backups were made in")
+        if self.state is DestinationState.IO_ERROR:
+            return _("The place where your backups are kept reports errors: {location}")
         if self.state is DestinationState.FULL:
             return _("The place where your backups are kept is full: {location}")
         if self.state is DestinationState.READ_ONLY:
@@ -73,6 +111,8 @@ class DestinationUnavailable(DeltaError):
             return _("Connect the drive that holds your backups. If this repository is the right one, choose it again in the preferences, with its passphrase.")
         if self.state is DestinationState.OTHER_DRIVE:
             return _("This is not the drive that holds your backups. Connect that one, or choose another place in the preferences.")
+        if self.state is DestinationState.IO_ERROR:
+            return _("The drive reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing.")
         if self.state is DestinationState.FULL:
             return _("There is no room left there. Free some space, or choose another place in the preferences.")
         if self.state is DestinationState.READ_ONLY:

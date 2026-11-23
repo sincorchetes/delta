@@ -1488,3 +1488,21 @@ msgstr "Estas no son tus copias"
 
 msgid "The repository at {location} is not the one your backups were made in. Connect the drive that holds them. If this one is the right one, choose it again in the preferences, with its passphrase."
 msgstr "El repositorio de {location} no es aquel en el que se hicieron tus copias. Conecta el disco que las tiene. Si este es el correcto, vuelve a elegirlo en las preferencias, con su contraseña."
+
+msgid "The place where your backups are kept reports errors: {location}"
+msgstr "El sitio donde se guardan tus copias da errores: {location}"
+
+msgid "The drive reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing."
+msgstr "El disco ha dado un error al escribir. Comprueba su conexión; si se repite, puede que el disco esté fallando."
+
+msgid "Backup drive reports errors"
+msgstr "El disco de las copias da errores"
+
+msgid "The drive with your backups reports errors"
+msgstr "El disco con tus copias da errores"
+
+msgid "{location} reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing."
+msgstr "{location} ha dado un error al escribir en él. Comprueba su conexión; si se repite, puede que el disco esté fallando."
+
+msgid "Borg stopped unexpectedly: {error}"
+msgstr "Borg se detuvo de forma inesperada: {error}"

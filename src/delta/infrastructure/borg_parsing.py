@@ -1,6 +1,7 @@
 """Parsing of borg output and mapping of failures to domain errors."""
 
 import json
+import logging
 import re
 from datetime import datetime
 
@@ -18,6 +19,7 @@ from delta.domain.snapshot import Snapshot
 from delta.i18n import _
 
 
+log = logging.getLogger(__name__)
 _CHECKPOINT = re.compile(r"\.checkpoint(\.\d+)?$")
 
 
@@ -187,9 +189,31 @@ def log_messages(stderr: str) -> str:
     return "\n".join(lines)
 
 
+def crash_reason(text: str) -> str | None:
+    """What went wrong, from the report that Borg prints when it stops with an internal error («Local Exception» and a traceback).
+
+    The line that names the exception is the last one that is not indented before the lines that describe the platform.
+    """
+    lines = text.splitlines()
+    start = next((index for index, line in enumerate(lines) if line.startswith("Traceback (most recent call last)")), None)
+    if start is None:
+        return None
+    reason = None
+    for line in lines[start + 1 :]:
+        if line.startswith("Platform:"):
+            break
+        if line and not line[0].isspace() and not line.startswith(("During handling", "The above exception")):
+            reason = line
+    return reason
+
+
 def error_for(returncode: int, stderr: str) -> DeltaError:
     text = log_messages(stderr).strip()
     lowered = text.lower()
+    reason = crash_reason(text)
+    if reason is not None:
+        log.warning("borg stopped with an internal error:\n%s", text)
+        return EngineError(_("Borg stopped unexpectedly: {error}").format(error=reason), returncode)
     if "does not exist" in lowered or "is not a valid repository" in lowered:
         return RepositoryNotFound(text)
     if is_lock_message(text):

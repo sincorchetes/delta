@@ -12,6 +12,7 @@ class DestinationState(str, Enum):
     FULL = "full"  # it is there, and there is no room left in it
     READ_ONLY = "read-only"  # mounted so that nothing can be written to it
     DENIED = "denied"  # the person has no permission to write in it
+    IO_ERROR = "io-error"  # the drive answers with errors: a pulled cable, a failing disk
 
 # What a file system puts in an empty drive by itself (ext4 makes `lost+found`): it does not make the drive hold anything.
 IGNORED_ENTRIES = frozenset({"lost+found"})
