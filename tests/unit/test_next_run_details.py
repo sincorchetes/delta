@@ -1,5 +1,6 @@
 """The cache of the next scheduled backup: when it goes stale, what it keeps and the thread it works on."""
 
+import logging
 from datetime import datetime
 from types import SimpleNamespace
 
@@ -82,3 +83,30 @@ def test_a_schedule_with_no_next_moment_is_zero_and_one_with_it_is_its_epoch():
     some.value()
     spawned.pop()()
     assert some.value() == int(moment.timestamp())
+
+
+def test_no_next_moment_is_not_an_error_and_says_nothing(caplog):
+    spawned = []
+    cache = NextRunCache(Scheduler(None), 60.0, Clock(), spawned.append)
+
+    with caplog.at_level(logging.WARNING, logger="delta.daemon.next_run"):
+        cache.value()
+        spawned.pop()()
+
+    assert caplog.records == []
+
+
+def test_a_scheduler_that_fails_is_said_and_the_value_is_zero(caplog):
+    class Broken:
+        def next_run(self):
+            raise RuntimeError("no systemd")
+
+    spawned = []
+    cache = NextRunCache(Broken(), 60.0, Clock(), spawned.append)
+
+    with caplog.at_level(logging.WARNING, logger="delta.daemon.next_run"):
+        cache.value()
+        spawned.pop()()
+
+    assert cache.value() == 0
+    assert [record.getMessage() for record in caplog.records] == ["cannot read the next scheduled run: no systemd"]

@@ -86,3 +86,12 @@ def test_the_closest_ancestor_is_the_one_used():
 
     assert cache.get("r", "s", "/a/b/c") == listing("a/b/c")
     assert ("r", "s", "/a/b/c") in cache._items
+
+
+def test_the_closest_ancestor_is_the_deepest_one_and_not_the_one_that_sorts_last():
+    shallow = json.dumps({"path": "a/.b/c", "type": "-", "size": 99})  # what the shallower one says is different
+    cache = ListingCache()
+    cache.put("r", "s", "/a//", shallow)  # `/` sorts after `.`, so this one sorts last, but it is the shallower
+    cache.put("r", "s", "/a/.b", listing("a/.b", "a/.b/c"))
+
+    assert cache.get("r", "s", "/a/.b/c") == listing("a/.b/c")

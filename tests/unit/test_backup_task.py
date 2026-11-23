@@ -310,6 +310,7 @@ def test_a_journal_that_cannot_be_written_is_logged_with_its_error(tmp_path, cap
     with caplog.at_level(logging.WARNING, logger="delta.daemon.backup_task"):
         make_backup_task(backup.new_job(), backup, None, None, FileJobJournal(blocker / "state"))(lambda event: None)
 
+    with pytest.raises(OSError) as raised:
+        FileJobJournal(blocker / "state").begin()
     messages = [record.getMessage() for record in caplog.records if record.name == "delta.daemon.backup_task"]
-    assert messages and all(message.startswith("cannot update the backup journal: ") for message in messages)
-    assert not any(message.endswith(": None") for message in messages)
+    assert "cannot update the backup journal: " + str(raised.value) in messages

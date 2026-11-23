@@ -16,5 +16,7 @@ def test_a_job_that_waits_gives_the_reason_it_was_given():
 
 
 def test_a_job_that_is_not_waiting_has_no_reason_and_asking_for_it_is_a_mistake():
-    with pytest.raises(ValueError, match="not waiting for a destination"):
+    with pytest.raises(ValueError) as raised:
         BackupJob("j", ("/home",)).why_unavailable()
+
+    assert str(raised.value) == "this job is not waiting for a destination"
