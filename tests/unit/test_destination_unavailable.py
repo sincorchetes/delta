@@ -12,6 +12,7 @@ from delta.domain.errors import (
     EngineError,
     RepositoryNotFound,
     is_full_message,
+    says_repository_is_full,
 )
 from delta.domain.repository import Repository
 from delta.i18n import _ as translate
@@ -274,6 +275,36 @@ def test_a_failure_that_does_not_say_so_asks_the_ordinary_question():
     backup.run(working)
 
     assert probe.out_of_space == [False, False] and working.state is JobState.FAILED
+
+
+BORG_SHORT = "Insufficient free space to complete transaction (required: 545.43 MB, available: 263.97 MB)."
+
+
+@pytest.mark.parametrize(
+    "text, says",
+    [
+        (BORG_SHORT, True),
+        ("insufficient free space", True),
+        ("INSUFFICIENT FREE SPACE", True),
+        (NO_ROOM, False),  # «no space left» can be the home folder: it is not about the repository
+        ("Input/output error", False),
+        ("", False),
+    ],
+)
+def test_borg_saying_that_the_disk_of_the_repository_is_too_full_is_recognised(text, says):
+    assert says_repository_is_full(text) is says
+
+
+def test_borg_refusing_for_lack_of_free_space_is_the_destination_being_full_even_if_it_has_some_room():
+    # the probe says it can be used: it has room, but less than Borg needs to commit
+    probe = Probe(AVAILABLE)
+    backup = BackupService(Engine(EngineError(BORG_SHORT)), REPO, ("/home",), destination=probe)
+    working = backup.new_job()
+
+    backup.run(working)
+
+    assert working.state is JobState.UNAVAILABLE and working.unavailable.state is FULL
+    assert probe.asked == [REPO, REPO]
 
 
 def test_no_room_somewhere_else_is_still_a_failure_of_the_backup():

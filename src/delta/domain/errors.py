@@ -16,6 +16,15 @@ def is_full_message(text: str) -> bool:
     return "no space left" in lowered or "quota exceeded" in lowered or "errno 28]" in lowered or "errno 122]" in lowered
 
 
+def says_repository_is_full(text: str) -> bool:
+    """Whether Borg says that the disk of the repository, and no other, is too full for it to go on.
+
+    Unlike «no space left», which can be the home folder where Borg keeps its cache, this one is about the repository: Borg
+    refuses to commit when what is free is less than what it needs («Insufficient free space to complete transaction»).
+    """
+    return "insufficient free space" in text.lower()
+
+
 class DeltaError(Exception):
     """Base class for every Delta domain error."""
 

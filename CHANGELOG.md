@@ -5,6 +5,13 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A destination that is too full for Borg to go on is told as full**, not as «The last backup failed» with Borg's English: Borg
+  refuses to commit when what is free is less than what it needs («Insufficient free space to complete transaction»), even if the
+  disk still has room. Found with a small drive: the window said «The place with your backups is full» when the disk was at
+  100 %, and Borg's own text when it was a little below.
+
 ## [0.2.0] - 2026-11-20
 
 ### Added
