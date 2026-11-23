@@ -139,6 +139,16 @@ def test_of_chained_exceptions_the_last_one_is_the_reason():
     assert crash_reason(chained) == "ValueError: the second"
 
 
+def test_the_reason_is_found_even_when_the_report_has_no_platform_lines():
+    assert crash_reason("Traceback (most recent call last):\n  File \"a.py\", line 1\nOSError: [Errno 5] gone") == "OSError: [Errno 5] gone"
+
+
+def test_lines_with_a_single_space_or_tab_of_indentation_and_one_character_lines_are_not_the_reason():
+    report = "Traceback (most recent call last):\nOSError: the reason\n detail\n\tmore\nx\nPlatform: Linux"
+
+    assert crash_reason(report) == "x"
+
+
 def test_text_that_is_not_a_report_of_a_crash_has_no_reason():
     assert crash_reason("Repository /x does not exist.") is None
     assert crash_reason("Traceback (most recent call last):\n  File \"a.py\", line 1") is None

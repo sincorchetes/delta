@@ -19,6 +19,8 @@ from delta.domain.progress import ProgressEvent
 from delta.domain.repository import Repository
 from delta.i18n import _
 
+NOTHING_SAID = ""  # the cause given to the probe when no engine failure led to asking
+
 
 class BackupService:
     def __init__(
@@ -73,7 +75,7 @@ class BackupService:
 
     def cannot_back_up(self) -> DestinationUnavailable | None:
         """Why the backup has to wait: the place cannot be used, or another repository is in it."""
-        return self.unreachable("") or self._replaced()
+        return self.unreachable(NOTHING_SAID) or self._replaced()
 
     def _replaced(self) -> DestinationUnavailable | None:
         """Another repository where the one Delta made was. The first time there is nothing to compare with: it is learnt."""
