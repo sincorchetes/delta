@@ -141,6 +141,7 @@ Building and importing in a clean container is not the same as running it.
       `test_versions_window`, `test_wizard`), `tests/unit/` (`test_browse_controller`, `test_daemon_wiring`,
       `test_infrastructure_edges`, `test_nautilus_extension`, `test_restore_beside`, `test_version_preview`) and
       `scripts/smoke_session.py`.
+- [x] The bytecode of a working copy no longer goes into what Meson installs (`__pycache__` had to be named for each subpackage).
 - [ ] Optional: rename the local project directory from `gnome-time-machine` to `delta`.
 
 ## Deferred on purpose
