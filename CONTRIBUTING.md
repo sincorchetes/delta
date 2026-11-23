@@ -37,6 +37,7 @@ xvfb-run -a uv run pytest --cov     # must stay at 100 % of lines and branches
 sh scripts/ci/check_mutants.sh      # mutation tests: at most the one known equivalent survivor
 meson setup build && meson test -C build
 ruff check src tests scripts
+pyright                             # types: no errors (PyGObject has no stubs, so what comes from it is not checked)
 ```
 
 ## What a change needs

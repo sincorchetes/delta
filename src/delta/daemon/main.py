@@ -3,6 +3,7 @@
 import logging
 import signal
 import threading
+from typing import TypeVar
 
 import gi
 
@@ -47,6 +48,14 @@ from delta.infrastructure.ui_launcher import open_ui
 # launching the app hand its activation to this windowless daemon.
 APPLICATION_ID = "io.github.sincorchetes.Delta.Daemon"
 log = logging.getLogger(__name__)
+T = TypeVar("T")
+
+
+def _required(value: T | None, what: str) -> T:
+    """Something that exists once the bus name is acquired: used before that, it is said, and it is not a `None`."""
+    if value is None:
+        raise RuntimeError(f"{what} is not there yet")
+    return value
 
 
 class DeltaDaemon:
@@ -71,6 +80,9 @@ class DeltaDaemon:
     def run(self) -> int:
         return self._app.run(None)
 
+    def _start_scheduled(self) -> None:
+        _required(self._service, "the service").start_scheduled_backup()
+
     def _on_startup(self, app) -> None:
         app.hold()
         for signum in (signal.SIGTERM, signal.SIGINT):
@@ -93,7 +105,7 @@ class DeltaDaemon:
         self._jobs = jobs
         scheduler = (
             BackgroundScheduler(
-                TimerScheduler(lambda: self._service.start_scheduled_backup(), lambda: jobs.last_backup),
+                TimerScheduler(self._start_scheduled, lambda: jobs.last_backup),
                 BackgroundPortal(connection),
             )
             if sandboxed
@@ -108,7 +120,7 @@ class DeltaDaemon:
                 connection,
                 jobs,
                 self._engine.interrupt,
-                lambda owed: self._service.resume_interrupted(owed),
+                lambda owed: _required(self._service, "the service").resume_interrupted(owed),
                 None if sandboxed else LogindSessionEvents(),
                 on_postponed=notifications.postponed,
                 usage=ProcMountUsage(),
@@ -139,7 +151,7 @@ class DeltaDaemon:
     def _seed_last_backup(self, snapshots) -> None:
         """After a restart the daemon remembers nothing: ask the repository when it was last backed up."""
         try:
-            self._jobs.seed_last_backup(snapshots.latest_backup())
+            _required(self._jobs, "the jobs").seed_last_backup(snapshots.latest_backup())
         except DeltaError as err:
             log.info("could not read the last backup from the repository: %s", err)
 
@@ -156,8 +168,9 @@ class DeltaDaemon:
         return GLib.SOURCE_REMOVE
 
     def _rebuild(self) -> None:
-        self._service.close_browse(REASON_REPOSITORY_CHANGED, resume=False)
-        self._service.reconfigure(build_services(self._engine, self._mounter))
+        service = _required(self._service, "the service")
+        service.close_browse(REASON_REPOSITORY_CHANGED, resume=False)
+        service.reconfigure(build_services(_required(self._engine, "the engine"), self._mounter))
 
     def _on_name_lost(self, connection, name) -> None:
         self._app.release()

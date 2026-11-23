@@ -100,7 +100,7 @@ that the flake sees them.
 ## CI
 
 `.github/workflows/ci.yml` has two pipelines, and `scripts/ci/changed_areas.sh` decides which one a change needs. A change
-**outside `website/`** runs the tests (a devenv job: lint, build, pytest with coverage, then the **mutation tests** of
+**outside `website/`** runs the tests (a devenv job: lint, **types with Pyright** (`[tool.pyright]`, with a stub of its own for PyGObject in `typings/`), build, pytest with coverage, then the **mutation tests** of
 `scripts/ci/check_mutants.sh`, which fail if more than one mutant survives, the known equivalent one, and Sonar). A change
 **in `website/`** runs only the website: it builds the site, checks its pages and, on `main`, **publishes** it. A change in
 both runs both. The job that does not apply is skipped, and a skipped job counts as passed for the required checks. The packages

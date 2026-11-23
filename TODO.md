@@ -81,7 +81,9 @@ builds and is deployed from `main`.
       criticals.
 - [ ] **A backup inside the Flatpak, in CI:** the smoke does not make one, because the passphrase goes to the keyring through the
       Secret portal, which a runner does not have (it would need `xdg-desktop-portal` with a keyring backend).
-- [ ] **Type checking** in the CI (the IDE already shows what Pyright says): fix a baseline first, then keep it from growing.
+- [x] **Type checking** in the CI (`pyright`, in the devenv job, in `basic` mode): PyGObject has no stubs, so `typings/gi/` types
+      `gi.repository` as `Any` and what is checked is Delta's own code. The 9 real errors it found (a service, an engine and some
+      jobs used as if they were never `None`) are fixed. Next: `standard` mode, and the tests (`include` only has `src`).
 - [x] **Checks that keep bugs out:** the widget tests fail on any GLib critical (`tests/gtk/conftest.py`); names that break careless
       code are backed up and restored with a real Borg; properties of the paths, the readers of Borg's output and the schedule
       are tested with `hypothesis`; every workflow is read as YAML (`tests/unit/test_workflows_yaml.py`); Distributions runs on the

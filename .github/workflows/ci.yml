@@ -62,6 +62,9 @@ jobs:
       - name: Lint (ruff)
         run: devenv shell -- ruff check src tests scripts
 
+      - name: Types (pyright)
+        run: devenv shell -- pyright
+
       - name: Build
         run: devenv shell -- sh -c 'meson setup build && meson compile -C build'
 

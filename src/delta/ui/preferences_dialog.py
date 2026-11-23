@@ -54,14 +54,14 @@ class PreferencesDialog(Adw.PreferencesDialog):
         self._location_row.set_subtitle_selectable(True)
         if self._client is not None and location:
             change = Gtk.Button(label=_("Change…"), valign=Gtk.Align.CENTER)
-            change.connect("clicked", self._on_change_destination)
+            change.connect("clicked", self._on_change_destination, self._client)
             self._location_row.add_suffix(change)
         group.add(self._location_row)
         return group
 
-    def _on_change_destination(self, button) -> None:
+    def _on_change_destination(self, button, client) -> None:
         """The backups already made stay where they are; what is backed up and how long it is kept do not change."""
-        SetupWizard(self._parent, self._client, self._settings, self._show_destination, change=True).present()
+        SetupWizard(self._parent, client, self._settings, self._show_destination, change=True).present()
 
     def _show_destination(self) -> None:
         location = self._settings.get_string("repository-location")

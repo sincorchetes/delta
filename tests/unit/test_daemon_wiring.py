@@ -472,3 +472,27 @@ def test_a_drive_that_is_mounted_starts_the_backup_that_was_waiting_for_it(daemo
     daemon._jobs.unavailable = "/media/disk/delta"
     on_mounted()
     assert service.scheduled == 1
+
+
+# --- what is used before the bus name is acquired ----------------------------------------------------
+
+
+def test_what_exists_is_handed_back_and_what_does_not_is_said():
+    assert main._required("here", "the thing") == "here"
+    with pytest.raises(RuntimeError, match="the thing is not there yet"):
+        main._required(None, "the thing")
+
+
+def test_nothing_that_needs_the_service_runs_before_it_is_there(daemon):
+    with pytest.raises(RuntimeError, match="the service is not there yet"):
+        daemon._start_scheduled()
+    with pytest.raises(RuntimeError, match="the service is not there yet"):
+        daemon._rebuild()
+
+
+def test_the_scheduler_asks_the_service_for_a_scheduled_backup(daemon):
+    daemon._on_bus_acquired("connection", "io.github.sincorchetes.Delta.Service1")
+
+    daemon._start_scheduled()
+
+    assert Service.built[0].scheduled == 1
