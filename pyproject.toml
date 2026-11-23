@@ -61,7 +61,7 @@ fail_under = 100  # lines and branches; the GTK widget tests need a display (xvf
 # the handlers of the D-Bus calls (`job_calls`, `query_calls`, `service`, `introspection`) and the wiring (`composition`, `main`,
 # `stop_signals`), tested through a real bus in tests/integration/; the adapters of the platform (`borg_runner`, `borg_mounter`,
 # `libsecret_store`, `systemd_scheduler`, `background_portal`, `session_events`, `ui_launcher`, `gio_notifier`), tested with the
-# real Borg, keyring and session; and `browse_controller` (a state machine over the bus: next on the list, see TODO.md).
+# real Borg, keyring and session.
 # `sh scripts/ci/mutants_by_module.sh` says where the survivors are after a run.
 source_paths = ["src/"]
 only_mutate = [
@@ -80,6 +80,7 @@ only_mutate = [
     "src/delta/infrastructure/settings.py",
     "src/delta/daemon/next_run.py",
     "src/delta/daemon/backup_task.py",
+    "src/delta/daemon/browse_controller.py",
     "src/delta/daemon/job_runner.py",
     "src/delta/daemon/config_reloader.py",
     "src/delta/daemon/drive_return.py",

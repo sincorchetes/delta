@@ -90,15 +90,14 @@ class BrowseController:
         self._pending = True
 
         def task(on_progress):
-            opened = False
             try:
                 self._release()
                 path = browse.open(snapshot)
-                opened = True
-            finally:
-                self._pending = False
-                if not opened:
-                    self._give_back(resume=True)
+            except BaseException:
+                self._pending = False  # before giving back: what starts then asks `postpone`, and nothing is pending any more
+                self._give_back(resume=True)
+                raise
+            self._pending = False
             self._open = browse
             if self._session is not None:
                 self._session.hold()  # sleeping waits until the folder is closed

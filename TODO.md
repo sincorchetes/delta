@@ -154,8 +154,7 @@ Building and importing in a clean container is not the same as running it.
   the bus, the task of a backup, the cache of listings, the destination, the settings, the next run...). Left out, because
   `mutmut` runs only the unit tests and these are judged by integration tests or the real system: the handlers of the D-Bus calls
   (`job_calls`, `query_calls`), the wiring (`composition`, `main`), and the adapters (`borg_runner`, `borg_mounter`, `libsecret_store`,
-  `systemd_scheduler`, `background_portal`, `session_events`, `ui_launcher`, `gio_notifier`). `browse_controller` is next: its
-  survivors are real rules (what is postponed, what is given back, what is closed and said). `gio_notifier` would need each message
+  `systemd_scheduler`, `background_portal`, `session_events`, `ui_launcher`, `gio_notifier`). `gio_notifier` would need each message
   asserted exactly. `sh scripts/ci/mutants_by_module.sh` shows where the survivors are after a run.
 - **A drive that goes away while Borg is copying** is told as "not connected" when the place cannot be reached afterwards, but it
   was only tried with fakes, not by pulling a real drive in the middle of a copy. Unmounted places under `/mnt` are not
