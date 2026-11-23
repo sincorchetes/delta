@@ -194,17 +194,11 @@ def crash_reason(text: str) -> str | None:
 
     The line that names the exception is the last one that is not indented before the lines that describe the platform.
     """
-    lines = text.splitlines()
-    start = next((index for index, line in enumerate(lines) if line.startswith("Traceback (most recent call last)")), None)
-    if start is None:
+    report = text.partition("\nPlatform:")[0]
+    unindented = [line for line in report.splitlines() if line and not line[0].isspace()]
+    if "Traceback (most recent call last)" not in report or unindented[-1].startswith("Traceback"):
         return None
-    reason = None
-    for line in lines[start + 1 :]:
-        if line.startswith("Platform:"):
-            break
-        if line and not line[0].isspace() and not line.startswith(("During handling", "The above exception")):
-            reason = line
-    return reason
+    return unindented[-1]
 
 
 def error_for(returncode: int, stderr: str) -> DeltaError:

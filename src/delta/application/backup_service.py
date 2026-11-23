@@ -73,7 +73,7 @@ class BackupService:
 
     def cannot_back_up(self) -> DestinationUnavailable | None:
         """Why the backup has to wait: the place cannot be used, or another repository is in it."""
-        return self.unreachable() or self._replaced()
+        return self.unreachable("") or self._replaced()
 
     def _replaced(self) -> DestinationUnavailable | None:
         """Another repository where the one Delta made was. The first time there is nothing to compare with: it is learnt."""
@@ -91,7 +91,7 @@ class BackupService:
             return DestinationUnavailable(self._repo.location, DestinationState.OTHER_REPOSITORY)
         return None
 
-    def unreachable(self, cause: str = "") -> DestinationUnavailable | None:
+    def unreachable(self, cause: str) -> DestinationUnavailable | None:
         """The error to wait with when the place of the repository cannot be used, else None.
 
         `cause` is what the engine said when it failed, if it did: the probe is asked knowing whether it was out of room, and when

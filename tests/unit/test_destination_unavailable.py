@@ -148,7 +148,7 @@ def test_without_a_probe_there_is_nothing_to_ask_and_a_failure_stays_a_failure()
     backup.run(failing)
 
     assert failing.state is JobState.FAILED and failing.message == "Repository /x does not exist."
-    assert backup.unreachable() is None
+    assert backup.unreachable("") is None
 
 
 def test_when_the_drive_goes_while_the_engine_works_the_failure_is_the_drive_not_the_engine():
@@ -189,7 +189,7 @@ def test_with_no_repository_that_is_what_is_said_and_the_destination_is_not_aske
     backup.run(unset)
 
     assert unset.state is JobState.FAILED and unset.message == translate("no repository configured")
-    assert probe.asked == [] and backup.unreachable() is None
+    assert probe.asked == [] and backup.unreachable("") is None
 
 
 # --- the other causes: full, read-only, no permission ---------------------------------------------------

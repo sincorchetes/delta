@@ -249,15 +249,15 @@ def test_the_probe_is_asked_about_the_repository_of_the_backup_and_the_error_say
     probe = Probe(DestinationState.EMPTY)
     backup = BackupService(FakeEngine(), Repository("/media/disk/delta"), ("/home",), destination=probe)
 
-    error = backup.unreachable()
+    error = backup.unreachable("")
 
     assert probe.asked == [Repository("/media/disk/delta")]
     assert (error.location, error.state) == ("/media/disk/delta", DestinationState.EMPTY)
 
 
 def test_with_nothing_to_probe_with_or_no_repository_nothing_is_unreachable():
-    assert BackupService(FakeEngine(), Repository("/r"), ("/home",)).unreachable() is None
-    assert BackupService(FakeEngine(), None, ("/home",), destination=Probe(DestinationState.MISSING)).unreachable() is None
+    assert BackupService(FakeEngine(), Repository("/r"), ("/home",)).unreachable("") is None
+    assert BackupService(FakeEngine(), None, ("/home",), destination=Probe(DestinationState.MISSING)).unreachable("") is None
 
 
 # --- what each notification says, what the service is handed, and what is logged -----------------------
