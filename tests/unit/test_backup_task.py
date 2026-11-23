@@ -1,3 +1,5 @@
+import logging
+
 import pytest
 
 from delta.application.backup_notifications import BackupNotifications
@@ -26,10 +28,11 @@ class FakeEngine:
 
 class Recorder:
     def __init__(self):
-        self.kinds = []
+        self.kinds, self.sent = [], []
 
     def notify(self, notification):
         self.kinds.append(notification.kind.value)
+        self.sent.append(notification)
 
 
 class FakePrune:
@@ -179,6 +182,7 @@ def test_a_drive_that_is_not_there_starts_nothing_and_is_told_without_a_backup_i
         task(lambda event: None)
 
     assert raised.value.location == "/media/disk/delta"
+    assert job.unavailable is raised.value  # the reason is kept on the job, not lost on the way up
     assert job.state is JobState.UNAVAILABLE
     assert (journal.begun, journal.ended) == (0, 0)
     assert notifier.kinds == ["destination-unavailable"]  # and no "backup in progress" to take back
@@ -254,3 +258,59 @@ def test_the_probe_is_asked_about_the_repository_of_the_backup_and_the_error_say
 def test_with_nothing_to_probe_with_or_no_repository_nothing_is_unreachable():
     assert BackupService(FakeEngine(), Repository("/r"), ("/home",)).unreachable() is None
     assert BackupService(FakeEngine(), None, ("/home",), destination=Probe(DestinationState.MISSING)).unreachable() is None
+
+
+# --- what each notification says, what the service is handed, and what is logged -----------------------
+
+
+def test_a_failure_is_told_with_its_reason(tmp_path):
+    _, _, _, notifier = run(tmp_path, EngineError("boom"))
+
+    assert notifier.sent[-1] == Notification(NotificationKind.BACKUP_FAILED, "boom")
+
+
+def test_a_warning_is_told_with_what_the_engine_said(tmp_path):
+    _, _, _, notifier = run(tmp_path, BackupWarning("1 unreadable"))
+
+    assert notifier.sent[-1] == Notification(NotificationKind.BACKUP_WARNINGS, "1 unreadable")
+
+
+def test_a_prune_that_fails_is_told_with_its_own_error_in_the_message(tmp_path):
+    result, _, _, notifier = run(tmp_path, prune=FakePrune(fail=True))
+
+    expected = "backup done, prune failed: prune broke"
+    assert result == (True, expected)
+    assert notifier.sent[-1] == Notification(NotificationKind.BACKUP_WARNINGS, expected)
+
+
+def test_the_service_is_handed_the_job_the_progress_callback_and_that_it_was_already_asked():
+    seen = []
+
+    class Spy(BackupService):
+        def run(self, job, on_progress=None, checked=False):
+            seen.append((job, on_progress, checked))
+            return super().run(job, on_progress, checked)
+
+    backup = Spy(FakeEngine(), Repository("/r"), ("/home",))
+    job = backup.new_job()
+
+    def progress(event):
+        pass
+
+    make_backup_task(job, backup, None, None, None)(progress)
+
+    assert seen == [(job, progress, True)]
+
+
+def test_a_journal_that_cannot_be_written_is_logged_with_its_error(tmp_path, caplog):
+    blocker = tmp_path / "blocker"
+    blocker.write_text("file")
+    backup = BackupService(FakeEngine(), Repository("/r"), ("/home",))
+
+    with caplog.at_level(logging.WARNING, logger="delta.daemon.backup_task"):
+        make_backup_task(backup.new_job(), backup, None, None, FileJobJournal(blocker / "state"))(lambda event: None)
+
+    with pytest.raises(OSError) as raised:
+        FileJobJournal(blocker / "state").begin()
+    messages = [record.getMessage() for record in caplog.records if record.name == "delta.daemon.backup_task"]
+    assert "cannot update the backup journal: " + str(raised.value) in messages

@@ -101,7 +101,10 @@ that the flake sees them.
 
 `.github/workflows/ci.yml` has two pipelines, and `scripts/ci/changed_areas.sh` decides which one a change needs. A change
 **outside `website/`** runs the tests (a devenv job: lint, **types with Pyright** (`[tool.pyright]`, with a stub of its own for PyGObject in `typings/`), build, pytest with coverage, then the **mutation tests** of
-`scripts/ci/check_mutants.sh`, which fail if more than one mutant survives, the known equivalent one, and Sonar). A change
+`scripts/ci/check_mutants.sh`, which fail if more than one mutant survives, the known equivalent one, and Sonar; the list of what is
+mutated is `[tool.mutmut]` in `pyproject.toml`, with the reason for what is left out; after a run, `scripts/ci/mutants_by_module.sh`
+says where the survivors are. A mutant that is **equivalent** (it does the same as the original) is not hidden: the code is written
+another way so that it does not exist). A change
 **in `website/`** runs only the website: it builds the site, checks its pages and, on `main`, **publishes** it. A change in
 both runs both. The job that does not apply is skipped, and a skipped job counts as passed for the required checks. The packages
 for each distribution are not built here: OBS builds them when a tag is published. **CodeQL** (`.github/workflows/codeql.yml`) analyzes, in another workflow, the Python code and the

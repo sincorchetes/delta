@@ -1,5 +1,6 @@
 """The next scheduled backup, cached so reading the D-Bus property never blocks the main loop."""
 
+import logging
 import threading
 import time
 from collections.abc import Callable
@@ -7,6 +8,7 @@ from collections.abc import Callable
 from delta.application.ports import Scheduler
 
 MAX_AGE_SECONDS = 60.0
+log = logging.getLogger(__name__)
 
 
 def _in_background(work: Callable[[], None]) -> None:
@@ -42,8 +44,9 @@ class NextRunCache:
     def _refresh(self) -> None:
         try:
             moment = self._scheduler.next_run()
-            self._epoch = int(moment.timestamp()) if moment else 0
-        except Exception:  # a broken scheduler must not take the daemon down
+            self._epoch = 0 if moment is None else int(moment.timestamp())
+        except Exception as err:  # a broken scheduler must not take the daemon down
+            log.warning("cannot read the next scheduled run: %s", err)
             self._epoch = 0
         finally:
             self._checked = self._clock()

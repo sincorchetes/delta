@@ -169,3 +169,12 @@ def test_but_anything_else_next_to_it_does(tmp_path):
     (tmp_path / "config").write_text("[repository]")
 
     assert state(tmp_path) is DestinationState.AVAILABLE
+
+
+def test_asking_without_saying_that_the_engine_ran_out_of_room_uses_the_ordinary_threshold(tmp_path):
+    (tmp_path / "config").write_text("[repository]")
+    hundred_mebibytes = 100 * 1024 * 1024
+
+    destination = LocalDestination(lambda path: Usage(hundred_mebibytes), lambda path, mode: True)
+
+    assert destination.state(Repository(str(tmp_path))) is DestinationState.AVAILABLE

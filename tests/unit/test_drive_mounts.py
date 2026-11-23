@@ -33,3 +33,7 @@ def test_on_a_mount_the_drive_is_there_whatever_the_depth(path, point):
 @pytest.mark.parametrize("path", ["/home/u/Backups", "/mnt/backups", "/media", "/run/media", "/tmp/x"])
 def test_anywhere_else_it_is_not_a_question_of_drives(path):
     assert drive_mounted(path, never) is None
+
+
+def test_a_mount_above_the_place_is_enough_whatever_is_below_it():
+    assert drive_mounted("/media/u/DISK/a/b", mounted("/media/u")) is True

@@ -131,3 +131,23 @@ def test_by_default_it_reads_the_real_proc_and_leaves_the_daemon_itself_out():
     usage = ProcMountUsage()
 
     assert usage._proc == "/proc" and usage._own == str(os.getpid())
+
+
+def test_the_device_asked_about_is_the_one_of_the_folder_given(proc):
+    asked = []
+
+    def stat(path):
+        asked.append(path)
+        return SimpleNamespace(st_dev=os.makedev(0, 46))
+
+    ProcMountUsage(str(proc), stat, own_pid=1).users(MOUNT)
+
+    assert asked == [MOUNT]
+
+
+def test_only_the_gvfs_daemons_are_left_out_not_what_merely_contains_their_letters(proc, usage):
+    program(proc, 20, comm="gvfsd-fuse", watching=[DEVICE])
+    program(proc, 21, comm=".gvfsd-wrapped", watching=[DEVICE])
+    program(proc, 22, comm="Xgvfsd", watching=[DEVICE])  # not a gvfs daemon: it is somebody using the folder
+
+    assert usage.users(MOUNT) == ["Xgvfsd (22): watches a folder"]

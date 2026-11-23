@@ -68,6 +68,12 @@ class BackupJob:
         self.unavailable = error
         self.message = str(error)
 
+    def why_unavailable(self) -> DestinationUnavailable:
+        """The reason of a job that waits for its destination; asking it of one that does not is a mistake."""
+        if self.unavailable is None:
+            raise ValueError("this job is not waiting for a destination")
+        return self.unavailable
+
     def fail(self, message: str) -> None:
         self._move(JobState.FAILED)
         self.message = message

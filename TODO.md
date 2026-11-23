@@ -150,8 +150,13 @@ Building and importing in a clean container is not the same as running it.
 - **A size column** in the history: `borg list` gives no sizes; check whether `borg info` gives them all in one call.
 - **An image gallery** with a slider and an integrated player; cleaning previews by age instead of when the window closes.
 - **Faster `ListVersions`** with many backups: a batch query or a persistent SQLite index (`docs/plan.md` §12).
-- **Mutation tests** over `daemon/` and `infrastructure/` too (it needs a decision on which tests to run: many need a real Borg
-  or D-Bus).
+- **Mutation tests, the rest of `daemon/` and `infrastructure/`:** the rules are mutated now (the runner of jobs and its signals on
+  the bus, the task of a backup, the cache of listings, the destination, the settings, the next run...). Left out, because
+  `mutmut` runs only the unit tests and these are judged by integration tests or the real system: the handlers of the D-Bus calls
+  (`job_calls`, `query_calls`), the wiring (`composition`, `main`), and the adapters (`borg_runner`, `borg_mounter`, `libsecret_store`,
+  `systemd_scheduler`, `background_portal`, `session_events`, `ui_launcher`, `gio_notifier`). `browse_controller` is next: its
+  survivors are real rules (what is postponed, what is given back, what is closed and said). `gio_notifier` would need each message
+  asserted exactly. `sh scripts/ci/mutants_by_module.sh` shows where the survivors are after a run.
 - **A drive that goes away while Borg is copying** is told as "not connected" when the place cannot be reached afterwards, but it
   was only tried with fakes, not by pulling a real drive in the middle of a copy. Unmounted places under `/mnt` are not
   recognized (anybody makes folders there by hand), only those under `/run/media` and `/media`.

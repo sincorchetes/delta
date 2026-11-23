@@ -57,18 +57,15 @@ class ListingCache:
             self._items[key] = listing
             self._bytes += len(listing)
             while self._bytes > self._max and len(self._items) > 1:
-                _, dropped = self._items.popitem(last=False)
-                self._bytes -= len(dropped)
+                oldest = next(iter(self._items))
+                self._bytes -= len(self._items.pop(oldest))
 
     def _closest_ancestor(self, repo: str, snapshot: str, path: str) -> str | None:
-        best: tuple[str, str, str] | None = None
-        for key in self._items:
-            kept_repo, kept_snapshot, kept_path = key
-            if kept_repo != repo or kept_snapshot != snapshot:
-                continue
-            if path.startswith(kept_path.rstrip("/") + "/") and (best is None or len(kept_path) > len(best[2])):
-                best = key
-        if best is None:
+        around = [
+            key for key in self._items if key[0] == repo and key[1] == snapshot and path.startswith(key[2].rstrip("/") + "/")
+        ]
+        if not around:
             return None
+        best = max(around, key=lambda key: len(key[2]))
         self._items.move_to_end(best)
         return self._items[best]
