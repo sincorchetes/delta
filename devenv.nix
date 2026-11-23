@@ -37,6 +37,7 @@
     bun # builds the documentation site (website/)
     patchelf
     ruff # from nixpkgs: the PyPI wheel is a generic binary that does not run on NixOS
+    pyright # type checking (pyproject.toml, [tool.pyright]); from nixpkgs for the same reason: the PyPI wheel downloads a Node binary
   ];
 
   languages.python = {

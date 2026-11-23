@@ -124,8 +124,9 @@ class VersionsWindow(Adw.Window):
         if self._inner is not None:
             return self._inner
         version = self._selected()
-        if version is None:
-            return None
+        return None if version is None else self._target_of(version)
+
+    def _target_of(self, version: VersionRow) -> Target:
         folder = self._browser.folder if version.is_dir else ""
         return Target(version.snapshot, folder or self._path, version.size, version.is_dir)
 
@@ -136,7 +137,7 @@ class VersionsWindow(Adw.Window):
             self._browser.open(version.snapshot, self._path)
         elif version is not None:
             self._shown.set_visible_child_name("preview")
-            self._previewer.show(self._current())
+            self._previewer.show(self._target_of(version))
         self._sync()
 
     def _restore_targets(self) -> list[Target]:

@@ -93,6 +93,15 @@ process_isolation = "forkserver"
 forkserver_warmup = "none"
 also_copy = ["po/"]  # test_i18n compiles po/es.po, resolved relative to the copied tests
 
+[tool.pyright]
+# The same checker as the editor shows. `basic` first: PyGObject has no type stubs, so what comes from `gi.repository` is untyped,
+# and what is checked is Delta's own code. The interpreter is the one on the PATH (the venv, inside devenv shell).
+include = ["src"]
+stubPath = "typings"  # a stub for PyGObject, which has none
+pythonVersion = "3.12"  # the oldest that Delta supports (GNOME 46)
+pythonPlatform = "Linux"
+typeCheckingMode = "basic"
+
 [tool.ruff]
 line-length = 120
 extend-exclude = [".devenv", "build", "result"]
