@@ -296,7 +296,7 @@ class DeltaService:
         if property_name == "LastError":
             return GLib.Variant("s", jobs.last_error if jobs else "")
         if property_name == "UnavailableReason":
-            return GLib.Variant("s", jobs.unavailable_reason if jobs else "")
+            return GLib.Variant("s", jobs.reason if jobs else "")
         if property_name == "CanMount":
             return GLib.Variant("b", self._browse is not None)
         return None

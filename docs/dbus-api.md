@@ -58,8 +58,10 @@ Long operations return a `job_id` at once and end with a signal. **There is only
 
 - `CanMount` b: whether this installation can open backups as a folder (false in a Flatpak); the UI hides "Browse as a folder"
   when it is false.
-- `Status` s: `idle` | `running` | `browsing` | `unavailable`. `unavailable` is that the latest backup found that the place of
-  the repository cannot be used (see `UnavailableReason`): it is not a failure, `LastError` stays empty, and it ends with the next
+- `Status` s: `idle` | `running` | `browsing` | `unavailable`. `unavailable` is that the place of the repository cannot be used (see
+  `UnavailableReason`): the latest backup found so, or the daemon, which looks at it in the background every ten seconds and
+  whenever a drive is mounted or taken away, without waiting for the next backup; only a backup that found it records the cause
+  that needs the engine (`other-repository`): it is not a failure, `LastError` stays empty, and it ends with the next
   backup, which runs by itself when the drive is mounted again (and at the next hourly try otherwise). A backup that is
   `running` is `running` whatever the previous one found.
 - `UnavailableReason` s: why, while `Status` is `unavailable`; else empty. `missing` (the folder is not there: a drive that is

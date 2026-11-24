@@ -146,6 +146,14 @@ class WizardModel:
             skipped.add(Step.RECOVERY)  # the passphrase is the one it already has
         return [step for step in Step if step not in skipped]
 
+    def chooser_start(self) -> str:
+        """Where the folder chooser opens: the nearest folder that exists on the way to what was typed, so a folder that is still
+        to be made does not leave the person in the list of recent files. Empty when there is none to go by."""
+        path = _normal(_expand(self.destination.strip(), self.home))
+        while path != "/" and self.inspect(path) in (PathState.MISSING, PathState.FILE):
+            path = path.rpartition("/")[0] or "/"
+        return "" if path == "/" or not path.startswith("/") else path
+
     def destination_text(self) -> str:
         """What the user typed or chose, before it is checked."""
         return self.destination

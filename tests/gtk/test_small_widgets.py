@@ -177,8 +177,11 @@ class Dialog:
     last = None
 
     def __init__(self, title):
-        self.title, self.callback = title, None
+        self.title, self.callback, self.initial = title, None, None
         Dialog.last = self
+
+    def set_initial_folder(self, folder):
+        self.initial = folder.get_path()
 
     def select_folder(self, window, cancellable, callback):
         self.callback = callback
@@ -208,6 +211,14 @@ def test_a_chosen_path_is_handed_over(file_dialog, choose):
     file_dialog.last.callback(file_dialog.last, Gio.File.new_for_path("/home/u/Pictures"))
 
     assert chosen == ["/home/u/Pictures"] and file_dialog.last.title == "Pick"
+
+
+def test_the_chooser_opens_where_it_is_told_to_and_nowhere_in_particular_otherwise(file_dialog):
+    choose_folder(None, "Pick", lambda path: None, "/media/disk")
+    assert file_dialog.last.initial == "/media/disk"
+
+    choose_folder(None, "Pick", lambda path: None)
+    assert file_dialog.last.initial is None
 
 
 @pytest.mark.parametrize("choose", [choose_folder, choose_file])
@@ -279,11 +290,16 @@ def test_typing_a_folder_updates_the_model(monkeypatch):
 
 def test_choosing_a_folder_fills_in_the_path(monkeypatch):
     page, model, _changes = destination_page(monkeypatch)
-    monkeypatch.setattr(wizard_destination, "choose_folder", lambda window, title, on_chosen: on_chosen("/media/disk"))
+    asked = []
+    monkeypatch.setattr(
+        wizard_destination, "choose_folder", lambda window, title, on_chosen, start: (asked.append(start), on_chosen("/media/disk"))
+    )
+    model.destination = "~/Backups/new"
+    start = model.chooser_start()
 
     page._on_choose(None)
 
-    assert model.destination == "/media/disk"
+    assert model.destination == "/media/disk" and asked == [start]
 
 
 # --- a list of paths -----------------------------------------------------------------------------

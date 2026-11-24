@@ -1139,7 +1139,7 @@ msgid "Where should backups go?"
 msgstr ""
 
 #: src/delta/ui/wizard_destination.py:22
-msgid "Pick a folder or a drive on this computer."
+msgid "Pick a folder or a drive on this computer. A folder that does not exist yet is created."
 msgstr ""
 
 #: src/delta/ui/wizard_destination.py:24

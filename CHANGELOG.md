@@ -5,6 +5,12 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- **The window learns that the drive is gone without waiting for a backup.** The daemon looks at the place of the backups in the
+  background (every ten seconds, and whenever a drive is mounted or taken away) and answers `Status` and `UnavailableReason` with
+  what it finds, so pulling the drive shows «not connected» in a few seconds. A drive that hangs holds up a thread, not the daemon.
+
 ### Fixed
 
 - **The history says why it is short.** A line under the count tells that old backups are removed to save space and that how

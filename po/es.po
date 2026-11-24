@@ -1181,8 +1181,8 @@ msgid "Where should backups go?"
 msgstr "¿Dónde deben guardarse las copias?"
 
 #: src/delta/ui/wizard_destination.py:22
-msgid "Pick a folder or a drive on this computer."
-msgstr "Elige una carpeta o una unidad de este equipo."
+msgid "Pick a folder or a drive on this computer. A folder that does not exist yet is created."
+msgstr "Elige una carpeta o una unidad de este equipo. Si la carpeta no existe, se crea."
 
 #: src/delta/ui/wizard_destination.py:24
 msgid "Folder"
