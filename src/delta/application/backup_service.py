@@ -12,6 +12,7 @@ from delta.domain.errors import (
     BackupWarning,
     DeltaError,
     DestinationUnavailable,
+    EngineError,
     is_full_message,
     state_from_error,
 )
@@ -64,7 +65,7 @@ class BackupService:
             job.warn(str(err))
         except DeltaError as err:
             # the drive may have gone or filled up: not its failure either
-            missing = self.unreachable(str(err))
+            missing = self.unreachable(err.report if isinstance(err, EngineError) and err.report else str(err))
             if missing is not None:
                 job.wait_for_destination(missing)
             else:

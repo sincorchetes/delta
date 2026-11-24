@@ -73,6 +73,7 @@ def test_a_lock_that_could_not_be_made_because_the_place_is_read_only_is_not_a_l
         (DENIED, LOCATION, DestinationState.DENIED),
         (DENIED.replace("[Errno 13]", "[Errno 1]"), LOCATION, DestinationState.DENIED),
         (DENIED, "/another/place", None),
+        (f"[Errno 13] Permission denied: '/home/u/.cache/borg/x'\nsys.argv: ['borg', 'create', '{LOCATION}::x']", LOCATION, None),
         ("[Errno 28] No space left on device", LOCATION, None),  # it can be the home folder: left to the probe
         ("Input/output error", LOCATION, None),  # no number: nothing to go by
         ("", LOCATION, None),
@@ -114,6 +115,20 @@ def test_a_failure_that_names_the_place_makes_the_backup_wait_with_that_cause_wh
     job = failed_with(text)
 
     assert job.state is JobState.UNAVAILABLE and job.unavailable.state is state
+
+
+def test_a_crash_is_classified_by_the_whole_report_and_not_by_its_short_account():
+    report = f"{LOCATION}/data/0/1: read: [Errno 30] Read-only file system\nTraceback (most recent call last):\n  File \"a.py\", line 1\nOSError: [Errno 30] Read-only file system\nPlatform: Linux\nsys.argv: ['borg', 'create', '{LOCATION}::x']"
+    backup = BackupService(
+        Engine(EngineError("Borg stopped unexpectedly: OSError: [Errno 30] Read-only file system", 2, report)),
+        Repository(LOCATION),
+        ("/home",),
+        destination=Probe(),
+    )
+    job = backup.new_job()
+    backup.run(job)
+
+    assert job.state is JobState.UNAVAILABLE and job.unavailable.state is DestinationState.READ_ONLY
 
 
 def test_a_failure_about_somewhere_else_is_still_a_failure_of_the_backup():
@@ -159,5 +174,5 @@ def test_a_crash_of_borg_is_told_in_one_line_and_its_report_is_logged(caplog):
         error = error_for(2, CRASH)
 
     assert isinstance(error, EngineError) and error.returncode == 2
-    assert str(error) == "Borg stopped unexpectedly: OSError: [Errno 5] Input/output error"
+    assert str(error) == "Borg stopped unexpectedly: OSError: [Errno 5] Input/output error" and error.report == CRASH.strip()
     assert [record.getMessage() for record in caplog.records] == ["borg stopped with an internal error:\n" + CRASH.strip()]
