@@ -7,6 +7,9 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **«Unlock…» on a drive that is gone says so.** The window can still show an old «locked» error after the drive was pulled; asking
+  to unlock now checks the place first and tells why it cannot be used, instead of Borg's own words.
+
 - **A backup that waits for its drive is not logged as a warning.** «The drive is not connected» and the other causes of an
   unusable destination are an expected state, so the daemon logs them as information; only real failures are warnings.
 
