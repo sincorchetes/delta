@@ -13,6 +13,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A drive that goes read-only in the middle of a backup is told as such.** When Borg stopped with an internal error, only its
+  one-line account was looked at, which does not name the folder, so the window said «The last backup failed». The whole report
+  is now kept with the error and the cause is read from it: a read-only place is the destination's if the report names its folder.
+
 - **The history says why it is short.** A line under the count tells that old backups are removed to save space and that how
   many are kept is a preference.
 

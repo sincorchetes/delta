@@ -46,18 +46,18 @@ def state_from_error(text: str, location: str) -> DestinationState | None:
 
     Borg's own judgement that the repository has not enough room counts, and so does an error of the device (a disk that answers
     with I/O errors). A read-only or a permission error counts when it names the folder of the repository: Borg keeps a cache in
-    the home folder, and a problem there is not the destination's. «No space left» is left to the probe, for the same reason.
+    the home folder, and a problem there is not the destination's: for a read-only place the folder has to be somewhere in what
+    the engine said, for a permission error on the very line of the error. «No space left» is left to the probe, for the same reason.
     """
     if says_repository_is_full(text):
         return DestinationState.FULL
     number = engine_errno(text)
     if number in DEVICE_ERRORS:
         return DestinationState.IO_ERROR
-    if location in text:
-        if number == errno.EROFS:
-            return DestinationState.READ_ONLY
-        if number in PERMISSION_ERRORS:
-            return DestinationState.DENIED
+    if number == errno.EROFS and location in text:
+        return DestinationState.READ_ONLY
+    if number in PERMISSION_ERRORS and any(location in line and f"[Errno {number}]" in line for line in text.splitlines()):
+        return DestinationState.DENIED
     return None
 
 
@@ -151,6 +151,8 @@ class SchedulerError(DeltaError):
 class EngineError(DeltaError):
     """The backup engine failed for a reason without a dedicated type."""
 
-    def __init__(self, message: str, returncode: int | None = None) -> None:
+    def __init__(self, message: str, returncode: int | None = None, report: str = "") -> None:
+        """`report`: everything the engine said, when `message` is only a short account of it."""
         super().__init__(message)
         self.returncode = returncode
+        self.report = report
