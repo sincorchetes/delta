@@ -6,7 +6,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, GLib, Gtk
+from gi.repository import Adw, Gio, GLib, Gtk
 
 from delta.ui.a11y import tipped
 from delta.ui.wizard import WizardModel
@@ -20,7 +20,8 @@ def flat_icon_button(icon: str, tooltip: str) -> Gtk.Button:
     return tipped(button, tooltip)
 
 
-def choose_folder(window, title: str, on_chosen: Callable[[str], None]) -> None:
+def choose_folder(window, title: str, on_chosen: Callable[[str], None], start: str = "") -> None:
+    """`start`: the folder it opens in, if there is one to open in."""
     def finished(dialog, result) -> None:
         try:
             folder = dialog.select_folder_finish(result)
@@ -29,7 +30,10 @@ def choose_folder(window, title: str, on_chosen: Callable[[str], None]) -> None:
         if folder.get_path():
             on_chosen(folder.get_path())
 
-    Gtk.FileDialog(title=title).select_folder(window, None, finished)
+    dialog = Gtk.FileDialog(title=title)
+    if start:
+        dialog.set_initial_folder(Gio.File.new_for_path(start))
+    dialog.select_folder(window, None, finished)
 
 
 def choose_file(window, title: str, on_chosen: Callable[[str], None]) -> None:

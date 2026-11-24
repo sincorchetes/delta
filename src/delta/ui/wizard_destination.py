@@ -19,7 +19,7 @@ class DestinationPage(Page):
         super().__init__(model, window, changed)
         self._local_group = Adw.PreferencesGroup(
             title=_("Where should backups go?"),
-            description=_("Pick a folder or a drive on this computer."),
+            description=_("Pick a folder or a drive on this computer. A folder that does not exist yet is created."),
         )
         self._path = Adw.EntryRow(title=_("Folder"))
         self._path.set_text(model.destination)
@@ -56,7 +56,9 @@ class DestinationPage(Page):
         self._changed()
 
     def _on_choose(self, button) -> None:
-        choose_folder(self._window, _("Choose a folder for your backups"), self._path.set_text)
+        choose_folder(
+            self._window, _("Choose a folder for your backups"), self._path.set_text, self._model.chooser_start()
+        )
 
     def _on_use_drive(self, button, drive) -> None:
         self._path.set_text(drive.suggested_folder)
