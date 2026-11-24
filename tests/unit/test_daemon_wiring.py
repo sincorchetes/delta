@@ -12,6 +12,7 @@ from delta.application.backup_service import BackupService
 from delta.daemon import composition, main
 from delta.daemon.job_runner import JobRunner
 from delta.daemon.next_run import NextRunCache
+from delta.domain.destination import DestinationState
 from delta.domain.errors import DeltaError
 from delta.domain.repository import Repository
 from delta.domain.retention import RetentionPolicy
@@ -120,10 +121,29 @@ class Immediately:
 
 class MountEvents:
     def __init__(self):
-        self.callbacks = []
+        self.callbacks, self.removed = [], []
 
     def watch(self, callback):
         self.callbacks.append(callback)
+
+    def watch_removed(self, callback):
+        self.removed.append(callback)
+
+
+class Watch:
+    """Stands in for DestinationWatch: the probe and the repository it was given, and how often it was told to look."""
+
+    instances: list = []
+
+    def __init__(self, probe, repository):
+        self.probe, self.repository, self.looks = probe, repository, 0
+        Watch.instances.append(self)
+
+    def state(self):
+        return DestinationState.AVAILABLE
+
+    def refresh(self):
+        self.looks += 1
 
 
 class Control:
@@ -143,6 +163,7 @@ class Notes(tuple):
 
 @pytest.fixture
 def daemon(monkeypatch):
+    Watch.instances = []
     Engine.instances, Service.built, Reloader.instances, Service.resumes = [], [], [], False
     services = SimpleNamespace(preview=Preview(), snapshots=Snapshots(), mounters=[])
     monkeypatch.setattr(main, "LibsecretStore", lambda: "keyring")
@@ -150,6 +171,8 @@ def daemon(monkeypatch):
     monkeypatch.setattr(main, "BorgMounter", lambda engine: ("mounter", engine))
     monkeypatch.setattr(main, "LogindSessionEvents", lambda: "session events")
     monkeypatch.setattr(main, "GioMountEvents", MountEvents)
+    monkeypatch.setattr(main, "LocalDestination", lambda: "probe")
+    monkeypatch.setattr(main, "DestinationWatch", Watch)
     monkeypatch.setattr(main, "ProcMountUsage", lambda: "usage")
     monkeypatch.setattr(main, "BrowseController", Control)
 
@@ -463,7 +486,7 @@ def test_the_next_run_is_looked_up_on_a_background_thread_by_default():
 
 def test_a_drive_that_is_mounted_starts_the_backup_that_was_waiting_for_it(daemon):
     daemon._on_bus_acquired("connection", "io.github.sincorchetes.Delta.Service1")
-    (on_mounted,) = daemon._mount_events.callbacks
+    on_mounted, _ = daemon._mount_events.callbacks
     service = Service.built[0]
 
     on_mounted()  # nothing is waiting: the status is idle
@@ -472,6 +495,20 @@ def test_a_drive_that_is_mounted_starts_the_backup_that_was_waiting_for_it(daemo
     daemon._jobs.unavailable = "/media/disk/delta"
     on_mounted()
     assert service.scheduled == 1
+
+
+def test_the_place_of_the_backups_is_looked_at_from_the_start_and_whenever_a_drive_comes_or_goes(daemon):
+    daemon._on_bus_acquired("connection", "io.github.sincorchetes.Delta.Service1")
+    (watch,) = Watch.instances
+
+    assert (watch.probe, watch.repository, watch.looks) == ("probe", main.configured_repository, 1)
+
+    _, looked = daemon._mount_events.callbacks
+    (gone,) = daemon._mount_events.removed
+    looked()
+    gone()
+
+    assert watch.looks == 3 and looked == gone == watch.refresh
 
 
 # --- what is used before the bus name is acquired ----------------------------------------------------

@@ -16,6 +16,7 @@ from delta.application.repository_setup import RepositorySetup
 from delta.daemon.browse_controller import REASON_REPOSITORY_CHANGED, REASON_SHUTDOWN, BrowseController
 from delta.daemon.composition import build_services
 from delta.daemon.config_reloader import ConfigReloader
+from delta.daemon.destination_watch import DestinationWatch
 from delta.daemon.drive_return import DriveReturn
 from delta.daemon.introspection import INTERFACE_NAME
 from delta.daemon.job_runner import JobRunner
@@ -30,6 +31,7 @@ from delta.infrastructure.borg_runner import BorgRunner
 from delta.infrastructure.file_job_journal import FileJobJournal
 from delta.infrastructure.gio_notifier import GioNotifier
 from delta.infrastructure.libsecret_store import LibsecretStore
+from delta.infrastructure.local_destination import LocalDestination
 from delta.infrastructure.proc_mount_usage import ProcMountUsage
 from delta.infrastructure.runtime import in_flatpak
 from delta.infrastructure.mount_events import GioMountEvents
@@ -101,7 +103,9 @@ class DeltaDaemon:
         self._engine = BorgRunner(secrets=store)
         sandboxed = in_flatpak()  # no FUSE that the file manager can see, no systemd --user
         self._mounter = None if sandboxed else BorgMounter(self._engine)
-        services, jobs = build_services(self._engine, self._mounter), JobRunner(connection)
+        place = DestinationWatch(LocalDestination(), configured_repository)
+        services, jobs = build_services(self._engine, self._mounter), JobRunner(connection, place.state)
+        place.refresh()
         self._jobs = jobs
         scheduler = (
             BackgroundScheduler(
@@ -133,6 +137,8 @@ class DeltaDaemon:
         )
         self._mount_events = GioMountEvents()
         self._mount_events.watch(DriveReturn(lambda: jobs.status, self._service.start_scheduled_backup).on_mounted)
+        self._mount_events.watch(place.refresh)
+        self._mount_events.watch_removed(place.refresh)
         services.preview.clear()  # leftovers of a daemon that was killed
         if self._service.resume_interrupted():
             log.info("resuming the backup that was interrupted")
