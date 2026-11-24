@@ -9,6 +9,7 @@ from delta.daemon.job_runner import JobRunner
 from delta.daemon.service import DeltaService
 from delta.domain.repository import Repository
 from delta.infrastructure.borg_runner import BorgRunner
+from delta.infrastructure.local_destination import LocalDestination
 
 pytestmark = pytest.mark.skipif(shutil.which("borg") is None, reason="borg not installed")
 
@@ -36,7 +37,7 @@ def test_unlocking_a_healthy_repository_succeeds_and_forgets_the_old_failure(bus
     jobs = JobRunner(bus)
     jobs.last_error = "Failed to create/acquire the lock (timeout)."
     service = DeltaService(
-        bus, SnapshotService(runner, repo), jobs, unlock=UnlockService(runner, repo)
+        bus, SnapshotService(runner, repo), jobs, unlock=UnlockService(runner, repo, LocalDestination())
     )
 
     _, finished, error = call_and_wait_finished(bus, "UnlockRepository", None)
@@ -48,7 +49,7 @@ def test_unlocking_a_healthy_repository_succeeds_and_forgets_the_old_failure(bus
 
 def test_without_a_repository_the_user_is_told_so(bus):
     jobs = JobRunner(bus)
-    service = DeltaService(bus, SnapshotService(None, None), jobs, unlock=UnlockService(None, None))
+    service = DeltaService(bus, SnapshotService(None, None), jobs, unlock=UnlockService(None, None, LocalDestination()))
 
     _, finished, _ = call_and_wait_finished(bus, "UnlockRepository", None)
     service.unregister()
