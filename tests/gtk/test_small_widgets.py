@@ -295,10 +295,11 @@ def test_choosing_a_folder_fills_in_the_path(monkeypatch):
         wizard_destination, "choose_folder", lambda window, title, on_chosen, start: (asked.append(start), on_chosen("/media/disk"))
     )
     model.destination = "~/Backups/new"
+    start = model.chooser_start()
 
     page._on_choose(None)
 
-    assert model.destination == "/media/disk" and asked == [model.chooser_start()]
+    assert model.destination == "/media/disk" and asked == [start]
 
 
 # --- a list of paths -----------------------------------------------------------------------------
