@@ -60,6 +60,11 @@
   </supports>
 
   <releases>
+    <release version="0.3.0" date="2026-11-24">
+      <description>
+        <p>The window knows that your drive is gone without waiting for a backup, and a drive that fails or goes read-only while it is written to is told for what it is.</p>
+      </description>
+    </release>
     <release version="0.2.0" date="2026-11-20">
       <description>
         <p>Delta notices when another repository is in the place of your backups, and does not write in it.</p>

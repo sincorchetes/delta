@@ -1,3 +1,11 @@
+delta-backup (0.3.0-1) unstable; urgency=medium
+
+  * The window learns that the drive is gone without waiting for a backup: the daemon looks at the place in the background.
+  * A drive that fails while it is written to, or goes read-only in the middle of a backup, is told for what it is, and a crash of Borg is told in one line.
+  * Unlocking checks the place first; a destination that is not usable is logged as information; the wizard chooser opens where you were; the history says why it is short.
+
+ -- Álvaro Castillo <sincorchetes@gmail.com>  Tue, 24 Nov 2026 12:00:00 +0100
+
 delta-backup (0.2.0-1) unstable; urgency=medium
 
   * Another repository in the place of the one Delta made is noticed: nothing is written in it and the window says so.

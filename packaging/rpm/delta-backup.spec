@@ -2,7 +2,7 @@
 %global appid io.github.sincorchetes.Delta
 
 Name:           delta-backup
-Version:        0.2.0
+Version:        0.3.0
 Release:        1%{?dist}
 Summary:        Time travel for your files in GNOME, with BorgBackup
 License:        GPL-3.0-or-later
@@ -108,6 +108,11 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_userunitdir}/delta.timer
 
 %changelog
+* Tue Nov 24 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.3.0-1
+- The window learns that the drive is gone without waiting for a backup: the daemon looks at the place in the background
+- A drive that fails while it is written to, or goes read-only in the middle of a backup, is told for what it is, and a crash of Borg is told in one line
+- Unlocking checks the place first; a destination that is not usable is logged as information; the wizard chooser opens where you were; the history says why it is short
+
 * Fri Nov 20 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.2.0-1
 - Another repository in the place of the one Delta made is noticed: nothing is written in it and the window says so
 - The wizard no longer refuses the place where the backups already are, so that a repository can be accepted on purpose
