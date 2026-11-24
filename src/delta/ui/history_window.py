@@ -54,6 +54,7 @@ class HistoryWindow(Adw.Window):
         self._count = Gtk.Label(xalign=0, margin_start=12, margin_top=6, margin_bottom=6)
         listing = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         listing.append(self._count)
+        listing.append(self._retention_note())
         listing.append(Gtk.ScrolledWindow(child=table, vexpand=True))
 
         self._empty = Adw.StatusPage(icon_name="document-open-recent-symbolic")
@@ -69,6 +70,20 @@ class HistoryWindow(Adw.Window):
 
         self._stack.set_visible_child_name("loading")
         client.list_snapshots(self._on_rows)
+
+    @staticmethod
+    def _retention_note() -> Gtk.Label:
+        """Why the list is not longer: old backups are removed on purpose, and how many is a preference."""
+        note = Gtk.Label(
+            label=_("Older backups are removed to save space. Change how many are kept in the preferences."),
+            xalign=0,
+            wrap=True,
+            margin_start=12,
+            margin_end=12,
+            margin_bottom=6,
+        )
+        note.add_css_class("dim-label")
+        return note
 
     def _on_rows(self, rows, error) -> None:
         if error:

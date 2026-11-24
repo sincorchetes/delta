@@ -254,6 +254,20 @@ def test_the_history_waits_for_the_daemon_then_lists_the_backups(client):
     assert window._store.get_item(0).name == "second"  # newest first
 
 
+def test_the_history_says_why_old_backups_are_not_in_it(client):
+    window = HistoryWindow(None, client)
+    listing = window._stack.get_child_by_name("list")
+    notes = []
+    child = listing.get_first_child()
+    while child is not None:
+        notes.append(child)
+        child = child.get_next_sibling()
+
+    assert [w.get_label() for w in notes if isinstance(w, Gtk.Label) and "removed" in w.get_label()] == [
+        "Older backups are removed to save space. Change how many are kept in the preferences."
+    ]
+
+
 def test_an_empty_repository_says_there_are_no_backups_yet(client):
     window = HistoryWindow(None, client)
 

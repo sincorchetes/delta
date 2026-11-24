@@ -7,6 +7,9 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **The history says why it is short.** A line under the count tells that old backups are removed to save space and that how
+  many are kept is a preference.
+
 - **«Unlock…» on a drive that is gone says so.** The window can still show an old «locked» error after the drive was pulled; asking
   to unlock now checks the place first and tells why it cannot be used, instead of Borg's own words.
 
