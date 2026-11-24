@@ -5,6 +5,8 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-24
+
 ### Changed
 
 - **The window learns that the drive is gone without waiting for a backup.** The daemon looks at the place of the backups in the
@@ -16,6 +18,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 - **A drive that goes read-only in the middle of a backup is told as such.** When Borg stopped with an internal error, only its
   one-line account was looked at, which does not name the folder, so the window said «The last backup failed». The whole report
   is now kept with the error and the cause is read from it: a read-only place is the destination's if the report names its folder.
+
+- **The folder chooser of the wizard opens where you were.** Typing a folder that does not exist yet and pressing «Choose…» left
+  you among the recent files; it now opens in the nearest folder that exists on the way, and the page says that a folder that
+  does not exist is created.
 
 - **The history says why it is short.** A line under the count tells that old backups are removed to save space and that how
   many are kept is a preference.
