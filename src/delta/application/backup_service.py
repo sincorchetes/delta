@@ -7,10 +7,19 @@ from collections.abc import Callable
 from delta.application.ports import BackupEngine, DestinationProbe, RepositoryIdentity
 from delta.domain.backup_job import BackupJob
 from delta.domain.destination import DestinationState
-from delta.domain.errors import BackupInterrupted, BackupWarning, DeltaError, DestinationUnavailable, is_full_message
+from delta.domain.errors import (
+    BackupInterrupted,
+    BackupWarning,
+    DeltaError,
+    DestinationUnavailable,
+    is_full_message,
+    state_from_error,
+)
 from delta.domain.progress import ProgressEvent
 from delta.domain.repository import Repository
 from delta.i18n import _
+
+NOTHING_SAID = ""  # the cause given to the probe when no engine failure led to asking
 
 
 class BackupService:
@@ -54,7 +63,8 @@ class BackupService:
         except BackupWarning as err:
             job.warn(str(err))
         except DeltaError as err:
-            missing = self.unreachable(is_full_message(str(err)))  # the drive may have gone or filled up: not its failure either
+            # the drive may have gone or filled up: not its failure either
+            missing = self.unreachable(str(err))
             if missing is not None:
                 job.wait_for_destination(missing)
             else:
@@ -65,7 +75,7 @@ class BackupService:
 
     def cannot_back_up(self) -> DestinationUnavailable | None:
         """Why the backup has to wait: the place cannot be used, or another repository is in it."""
-        return self.unreachable() or self._replaced()
+        return self.unreachable(NOTHING_SAID) or self._replaced()
 
     def _replaced(self) -> DestinationUnavailable | None:
         """Another repository where the one Delta made was. The first time there is nothing to compare with: it is learnt."""
@@ -83,11 +93,18 @@ class BackupService:
             return DestinationUnavailable(self._repo.location, DestinationState.OTHER_REPOSITORY)
         return None
 
-    def unreachable(self, out_of_space: bool = False) -> DestinationUnavailable | None:
-        """The error to wait with when the place of the repository cannot be used, else None."""
+    def unreachable(self, cause: str) -> DestinationUnavailable | None:
+        """The error to wait with when the place of the repository cannot be used, else None.
+
+        `cause` is what the engine said when it failed, if it did: the probe is asked knowing whether it was out of room, and when
+        the probe finds nothing wrong the engine's own words can still say what is (a disk that answers with errors, a place that
+        went read-only meanwhile).
+        """
         if self._destination is None or self._repo is None:
             return None
-        state = self._destination.state(self._repo, out_of_space)
+        state = self._destination.state(self._repo, is_full_message(cause))
+        if state is DestinationState.AVAILABLE:
+            state = state_from_error(cause, self._repo.location) or DestinationState.AVAILABLE
         if state is DestinationState.AVAILABLE:
             return None
         return DestinationUnavailable(self._repo.location, state)

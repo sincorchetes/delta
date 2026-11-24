@@ -67,7 +67,7 @@ Long operations return a `job_id` at once and end with a signal. **There is only
   were kept, and they are not on it: another disk, or a wiped one), `other-repository` (there is a repository where the backups
   were kept, but its identifier is not that of the one Delta made or adopted: another repository was put in its place; the
   identifier is kept in the setting `repository-id`), `full` (less than 1 MiB free, or the engine said a disk
-  had no room and the destination has less than 256 MiB), `read-only` (mounted so that nothing can be written) or `denied` (no
+  had no room and the destination has less than 256 MiB), `io-error` (the drive answered with an input/output error, or went away, while it was written to), `read-only` (mounted so that nothing can be written) or `denied` (no
   permission to write in it).
 - `LastBackup` t: the epoch of the last successful backup (0 = none). When the daemon starts, it takes it from the most recent
   snapshot of the repository.

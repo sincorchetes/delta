@@ -14,6 +14,7 @@ class NotificationKind(str, Enum):
     DESTINATION_UNAVAILABLE = "destination-unavailable"  # a drive that is not connected, or a folder that is not there
     DESTINATION_OTHER_DRIVE = "destination-other-drive"
     DESTINATION_OTHER_REPOSITORY = "destination-other-repository"
+    DESTINATION_IO_ERROR = "destination-io-error"
     DESTINATION_FULL = "destination-full"
     DESTINATION_READ_ONLY = "destination-read-only"
     DESTINATION_DENIED = "destination-denied"

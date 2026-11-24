@@ -109,6 +109,10 @@ def unavailable_view(snapshot: DaemonSnapshot) -> StatusView:
         title = _("Your backups are not on this drive")
         subtitle = _("A drive is connected at {location}, but it does not hold your backups. Connect the one that does, or choose another place in the preferences.")
         icon = "drive-harddisk-symbolic"
+    elif snapshot.reason == "io-error":
+        title = _("The drive with your backups reports errors")
+        subtitle = _("{location} reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing.")
+        icon = "dialog-warning-symbolic"
     elif snapshot.reason == "other-repository":
         title = _("These are not your backups")
         subtitle = _("The repository at {location} is not the one your backups were made in. Connect the drive that holds them. If this one is the right one, choose it again in the preferences, with its passphrase.")

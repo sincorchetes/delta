@@ -1432,3 +1432,21 @@ msgstr ""
 
 msgid "The repository at {location} is not the one your backups were made in. Connect the drive that holds them. If this one is the right one, choose it again in the preferences, with its passphrase."
 msgstr ""
+
+msgid "The place where your backups are kept reports errors: {location}"
+msgstr ""
+
+msgid "The drive reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing."
+msgstr ""
+
+msgid "Backup drive reports errors"
+msgstr ""
+
+msgid "The drive with your backups reports errors"
+msgstr ""
+
+msgid "{location} reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing."
+msgstr ""
+
+msgid "Borg stopped unexpectedly: {error}"
+msgstr ""

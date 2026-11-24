@@ -51,6 +51,9 @@ def render(notification: Notification) -> tuple[str, str, Gio.NotificationPriori
     if kind is NotificationKind.DESTINATION_OTHER_REPOSITORY:
         body = detail or _("Connect the drive that holds your backups. If this repository is the right one, choose it again in the preferences, with its passphrase.")
         return _("These are not your backups"), body, Gio.NotificationPriority.NORMAL
+    if kind is NotificationKind.DESTINATION_IO_ERROR:
+        body = detail or _("The drive reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing.")
+        return _("Backup drive reports errors"), body, Gio.NotificationPriority.NORMAL
     if kind is NotificationKind.DESTINATION_FULL:
         body = detail or _("There is no room left there. Free some space, or choose another place in the preferences.")
         return _("Backup place is full"), body, Gio.NotificationPriority.NORMAL

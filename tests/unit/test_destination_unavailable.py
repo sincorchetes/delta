@@ -12,6 +12,7 @@ from delta.domain.errors import (
     EngineError,
     RepositoryNotFound,
     is_full_message,
+    says_repository_is_full,
 )
 from delta.domain.repository import Repository
 from delta.i18n import _ as translate
@@ -147,7 +148,7 @@ def test_without_a_probe_there_is_nothing_to_ask_and_a_failure_stays_a_failure()
     backup.run(failing)
 
     assert failing.state is JobState.FAILED and failing.message == "Repository /x does not exist."
-    assert backup.unreachable() is None
+    assert backup.unreachable("") is None
 
 
 def test_when_the_drive_goes_while_the_engine_works_the_failure_is_the_drive_not_the_engine():
@@ -188,13 +189,13 @@ def test_with_no_repository_that_is_what_is_said_and_the_destination_is_not_aske
     backup.run(unset)
 
     assert unset.state is JobState.FAILED and unset.message == translate("no repository configured")
-    assert probe.asked == [] and backup.unreachable() is None
+    assert probe.asked == [] and backup.unreachable("") is None
 
 
 # --- the other causes: full, read-only, no permission ---------------------------------------------------
 
 FULL, READ_ONLY, DENIED = DestinationState.FULL, DestinationState.READ_ONLY, DestinationState.DENIED
-OTHER_DRIVE = DestinationState.OTHER_DRIVE
+OTHER_DRIVE, IO_ERROR = DestinationState.OTHER_DRIVE, DestinationState.IO_ERROR
 NO_ROOM = "/h/test.flac: read: [Errno 28] No space left on device"
 
 
@@ -202,6 +203,7 @@ NO_ROOM = "/h/test.flac: read: [Errno 28] No space left on device"
     "state, message",
     [
         (OTHER_DRIVE, "A drive is connected where your backups were kept, but they are not on it: /media/disk/delta"),
+        (IO_ERROR, "The place where your backups are kept reports errors: /media/disk/delta"),
         (FULL, "The place where your backups are kept is full: /media/disk/delta"),
         (READ_ONLY, "The place where your backups are kept is read-only: /media/disk/delta"),
         (DENIED, "You cannot write in the place where your backups are kept: /media/disk/delta"),
@@ -219,6 +221,10 @@ def test_each_cause_says_what_is_wrong_with_the_place(state, message):
         (
             OTHER_DRIVE,
             "This is not the drive that holds your backups. Connect that one, or choose another place in the preferences.",
+        ),
+        (
+            IO_ERROR,
+            "The drive reported an error while it was written to. Check its connection; if it keeps happening, the drive may be failing.",
         ),
         (FULL, "There is no room left there. Free some space, or choose another place in the preferences."),
         (
@@ -274,6 +280,36 @@ def test_a_failure_that_does_not_say_so_asks_the_ordinary_question():
     backup.run(working)
 
     assert probe.out_of_space == [False, False] and working.state is JobState.FAILED
+
+
+BORG_SHORT = "Insufficient free space to complete transaction (required: 545.43 MB, available: 263.97 MB)."
+
+
+@pytest.mark.parametrize(
+    "text, says",
+    [
+        (BORG_SHORT, True),
+        ("insufficient free space", True),
+        ("INSUFFICIENT FREE SPACE", True),
+        (NO_ROOM, False),  # «no space left» can be the home folder: it is not about the repository
+        ("Input/output error", False),
+        ("", False),
+    ],
+)
+def test_borg_saying_that_the_disk_of_the_repository_is_too_full_is_recognised(text, says):
+    assert says_repository_is_full(text) is says
+
+
+def test_borg_refusing_for_lack_of_free_space_is_the_destination_being_full_even_if_it_has_some_room():
+    # the probe says it can be used: it has room, but less than Borg needs to commit
+    probe = Probe(AVAILABLE)
+    backup = BackupService(Engine(EngineError(BORG_SHORT)), REPO, ("/home",), destination=probe)
+    working = backup.new_job()
+
+    backup.run(working)
+
+    assert working.state is JobState.UNAVAILABLE and working.unavailable.state is FULL
+    assert probe.asked == [REPO, REPO]
 
 
 def test_no_room_somewhere_else_is_still_a_failure_of_the_backup():

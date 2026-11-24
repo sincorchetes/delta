@@ -5,6 +5,18 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **A drive that fails while it is written to is told as such.** The engine's failures are now told by the number of the system's
+  error that it reports, not by its words: an input/output error (a drive pulled or failing) is its own cause, «The drive with
+  your backups reports errors», with its notification; «could not create the lock» for a read-only or forbidden place is no
+  longer shown as a locked repository with «Unlock…»; and a crash of Borg is told in one line («Borg stopped unexpectedly: …»)
+  instead of its whole traceback, which goes to the log.
+- **A destination that is too full for Borg to go on is told as full**, not as «The last backup failed» with Borg's English: Borg
+  refuses to commit when what is free is less than what it needs («Insufficient free space to complete transaction»), even if the
+  disk still has room. Found with a small drive: the window said «The place with your backups is full» when the disk was at
+  100 %, and Borg's own text when it was a little below.
+
 ## [0.2.0] - 2026-11-20
 
 ### Added
