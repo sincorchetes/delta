@@ -1506,3 +1506,6 @@ msgstr "{location} ha dado un error al escribir en él. Comprueba su conexión; 
 
 msgid "Borg stopped unexpectedly: {error}"
 msgstr "Borg se detuvo de forma inesperada: {error}"
+
+msgid "Older backups are removed to save space. Change how many are kept in the preferences."
+msgstr "Las copias antiguas se eliminan para ahorrar espacio. Cambia cuántas se conservan en las preferencias."

@@ -1450,3 +1450,6 @@ msgstr ""
 
 msgid "Borg stopped unexpectedly: {error}"
 msgstr ""
+
+msgid "Older backups are removed to save space. Change how many are kept in the preferences."
+msgstr ""
