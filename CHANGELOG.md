@@ -7,6 +7,9 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A backup that waits for its drive is not logged as a warning.** «The drive is not connected» and the other causes of an
+  unusable destination are an expected state, so the daemon logs them as information; only real failures are warnings.
+
 - **A drive that fails while it is written to is told as such.** The engine's failures are now told by the number of the system's
   error that it reports, not by its words: an input/output error (a drive pulled or failing) is its own cause, «The drive with
   your backups reports errors», with its notification; «could not create the lock» for a read-only or forbidden place is no

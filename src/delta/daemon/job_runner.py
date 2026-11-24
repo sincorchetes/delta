@@ -114,7 +114,9 @@ class JobRunner:
     def _record_outcome(
         self, job_id: str, ok: bool, message: str, records_backup: bool, unreachable: DestinationUnavailable | None = None
     ) -> None:
-        if not ok:
+        if unreachable is not None:
+            log.info("job %s waits, the place of the backups cannot be used: %s", job_id, message)
+        elif not ok:
             log.warning("job %s did not succeed: %s", job_id, message)
         if not records_backup:
             return

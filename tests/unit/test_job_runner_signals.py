@@ -126,6 +126,21 @@ def test_a_job_that_did_not_succeed_is_logged_with_its_id_and_why(caplog):
     assert "job job-5 did not succeed: it broke" in [record.getMessage() for record in caplog.records]
 
 
+def test_a_job_that_waits_for_its_destination_is_not_a_warning(caplog):
+    runner = JobRunner(Wire())
+    error = DestinationUnavailable("/media/disk/delta", DestinationState.MISSING)
+
+    def waits(on_progress):
+        raise error
+
+    with caplog.at_level(logging.INFO, logger="delta.daemon.job_runner"):
+        runner.submit("job-6", waits, records_backup=True)
+        assert until(lambda: runner.status != "running")
+
+    records = [(record.levelno, record.getMessage()) for record in caplog.records]
+    assert records == [(logging.INFO, f"job job-6 waits, the place of the backups cannot be used: {error}")]
+
+
 def test_a_task_that_crashes_is_logged_with_its_job(caplog):
     runner = JobRunner(Wire())
 
