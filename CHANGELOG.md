@@ -5,6 +5,12 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- **The text for a read-only place says that the drive may be failing.** A drive with errors can refuse writes while it is still
+  mounted for writing (ext4 does it when its journal fails), so «mount it again» was not enough: the text now adds that, if this
+  came after an error, the drive may be failing.
+
 ## [0.3.0] - 2026-11-24
 
 ### Changed

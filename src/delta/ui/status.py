@@ -123,7 +123,7 @@ def unavailable_view(snapshot: DaemonSnapshot) -> StatusView:
         icon = "drive-harddisk-symbolic"
     elif snapshot.reason == "read-only":
         title = _("The place with your backups is read-only")
-        subtitle = _("{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences.")
+        subtitle = _("{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences. If this came after an error, the drive may be failing.")
         icon = "changes-prevent-symbolic"
     elif snapshot.reason == "denied":
         title = _("You cannot write where your backups are kept")

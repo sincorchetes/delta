@@ -1370,7 +1370,7 @@ msgstr ""
 msgid "There is no room left there. Free some space, or choose another place in the preferences."
 msgstr ""
 
-msgid "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences."
+msgid "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences. If this came after an error, the drive may be failing."
 msgstr ""
 
 msgid "You do not have permission to write there. Change its permissions, or choose another place in the preferences."
@@ -1394,7 +1394,7 @@ msgstr ""
 msgid "The place with your backups is read-only"
 msgstr ""
 
-msgid "{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences."
+msgid "{location} is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences. If this came after an error, the drive may be failing."
 msgstr ""
 
 msgid "You cannot write where your backups are kept"
