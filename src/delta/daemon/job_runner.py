@@ -11,6 +11,7 @@ gi.require_version("Gio", "2.0")
 from gi.repository import GLib
 
 from delta.daemon.introspection import INTERFACE_NAME, OBJECT_PATH
+from delta.domain.destination import DestinationState
 from delta.domain.errors import DeltaError, DestinationUnavailable
 from delta.domain.progress import ProgressEvent
 
@@ -22,13 +23,20 @@ ProgressSink = Callable[[ProgressEvent], None]
 Task = Callable[[ProgressSink], tuple[bool, str]]
 
 
+def _nothing_known() -> DestinationState:
+    return DestinationState.AVAILABLE
+
+
 class JobAlreadyRunning(Exception):
     pass
 
 
 class JobRunner:
-    def __init__(self, connection) -> None:
+    def __init__(self, connection, place: Callable[[], DestinationState] = _nothing_known) -> None:
+        """`place` tells, without waiting, whether the place of the backups can be used: a drive pulled out is known before a
+        backup tries it."""
         self._connection = connection
+        self._place = place
         self._lock = threading.Lock()
         self._running = False
         self._backup_running = False
@@ -50,7 +58,15 @@ class JobRunner:
     def status(self) -> str:
         if self._running:
             return "running"
-        return "unavailable" if self.unavailable else "idle"
+        return "unavailable" if self.unavailable or self._place() is not DestinationState.AVAILABLE else "idle"
+
+    @property
+    def reason(self) -> str:
+        """Why the place cannot be used, as the value of a DestinationState, while it cannot; else empty."""
+        if self.unavailable_reason:
+            return self.unavailable_reason
+        place = self._place()
+        return "" if place is DestinationState.AVAILABLE else place.value
 
     def when_idle(self, callback: Callable[[], None]) -> None:
         """Run `callback` now if no job runs, else right after the job ends.

@@ -14,3 +14,6 @@ class GioMountEvents:
 
     def watch(self, callback: Callable[[], None]) -> None:
         self._monitor.connect("mount-added", lambda _monitor, _mount: callback())
+
+    def watch_removed(self, callback: Callable[[], None]) -> None:
+        self._monitor.connect("mount-removed", lambda _monitor, _mount: callback())

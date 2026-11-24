@@ -35,6 +35,15 @@ def test_the_adapter_calls_back_without_the_arguments_of_the_signal():
     assert seen == ["mounted"]
 
 
+def test_the_adapter_also_tells_when_a_mount_is_taken_away():
+    monitor, seen = Monitor(), []
+    GioMountEvents(monitor).watch_removed(lambda: seen.append("removed"))
+
+    monitor.handlers["mount-removed"](monitor, "a mount")
+
+    assert seen == ["removed"]
+
+
 def test_the_adapter_follows_the_volume_monitor_of_the_session_by_default():
     assert GioMountEvents() is not None
 

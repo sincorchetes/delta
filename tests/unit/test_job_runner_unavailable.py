@@ -127,3 +127,28 @@ def test_the_reason_goes_with_the_state(runner):
     finish(runner, done)
 
     assert runner.unavailable_reason == ""
+
+
+def test_a_place_that_is_known_to_be_unusable_is_the_status_before_any_backup_tried_it():
+    state = [DestinationState.EMPTY]
+    runner = JobRunner(FakeConnection(), lambda: state[0])
+
+    assert (runner.status, runner.reason, runner.unavailable) == ("unavailable", "empty", "")
+
+    state[0] = DestinationState.AVAILABLE
+
+    assert (runner.status, runner.reason) == ("idle", "")
+
+
+def test_what_a_backup_found_is_the_reason_even_if_the_place_looks_fine_now():
+    runner = JobRunner(FakeConnection(), lambda: DestinationState.AVAILABLE)
+    runner.unavailable, runner.unavailable_reason = "/media/disk/delta", "full"
+
+    assert (runner.status, runner.reason) == ("unavailable", "full")
+
+
+def test_a_running_job_is_running_whatever_the_place_looks_like():
+    runner = JobRunner(FakeConnection(), lambda: DestinationState.MISSING)
+    runner._running = True
+
+    assert runner.status == "running"
