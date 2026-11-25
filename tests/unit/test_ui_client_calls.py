@@ -60,6 +60,8 @@ def connection():
         (lambda c, r: c.create_backup(r), INTERFACE, "CreateBackup", None),
         (lambda c, r: c.create_repository("/r", "pw", r), INTERFACE, "CreateRepository", ("/r", "pw")),
         (lambda c, r: c.unlock_repository(r), INTERFACE, "UnlockRepository", None),
+        (lambda c, r: c.check_repository(r), INTERFACE, "CheckRepository", None),
+        (lambda c, r: c.cancel_check(r), INTERFACE, "CancelCheck", None),
         (lambda c, r: c.use_repository("/r", "pw", r), INTERFACE, "UseRepository", ("/r", "pw")),
     ],
 )

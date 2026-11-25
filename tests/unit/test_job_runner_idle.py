@@ -163,8 +163,10 @@ def test_a_check_is_the_status_while_it_runs_and_idle_after(runner):
         release.wait(5)
         return True, ""
 
+    assert runner.checking is False
+
     runner.submit("job", task, checking=True)
-    assert runner.status == "checking"
+    assert runner.status == "checking" and runner.checking is True
 
     release.set()
     assert iterate_until(lambda: runner.status == "idle")
@@ -174,7 +176,7 @@ def test_a_backup_is_running_and_not_checking(runner):
     release = threading.Event()
     runner.submit("job", lambda on_progress: (release.wait(5), (True, ""))[1], records_backup=True)
 
-    assert runner.status == "running"
+    assert runner.status == "running" and runner.checking is False
 
     release.set()
     assert iterate_until(lambda: runner.status == "idle")

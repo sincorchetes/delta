@@ -62,6 +62,11 @@ class JobRunner:
         return "unavailable" if self.unavailable or self._place() is not DestinationState.AVAILABLE else "idle"
 
     @property
+    def checking(self) -> bool:
+        """A check of the repository runs now."""
+        return self._checking
+
+    @property
     def reason(self) -> str:
         """Why the place cannot be used, as the value of a DestinationState, while it cannot; else empty."""
         if self.unavailable_reason:

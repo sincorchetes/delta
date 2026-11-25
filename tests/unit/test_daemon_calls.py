@@ -28,15 +28,19 @@ class Parameters:
 
 
 class Jobs:
-    def __init__(self, busy=False, status="idle"):
-        self.busy, self.status = busy, status
-        self.submitted, self.checking, self.cleared = [], [], 0
+    def __init__(self, busy=False, checking=False):
+        self.busy, self.checking_now = busy, checking
+        self.submitted, self.kinds, self.cleared = [], [], 0
 
     def submit(self, job_id, task, records_backup=False, checking=False):
         if self.busy:
             raise JobAlreadyRunning()
         self.submitted.append((job_id, task, records_backup))
-        self.checking.append(checking)
+        self.kinds.append(checking)
+
+    @property
+    def checking(self):
+        return self.checking_now
 
     def clear_error(self):
         self.cleared += 1
@@ -161,7 +165,7 @@ def test_unlocking_forgets_the_old_failure_and_says_nothing_else():
 
     job_calls.start_unlock(jobs, Service(), invocation)
 
-    assert finished(jobs) == (True, "") and jobs.cleared == 1 and jobs.checking == [False] and len(invocation.values) == 1
+    assert finished(jobs) == (True, "") and jobs.cleared == 1 and jobs.kinds == [False] and len(invocation.values) == 1
 
 
 def test_unlocking_with_no_repository_says_so_and_keeps_the_failure():
@@ -177,7 +181,7 @@ def test_a_check_is_a_job_of_its_own_kind_that_says_how_it_went():
     job_calls.start_check(jobs, Service(), invocation)
 
     assert finished(jobs) == (True, "Your backups were checked and no problems were found.")
-    assert jobs.checking == [True] and len(invocation.values) == 1
+    assert jobs.kinds == [True] and len(invocation.values) == 1
 
 
 def test_a_check_with_no_repository_says_so():
@@ -205,16 +209,15 @@ def test_a_check_while_another_job_runs_is_told_the_daemon_is_busy():
 def test_cancelling_stops_a_check_that_is_running():
     stopped, invocation = [], Invocation()
 
-    job_calls.cancel_check(Jobs(status="checking"), lambda: stopped.append(1), invocation)
+    job_calls.cancel_check(Jobs(checking=True), lambda: stopped.append(1), invocation)
 
     assert stopped == [1] and len(invocation.values) == 1
 
 
-@pytest.mark.parametrize("status", ["idle", "running", "browsing", "unavailable"])
-def test_cancelling_never_stops_anything_else(status):
+def test_cancelling_never_stops_anything_else():
     stopped, invocation = [], Invocation()
 
-    job_calls.cancel_check(Jobs(status=status), lambda: stopped.append(1), invocation)
+    job_calls.cancel_check(Jobs(checking=False), lambda: stopped.append(1), invocation)
 
     assert stopped == [] and len(invocation.values) == 1
 

@@ -84,5 +84,12 @@ def test_a_failure_that_is_not_a_finding_is_not_made_one():
         Runner(RepositoryLocked("locked")).check(REPO)
 
 
+def test_the_finding_is_told_in_these_words():
+    assert str(RepositoryDamaged("segment 3 is damaged")) == (
+        "The check found problems in your backups. Check the drive and, if the backups are still there, "
+        "repair them with “borg check --repair”. Borg said: segment 3 is damaged"
+    )
+
+
 def test_what_borg_said_is_shortened():
     assert str(RepositoryDamaged("x" * 1000)).endswith("x" * 300) and "x" * 301 not in str(RepositoryDamaged("x" * 1000))

@@ -142,6 +142,6 @@ def start_check(jobs: JobRunner | None, check: CheckService | None, invocation) 
 
 def cancel_check(jobs: JobRunner | None, interrupt, invocation) -> None:
     """Stops a check that is running; with nothing to cancel it does nothing (it never stops a backup)."""
-    if jobs is not None and jobs.status == "checking":
+    if jobs is not None and jobs.checking:
         interrupt()
     invocation.return_value(None)
