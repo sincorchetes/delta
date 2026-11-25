@@ -77,6 +77,20 @@ and changing it would leave people without access to their backups.
 - Enter with `devenv shell`. The devenv scripts: `sync`, `build`, `test`, `cov` (tests with coverage). Direct commands:
   `sh scripts/sync-venv.sh`, `uv run pytest`.
 
+### Running commands (agents: hand the maintainer the full command)
+
+`python3`, `uv`, `ruff`, `pytest`, `meson` and `xvfb-run` are **not** on the PATH outside devenv, and the agent's own shell does
+not run `devenv` or `xvfb-run` (they are not on its allowlist, and the maintainer does not add them). So an agent **does not try to
+run them and does not ask whether it may**: it gives the maintainer the **complete command**, ready to paste with the `!` prefix
+(for instance `! devenv shell -- sh -c '…'`), and waits for the output. Every command below goes that way.
+
+- One command: `devenv shell -- sh -c '<command>'`
+- Tests: `devenv shell -- sh -c 'sh scripts/sync-venv.sh && xvfb-run -a uv run pytest --cov'` (they take about two minutes: run
+  them in the background)
+- Lint and format: `devenv shell -- uv run ruff check --fix <paths>` and `devenv shell -- uv run ruff format <paths>`
+- Types: `devenv shell -- uv run pyright`; mutants: `devenv shell -- sh scripts/ci/check_mutants.sh`
+- Build: `devenv shell -- sh -c 'meson setup build && meson compile -C build'`
+
 ### The Nix package (`flake.nix`, `nix/`)
 
 It is for **installing** Delta, not for developing it (that is devenv). Like every other distribution, it uses what the
