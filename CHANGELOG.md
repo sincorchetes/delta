@@ -5,6 +5,11 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- **The check of a published package also opens its window.** After the backup and the restore, the window of the versions of a file
+  is opened from the installed package, under a virtual display, and it must stay open with no traceback and no GLib critical.
+
 ### Fixed
 
 - **The check of a published package on Fedora no longer waits for a version it already has.** `dnf install` of a package that is

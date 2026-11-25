@@ -81,8 +81,9 @@ builds and is deployed from `main`.
       startup passed them. Each job now runs `scripts/ci/package_smoke.py --source` (the daemon that Meson installs, with the
       distribution's own GLib, keyring and Borg: a repository, a backup and a restore), and then the window of the versions of a
       file against it (`--window`, under `xvfb-run` or `xwfb-run`): it must stay open with no traceback and no GLib critical.
-- [ ] **Package smoke, the window of the installed package:** the same `--window` in *Package smoke*, against the package of the
-      repository. It needs a virtual display in each clean container (Xvfb is not in Enterprise Linux 10: `xwfb-run`, from EPEL).
+- [ ] **Package smoke, the window of the installed package:** written (`package_smoke.sh` installs Xvfb, or `xwfb-run` from EPEL on
+      Enterprise Linux, and runs `--window` against the package of the repository); check that the eight distributions pass it in the
+      run of its pull request, and mark it done.
 - [x] **Flatpak smoke** (`scripts/ci/flatpak_smoke.sh`, in `flatpak.yml`): the bundle is installed and run, and BorgBackup works in the
       sandbox, the application is the version of the tree, the daemon owns its name on the bus and the window stays open without
       criticals.
