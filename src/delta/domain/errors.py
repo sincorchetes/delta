@@ -116,7 +116,7 @@ class DestinationUnavailable(DeltaError):
         if self.state is DestinationState.FULL:
             return _("There is no room left there. Free some space, or choose another place in the preferences.")
         if self.state is DestinationState.READ_ONLY:
-            return _("It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences.")
+            return _("It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences. If this came after an error, the drive may be failing.")
         if self.state is DestinationState.DENIED:
             return _("You do not have permission to write there. Change its permissions, or choose another place in the preferences.")
         if self.state is DestinationState.EMPTY:

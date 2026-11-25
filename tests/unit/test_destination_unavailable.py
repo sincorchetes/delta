@@ -229,7 +229,7 @@ def test_each_cause_says_what_is_wrong_with_the_place(state, message):
         (FULL, "There is no room left there. Free some space, or choose another place in the preferences."),
         (
             READ_ONLY,
-            "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences.",
+            "It is mounted so that nothing can be written to it. Mount it again for writing, or choose another place in the preferences. If this came after an error, the drive may be failing.",
         ),
         (
             DENIED,
