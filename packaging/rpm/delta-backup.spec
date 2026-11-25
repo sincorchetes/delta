@@ -2,7 +2,7 @@
 %global appid io.github.sincorchetes.Delta
 
 Name:           delta-backup
-Version:        0.3.0
+Version:        0.4.0
 Release:        1%{?dist}
 Summary:        Time travel for your files in GNOME, with BorgBackup
 License:        GPL-3.0-or-later
@@ -108,6 +108,10 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_userunitdir}/delta.timer
 
 %changelog
+* Wed Nov 25 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.4.0-1
+- New: «Check backups» in the main menu checks that the files of the repository can be read, with progress and cancel; a repository with problems is told as such
+- The text for a read-only place says that the drive may be failing
+
 * Tue Nov 24 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.3.0-1
 - The window learns that the drive is gone without waiting for a backup: the daemon looks at the place in the background
 - A drive that fails while it is written to, or goes read-only in the middle of a backup, is told for what it is, and a crash of Borg is told in one line
