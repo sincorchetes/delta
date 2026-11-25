@@ -24,15 +24,21 @@ builds and is deployed from `main`.
 
 - [x] **Ruleset for `main`** and **ruleset for the tags `v*`** (`releases-tag`): both active.
 - [x] **Settings:** description, website and topics; squash merging only.
-- [ ] **Settings, still to check:** delete branches automatically after merging (it is off; `gh pr merge --delete-branch` does it),
-      workflow permissions read-only, approval for first-time contributors, a social preview image.
+- [x] **Settings:** branches are deleted after merging, workflow permissions are read-only and cannot approve pull requests
+      (checked with the API, 2026-11-25).
+- [ ] **Settings, still to check:** approval for first-time contributors (Settings → Actions → General; the API does not show it)
+      and a social preview image.
 - [x] **Code security:** Dependabot security updates, secret scanning and push protection.
-- [ ] **Code security, still to check:** Dependabot alerts and private vulnerability reporting. Leave CodeQL's *default setup* off:
-      the workflow `.github/workflows/codeql.yml` does it.
+- [x] **Code security:** Dependabot alerts and private vulnerability reporting are on (2026-11-25). Leave CodeQL's *default setup*
+      off: the workflow `.github/workflows/codeql.yml` does it.
 - [x] **Pages:** source *GitHub Actions* and the custom domain `delta.sincorchetes.tech`.
-- [ ] **Pages:** GitHub reports no certificate of its own for the domain (*Enforce HTTPS* is off), although the site is served
-      over HTTPS. Check who serves it (a proxy such as Cloudflare would) and that `http://` redirects to `https://`. Limit the
-      `github-pages` environment to `main`.
+- [x] **Pages, HTTPS:** the domain is behind the Cloudflare proxy, which serves the certificate and redirects `http://` to
+      `https://` (*Always Use HTTPS*); the minimum TLS version is 1.2. GitHub reports no certificate of its own and *Enforce HTTPS*
+      stays off **on purpose**: it cannot issue one behind a proxy, and forcing HTTPS at the origin too would make redirect loops.
+      HSTS is left off until every subdomain is known to go over HTTPS.
+- [ ] **Pages, still to check:** limit the `github-pages` environment to `main`; and that the domain is *verified* in the GitHub
+      account (Settings → Pages → Add a domain, with a TXT record): the DNS has a wildcard `*` that points to `github.io`, so
+      without verification anybody could serve a site from an invented subdomain.
 - [x] **SonarQube Cloud:** the project `sincorchetes_delta` analyzes on every change to the code (the secret `SONAR_TOKEN`).
 - [x] **SonarQube Cloud:** mark the six `--no-build` hotspots of `scripts/sync-venv.sh` and `scripts/ci/check_mutants.sh` as *Safe*:
       the GNOME sdists have to be built against the system libraries (see "Known traps" in `AGENTS.md`).
