@@ -1,5 +1,7 @@
 """The error answers of the daemon's job and query calls, without a bus: a stand-in invocation."""
 
+import logging
+
 import pytest
 
 from delta.daemon import job_calls, query_calls
@@ -182,6 +184,21 @@ def test_a_check_is_a_job_of_its_own_kind_that_says_how_it_went():
 
     assert finished(jobs) == (True, "Your backups were checked and no problems were found.")
     assert jobs.kinds == [True] and len(invocation.values) == 1
+
+
+def test_a_check_says_in_the_log_when_it_starts_and_how_it_ended(caplog):
+    with caplog.at_level(logging.INFO, logger="delta.daemon.job_calls"):
+        for service in (Service(), Service(error=BackupInterrupted("stopped"))):
+            jobs = Jobs()
+            job_calls.start_check(jobs, service, Invocation())
+            finished(jobs)
+
+    assert [record.getMessage() for record in caplog.records] == [
+        "checking that the backups can be read",
+        "the check of the backups found no problems",
+        "checking that the backups can be read",
+        "the check of the backups was cancelled",
+    ]
 
 
 def test_a_check_with_no_repository_says_so():

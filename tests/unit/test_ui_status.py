@@ -286,6 +286,7 @@ def test_a_check_in_progress_is_what_the_window_says_and_it_can_be_cancelled():
         True,
     )
     assert not view.can_back_up_now
+    assert view.icon_name == "system-search-symbolic"
 
 
 def test_a_check_is_shown_before_the_state_of_the_last_backup():

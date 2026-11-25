@@ -1,5 +1,6 @@
 """D-Bus calls that start a path-based job (restore, preview) and the errors they answer with."""
 
+import logging
 import uuid
 
 import gi
@@ -15,6 +16,8 @@ from delta.application.unlock_service import UnlockService
 from delta.daemon.job_runner import JobAlreadyRunning, JobRunner
 from delta.domain.errors import BackupInterrupted, InvalidPath
 from delta.i18n import _
+
+log = logging.getLogger(__name__)
 
 ERROR_INVALID_ARGUMENT = "io.github.sincorchetes.Delta.Service1.Error.InvalidArgument"
 ERROR_FAILED = "io.github.sincorchetes.Delta.Service1.Error.Failed"
@@ -130,11 +133,14 @@ def start_check(jobs: JobRunner | None, check: CheckService | None, invocation) 
         return
 
     def task(on_progress):
+        log.info("checking that the backups can be read")
         try:
             if not check.run():
                 return False, _("No backup repository is set up.")
         except BackupInterrupted:
+            log.info("the check of the backups was cancelled")
             return True, _("The check was cancelled.")
+        log.info("the check of the backups found no problems")
         return True, _("Your backups were checked and no problems were found.")
 
     submit_job(jobs, invocation, uuid.uuid4().hex, task, checking=True)
