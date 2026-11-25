@@ -33,7 +33,8 @@ builds and is deployed from `main`.
       off: the workflow `.github/workflows/codeql.yml` does it.
 - [x] **Pages:** source *GitHub Actions* and the custom domain `delta.sincorchetes.tech`.
 - [x] **Pages, HTTPS:** the domain is behind the Cloudflare proxy, which serves the certificate and redirects `http://` to
-      `https://` (*Always Use HTTPS*); the minimum TLS version is 1.2. GitHub reports no certificate of its own and *Enforce HTTPS*
+      `https://` (*Always Use HTTPS*); the minimum TLS version is 1.2. Its encryption mode is **Full**, not *Full (strict)*:
+      GitHub has no certificate for the domain and gives its generic one, which *strict* rejects (error 526). GitHub reports no certificate of its own and *Enforce HTTPS*
       stays off **on purpose**: it cannot issue one behind a proxy, and forcing HTTPS at the origin too would make redirect loops.
       HSTS is left off until every subdomain is known to go over HTTPS.
 - [ ] **Pages, still to check:** limit the `github-pages` environment to `main`; and that the domain is *verified* in the GitHub
