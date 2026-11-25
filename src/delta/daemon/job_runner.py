@@ -40,6 +40,7 @@ class JobRunner:
         self._lock = threading.Lock()
         self._running = False
         self._backup_running = False
+        self._checking = False
         self._idle_callbacks: list[Callable[[], None]] = []
         self.last_backup = 0
         self.last_error = ""  # why the latest backup failed; empty after a good one
@@ -57,8 +58,13 @@ class JobRunner:
     @property
     def status(self) -> str:
         if self._running:
-            return "running"
+            return "checking" if self._checking else "running"
         return "unavailable" if self.unavailable or self._place() is not DestinationState.AVAILABLE else "idle"
+
+    @property
+    def checking(self) -> bool:
+        """A check of the repository runs now."""
+        return self._checking
 
     @property
     def reason(self) -> str:
@@ -96,12 +102,13 @@ class JobRunner:
 
         self.when_idle(start)
 
-    def submit(self, job_id: str, task: Task, records_backup: bool = False) -> None:
+    def submit(self, job_id: str, task: Task, records_backup: bool = False, checking: bool = False) -> None:
         with self._lock:
             if self._running:
                 raise JobAlreadyRunning()
             self._running = True
             self._backup_running = records_backup
+            self._checking = checking
         threading.Thread(target=self._work, args=(job_id, task, records_backup), daemon=True).start()
 
     def _work(self, job_id: str, task: Task, records_backup: bool) -> None:
@@ -121,7 +128,7 @@ class JobRunner:
         finally:
             self._record_outcome(job_id, ok, message, records_backup, unreachable)
             with self._lock:
-                self._running = self._backup_running = False
+                self._running = self._backup_running = self._checking = False
                 pending, self._idle_callbacks = self._idle_callbacks, []
             self._emit("BackupFinished", GLib.Variant("(sbs)", (job_id, ok, message)))
             for callback in pending:

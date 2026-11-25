@@ -134,6 +134,7 @@ class DeltaDaemon:
             notifications=notifications,
             journal=FileJobJournal(),
             next_runs=NextRunCache(scheduler),
+            on_cancel=self._engine.interrupt,
         )
         self._mount_events = GioMountEvents()
         self._mount_events.watch(DriveReturn(lambda: jobs.status, self._service.start_scheduled_backup).on_mounted)

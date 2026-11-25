@@ -273,3 +273,20 @@ def test_a_place_that_is_full_points_to_the_preferences_and_not_to_a_cable():
     view = build_status(snapshot(status="unavailable", repository="/x", reason="full"), NOW)
 
     assert "Free some space" in view.subtitle and "preferences" in view.subtitle and "Connect" not in view.subtitle
+
+
+def test_a_check_in_progress_is_what_the_window_says_and_it_can_be_cancelled():
+    view = build_status(snapshot(status="checking"), NOW)
+
+    assert (view.health, view.title, view.action, view.action_label, view.action_enabled) == (
+        Health.CHECKING,
+        "Checking your backups…",
+        Action.CANCEL_CHECK,
+        "Cancel",
+        True,
+    )
+    assert not view.can_back_up_now
+
+
+def test_a_check_is_shown_before_the_state_of_the_last_backup():
+    assert build_status(snapshot(status="checking", last_error="disk full"), NOW).health is Health.CHECKING

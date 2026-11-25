@@ -12,6 +12,7 @@ from gi.repository import Gio, GLib
 from delta.application.backup_notifications import BackupNotifications
 from delta.application.backup_service import BackupService
 from delta.application.browse_service import BrowseService
+from delta.application.check_service import CheckService
 from delta.application.deleted_service import DeletedService
 from delta.application.ports import JobJournal
 from delta.application.preview_service import PreviewService
@@ -29,10 +30,13 @@ from delta.daemon.job_calls import (
     ERROR_BUSY,
     ERROR_INVALID_ARGUMENT,
     ERROR_UNAVAILABLE,
+    cancel_check,
+    start_check,
     start_preview,
     start_restore,
     start_restore_beside,
     start_restore_deleted,
+    start_unlock,
     submit_job,
 )
 from delta.daemon.job_runner import JobAlreadyRunning, JobRunner, Task
@@ -76,6 +80,8 @@ class DeltaService:
         deleted: DeletedService | None = None,
         browse: BrowseService | None = None,
         browse_control: BrowseController | None = None,
+        check: CheckService | None = None,
+        on_cancel: Callable[[], None] = lambda: None,
     ) -> None:
         self._connection = connection
         self._browse = browse
@@ -83,6 +89,8 @@ class DeltaService:
         self._preview = preview
         self._deleted = deleted
         self._unlock = unlock
+        self._check = check
+        self._on_cancel = on_cancel
         self._next_runs = next_runs
         self._journal = journal
         self._notifications = notifications
@@ -127,7 +135,11 @@ class DeltaService:
         elif method_name == "CreateBackup":
             self._create_backup(invocation)
         elif method_name == "UnlockRepository":
-            self._unlock_repository(invocation)
+            start_unlock(self._jobs, self._unlock, invocation)
+        elif method_name == "CheckRepository":
+            start_check(self._jobs, self._check, invocation)
+        elif method_name == "CancelCheck":
+            cancel_check(self._jobs, self._on_cancel, invocation)
         elif method_name in ("CreateRepository", "UseRepository"):
             self._create_repository(parameters, invocation, method_name == "UseRepository")
         elif method_name == "Restore":
@@ -247,21 +259,6 @@ class DeltaService:
                 raise
             if created is not None:
                 GLib.idle_add(created, repo)
-            return True, ""
-
-        self._submit(jobs, invocation, uuid.uuid4().hex, task)
-
-    def _unlock_repository(self, invocation) -> None:
-        """Only on the user's explicit request; a running job of ours makes this answer Busy."""
-        jobs, unlock = self._jobs, self._unlock
-        if jobs is None or unlock is None:
-            invocation.return_dbus_error(ERROR_UNAVAILABLE, _("unlocking is not available"))
-            return
-
-        def task(on_progress):
-            if not unlock.run():
-                return False, _("No backup repository is set up.")
-            jobs.clear_error()
             return True, ""
 
         self._submit(jobs, invocation, uuid.uuid4().hex, task)

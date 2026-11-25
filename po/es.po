@@ -1509,3 +1509,30 @@ msgstr "Borg se detuvo de forma inesperada: {error}"
 
 msgid "Older backups are removed to save space. Change how many are kept in the preferences."
 msgstr "Las copias antiguas se eliminan para ahorrar espacio. Cambia cuántas se conservan en las preferencias."
+
+msgid "The check found problems in your backups. Check the drive and, if the backups are still there, repair them with “borg check --repair”. Borg said: {details}"
+msgstr "La comprobación ha encontrado problemas en tus copias. Revisa el disco y, si las copias siguen ahí, repáralas con «borg check --repair». Borg dijo: {details}"
+
+msgid "checking the backups is not available"
+msgstr "comprobar las copias no está disponible"
+
+msgid "Your backups were checked and no problems were found."
+msgstr "Tus copias se han comprobado y no se han encontrado problemas."
+
+msgid "The check was cancelled."
+msgstr "La comprobación se ha cancelado."
+
+msgid "Check backups"
+msgstr "Comprobar copias"
+
+msgid "Checking your backups"
+msgstr "Comprobando tus copias"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Checking your backups…"
+msgstr "Comprobando tus copias…"
+
+msgid "Delta is making sure your backups can be read. It may take a while; you can close this window."
+msgstr "Delta está comprobando que tus copias se pueden leer. Puede tardar; puedes cerrar esta ventana."

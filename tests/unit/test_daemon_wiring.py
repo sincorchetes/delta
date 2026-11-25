@@ -311,6 +311,7 @@ def test_browsing_is_wired_to_the_engine_the_jobs_and_the_session(daemon):
     assert service.extras["browse_control"].kwargs["on_postponed"] == service.extras["notifications"].postponed
     assert service.extras["browse_control"].kwargs["usage"] == "usage"
     assert interrupt == Engine.instances[0].interrupt
+    assert service.extras["on_cancel"] == Engine.instances[0].interrupt  # cancelling a check stops the engine the same way
     assert daemon.services.mounters == [("mounter", Engine.instances[0])]
     resume(True)
     assert service.resumed == [False, True]  # the startup check, then the one browsing asked for

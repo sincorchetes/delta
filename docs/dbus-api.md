@@ -19,6 +19,8 @@ Long operations return a `job_id` at once and end with a signal. **There is only
 | `CreateBackup` | – | `job_id` s | Backs up the folders in `backup-sources` (empty = `$HOME`). With Borg warnings it ends with `ok=true` and the text in `message`. |
 | `CreateRepository` | `location` s, `passphrase` s | `job_id` s | An empty `passphrase`: the daemon generates a 256-bit one and stores it in the keyring; it never leaves the daemon. It creates the parent directories of a local repository (0700). It saves `repository-location` when it ends well. |
 | `UnlockRepository` | – | `job_id` s | Runs `borg break-lock` on the configured repository and, if it goes well, forgets the last error. **Only on an explicit, confirmed request from the user**: breaking a lock that really is in use can damage the backups. Like any job, it answers `Busy` if another is running, so it never unlocks under a backup of the daemon's own. |
+| `CheckRepository` | – | `job_id` s | Runs `borg check --repository-only` on the configured repository: whether its own files can be read (the check of the data of every backup takes far longer and is not made). First it looks at the place, so a drive that is gone says why instead of the engine's words. The finished job's message says how it went: no problems, or what the check found (`ok` is false), or that it was cancelled (`ok` is true: it did not fail). While it runs `Status` is `checking`. Like any job, it answers `Busy` if another is running. |
+| `CancelCheck` | – | – | Stops a check that is running; with nothing to cancel it does nothing, and it never stops a backup. |
 | `UseRepository` | `location` s, `passphrase` s | `job_id` s | Adopts a repository that **already exists** (a reinstall, another computer). It requires the passphrase, checks that it opens the repository (`borg list`) and only then stores it in the keyring and sets `repository-location`. It never runs `borg init`; if it does not open, it leaves the keyring as it was. |
 | `ListSnapshots` | – | `aa{sv}` | Keys: `id` s, `name` s, `time` x (epoch). Most recent first. It excludes Borg's `.checkpoint` files (partial backups). |
 | `ListVersions` | `path` s | `aa{sv}` | The distinct versions of the file across the snapshots (identical ones collapse), most recent first. Keys: `id`, `name`, `time`, `size` x, `mtime` x. |
@@ -58,7 +60,7 @@ Long operations return a `job_id` at once and end with a signal. **There is only
 
 - `CanMount` b: whether this installation can open backups as a folder (false in a Flatpak); the UI hides "Browse as a folder"
   when it is false.
-- `Status` s: `idle` | `running` | `browsing` | `unavailable`. `unavailable` is that the place of the repository cannot be used (see
+- `Status` s: `idle` | `running` | `checking` | `browsing` | `unavailable`. `checking` is that a check of the repository runs (`CheckRepository`). `unavailable` is that the place of the repository cannot be used (see
   `UnavailableReason`): the latest backup found so, or the daemon, which looks at it in the background every ten seconds and
   whenever a drive is mounted or taken away, without waiting for the next backup; only a backup that found it records the cause
   that needs the engine (`other-repository`): it is not a failure, `LastError` stays empty, and it ends with the next

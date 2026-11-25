@@ -25,6 +25,8 @@ def test_declared_methods_match_draft_api():
         "CreateBackup",
         "CreateRepository",
         "UnlockRepository",
+        "CheckRepository",
+        "CancelCheck",
         "UseRepository",
         "ListSnapshots",
         "ListVersions",

@@ -146,6 +146,10 @@ class BackupEngine(VersionSource, Protocol):
 
     def prune(self, repo: Repository, policy: RetentionPolicy) -> None: ...
 
+    def check(self, repo: Repository) -> None:
+        """Verify the repository's consistency; raises RepositoryDamaged when it finds problems."""
+        ...
+
     def break_lock(self, repo: Repository) -> None:
         """Remove a stale lock. Dangerous if another process really holds the repository."""
         ...

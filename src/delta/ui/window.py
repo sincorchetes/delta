@@ -14,10 +14,12 @@ from delta.ui.a11y import tipped
 from delta.ui.about import build_about
 from delta.ui.client import DeltaClient
 from delta.ui.history_window import HistoryWindow
+from delta.ui.job_tracker import JobTracker
 from delta.ui.preferences_dialog import PreferencesDialog
 from delta.ui.status import Action, DaemonSnapshot, Health, build_status, summarise
 from delta.ui.wizard_window import SetupWizard
 
+CHECKABLE = (Health.OK, Health.PENDING, Health.FAILED)  # a check never runs under a backup, a lock or a missing drive
 REFRESH_SECONDS = 30  # keeps "5 minutes ago" honest while the window stays open
 
 
@@ -29,6 +31,7 @@ class StatusWindow(Adw.ApplicationWindow):
         self._client, self._settings = client, settings
         self._health = Health.UNREACHABLE
         self._action = Action.NONE
+        self._check = JobTracker()
 
         self._page = Adw.StatusPage()
         self._page.add_css_class("compact")  # a smaller title, so long ones are not clipped
@@ -47,6 +50,7 @@ class StatusWindow(Adw.ApplicationWindow):
         self._history.connect("clicked", lambda button: HistoryWindow(self, client).present())
         header.pack_start(self._history)
         menu = Gio.Menu()
+        menu.append(_("Check backups"), "win.check")
         menu.append(_("Preferences"), "win.preferences")
         menu.append(_("Help"), "app.help")
         menu.append(_("About Delta"), "win.about")
@@ -57,6 +61,10 @@ class StatusWindow(Adw.ApplicationWindow):
         preferences.set_enabled(settings is not None)
         preferences.connect("activate", self._on_preferences)
         self.add_action(preferences)
+        self._check_action = Gio.SimpleAction.new("check", None)
+        self._check_action.set_enabled(False)
+        self._check_action.connect("activate", self._on_check)
+        self.add_action(self._check_action)
         about = Gio.SimpleAction.new("about", None)
         about.connect("activate", lambda action, parameter: build_about().present(self))
         self.add_action(about)
@@ -97,6 +105,7 @@ class StatusWindow(Adw.ApplicationWindow):
         self._page.set_description(GLib.markup_escape_text(view.subtitle))
         self._action = view.action
         self._history.set_sensitive(view.health not in (Health.NOT_CONFIGURED, Health.UNREACHABLE))
+        self._check_action.set_enabled(view.health in CHECKABLE and not self._check.busy)
         self._button.set_label(view.action_label)
         self._button.set_sensitive(view.action_enabled)
         self._button.set_visible(view.action is not Action.NONE)
@@ -110,6 +119,10 @@ class StatusWindow(Adw.ApplicationWindow):
             return
         if self._action is Action.UNLOCK:
             self._confirm_unlock()
+            return
+        if self._action is Action.CANCEL_CHECK:
+            button.set_sensitive(False)
+            self._client.cancel_check(lambda value, error: self.refresh())
             return
         button.set_sensitive(False)
         self._client.create_backup(self._on_started)
@@ -144,8 +157,25 @@ class StatusWindow(Adw.ApplicationWindow):
             self._toast(error)
         self.refresh()
 
+    def _on_check(self, action, parameter) -> None:
+        self._check_action.set_enabled(False)
+        self._check.begin(self._on_check_done)
+        self._client.check_repository(self._check.on_started)
+
+    def _on_check_done(self, ok: bool, message: str) -> None:
+        """How it went: a sentence in a toast, and what the check found, which is long, where it can be read."""
+        if ok:
+            self._toast(message)
+        else:
+            dialog = Adw.AlertDialog.new(_("Checking your backups"), message)
+            dialog.add_response("close", _("Close"))
+            dialog.present(self)
+        self.refresh()
+
     def _on_finished(self, job_id: str, ok: bool, message: str) -> None:
-        if not ok and message:
+        was_check = self._check.busy
+        self._check.on_finished(job_id, ok, message)
+        if not ok and message and not was_check:
             self._toast(message)
         self.refresh()
 

@@ -1453,3 +1453,30 @@ msgstr ""
 
 msgid "Older backups are removed to save space. Change how many are kept in the preferences."
 msgstr ""
+
+msgid "The check found problems in your backups. Check the drive and, if the backups are still there, repair them with “borg check --repair”. Borg said: {details}"
+msgstr ""
+
+msgid "checking the backups is not available"
+msgstr ""
+
+msgid "Your backups were checked and no problems were found."
+msgstr ""
+
+msgid "The check was cancelled."
+msgstr ""
+
+msgid "Check backups"
+msgstr ""
+
+msgid "Checking your backups"
+msgstr ""
+
+msgid "Close"
+msgstr ""
+
+msgid "Checking your backups…"
+msgstr ""
+
+msgid "Delta is making sure your backups can be read. It may take a while; you can close this window."
+msgstr ""
