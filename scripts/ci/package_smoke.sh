@@ -77,4 +77,31 @@ while :; do
 done
 echo "installed delta-backup $have"
 
-python3 "$(dirname "$0")/package_smoke.py" /usr
+# The window of the installed package needs a display. One package at a time, because a package manager installs none of a list
+# when one of them does not exist (Enterprise Linux 10 has no Xvfb: xwayland-run, with weston from EPEL, brings xwfb-run).
+install_display() {
+    case $kind in
+        fedora) packages="xorg-x11-server-Xvfb" ;;
+        el) packages="xorg-x11-server-Xvfb xwayland-run weston" ;;
+        suse) packages="xorg-x11-server-Xvfb xvfb-run" ;;
+        deb) packages="xvfb xauth" ;;
+    esac
+    for package in $packages; do
+        case $kind in
+            fedora | el) dnf -y install "$package" ;;
+            suse) zypper -n install "$package" ;;
+            deb) apt-get -y install "$package" ;;
+        esac || echo "::warning::$package is not available"
+    done
+}
+
+smoke="$(dirname "$0")/package_smoke.py"
+install_display
+if command -v xvfb-run > /dev/null; then
+    xvfb-run -a python3 "$smoke" /usr --window
+elif command -v xwfb-run > /dev/null; then
+    xwfb-run -- python3 "$smoke" /usr --window
+else
+    echo "::warning::no xvfb-run on this distribution: the window was not opened"
+    python3 "$smoke" /usr
+fi

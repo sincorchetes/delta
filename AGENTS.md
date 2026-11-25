@@ -137,8 +137,8 @@ distributions in parity; when you add a system dependency, add it to `install-de
 
 **The published packages** are checked in `.github/workflows/package-smoke.yml`: one parallel job for each distribution installs
 `delta-backup` from its openSUSE Build Service repository, as the installation page says, in a clean container, and the installed
-daemon makes a repository, backs up a few files and restores one (`scripts/ci/package_smoke.sh` and `package_smoke.py`). After a
-release it waits for OBS to build the version of the tag; it never holds a release back, and it is a check, not a gate. The same
+daemon makes a repository, backs up a few files and restores one, and the window of the versions of a file opens from the package
+under a virtual display (`scripts/ci/package_smoke.sh` and `package_smoke.py`). After a release it waits for OBS to build the version of the tag; it never holds a release back, and it is a check, not a gate. The same
 script (`package_smoke.py --source --window`) runs in each job of Distributions against what Meson installs, and also opens the
 window of the versions of a file against that daemon.
 
