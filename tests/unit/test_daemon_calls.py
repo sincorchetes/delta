@@ -191,7 +191,7 @@ def test_a_check_that_is_stopped_on_request_says_it_was_cancelled():
     jobs = Jobs()
     job_calls.start_check(jobs, Service(error=BackupInterrupted("stopped")), Invocation())
 
-    assert finished(jobs) == (False, "The check was cancelled.")
+    assert finished(jobs) == (True, "The check was cancelled.")
 
 
 def test_a_check_while_another_job_runs_is_told_the_daemon_is_busy():

@@ -142,6 +142,13 @@ class DeltaClient:
         """Remove a stale lock. Only ever on an explicit, confirmed request from the user."""
         self._call(INTERFACE, "UnlockRepository", None, reply, lambda value: value.unpack()[0])
 
+    def check_repository(self, reply: Reply) -> None:
+        """Check that the repository can be read (the job's message says how it went)."""
+        self._call(INTERFACE, "CheckRepository", None, reply, lambda value: value.unpack()[0])
+
+    def cancel_check(self, reply: Reply) -> None:
+        self._call(INTERFACE, "CancelCheck", None, reply, lambda value: None)
+
     def use_repository(self, location: str, passphrase: str, reply: Reply) -> None:
         """Adopt a repository that already exists; the daemon checks the passphrase opens it."""
         self._call(

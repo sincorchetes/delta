@@ -10,7 +10,9 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 - **The daemon can check that your backups can be read.** `CheckRepository` runs `borg check --repository-only` (whether the files
   of the repository are readable; the check of every backup's data takes far longer and is not made), as a job of its own kind:
   `Status` is `checking` while it runs, `CancelCheck` stops it, and it never runs under a backup. A repository with problems is
-  told as such, with what Borg said, and a drive that is gone says why instead. The window comes next.
+  told as such, with what Borg said, and a drive that is gone says why instead.
+- **«Check backups» in the main menu of the window.** It starts that check; while it runs the window says so and offers to cancel
+  it, and it ends with a sentence in a toast or, when it found problems, a dialog where they can be read.
 
 ## [0.3.0] - 2026-11-24
 

@@ -1521,3 +1521,18 @@ msgstr "Tus copias se han comprobado y no se han encontrado problemas."
 
 msgid "The check was cancelled."
 msgstr "La comprobación se ha cancelado."
+
+msgid "Check backups"
+msgstr "Comprobar copias"
+
+msgid "Checking your backups"
+msgstr "Comprobando tus copias"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Checking your backups…"
+msgstr "Comprobando tus copias…"
+
+msgid "Delta is making sure your backups can be read. It may take a while; you can close this window."
+msgstr "Delta está comprobando que tus copias se pueden leer. Puede tardar; puedes cerrar esta ventana."

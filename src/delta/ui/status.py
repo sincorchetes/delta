@@ -12,6 +12,7 @@ class Health(str, Enum):
     UNREACHABLE = "unreachable"
     NOT_CONFIGURED = "not-configured"
     RUNNING = "running"
+    CHECKING = "checking"
     BROWSING = "browsing"
     UNAVAILABLE = "unavailable"
     FAILED = "failed"
@@ -25,6 +26,7 @@ class Action(Enum):
     BACK_UP = "back-up"
     SET_UP = "set-up"
     UNLOCK = "unlock"  # always behind an explicit confirmation
+    CANCEL_CHECK = "cancel-check"
 
 
 @dataclass(frozen=True)
@@ -165,6 +167,15 @@ def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
             "view-refresh-symbolic",
             *back_up,
             action_enabled=False,
+        )
+    if snapshot.status == "checking":
+        return StatusView(
+            Health.CHECKING,
+            _("Checking your backups…"),
+            _("Delta is making sure your backups can be read. It may take a while; you can close this window."),
+            "emblem-synchronizing-symbolic",
+            Action.CANCEL_CHECK,
+            _("Cancel"),
         )
     if snapshot.status == "browsing":
         return StatusView(

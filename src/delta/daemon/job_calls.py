@@ -134,7 +134,7 @@ def start_check(jobs: JobRunner | None, check: CheckService | None, invocation) 
             if not check.run():
                 return False, _("No backup repository is set up.")
         except BackupInterrupted:
-            return False, _("The check was cancelled.")
+            return True, _("The check was cancelled.")
         return True, _("Your backups were checked and no problems were found.")
 
     submit_job(jobs, invocation, uuid.uuid4().hex, task, checking=True)
