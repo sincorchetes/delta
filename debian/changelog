@@ -1,3 +1,10 @@
+delta-backup (0.4.0-1) unstable; urgency=medium
+
+  * New: "Check backups" in the main menu checks that the files of the repository can be read, with progress and cancel; a repository with problems is told as such.
+  * The text for a read-only place says that the drive may be failing.
+
+ -- Álvaro Castillo <sincorchetes@gmail.com>  Wed, 25 Nov 2026 12:00:00 +0100
+
 delta-backup (0.3.0-1) unstable; urgency=medium
 
   * The window learns that the drive is gone without waiting for a backup: the daemon looks at the place in the background.

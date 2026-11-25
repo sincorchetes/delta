@@ -60,6 +60,11 @@
   </supports>
 
   <releases>
+    <release version="0.4.0" date="2026-11-25">
+      <description>
+        <p>New: «Check backups» in the main menu checks that your backups can be read, with progress and cancel.</p>
+      </description>
+    </release>
     <release version="0.3.0" date="2026-11-24">
       <description>
         <p>The window knows that your drive is gone without waiting for a backup, and a drive that fails or goes read-only while it is written to is told for what it is.</p>
