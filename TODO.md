@@ -144,13 +144,11 @@ Building and importing in a clean container is not the same as running it.
 
 ## 6. Cleanup
 
-- [ ] Split by responsibility the files over about 300 lines, which `AGENTS.md` asks to avoid. Done (2026-11-25), tests only and the
-      same tests before and after: `test_destination_unavailable`, `test_backup_task`, `test_infrastructure_edges` and
-      `test_restore_beside` (what two halves share is in a `<name>_support.py`). Left: the ones whose halves share a big fixture or a
-      header with conditions, which need a folder with its own `conftest.py`: `tests/unit/` (`test_browse_controller`,
-      `test_daemon_wiring`, `test_nautilus_extension`, `test_version_preview`); `tests/gtk/` (`test_folder_browser`,
-      `test_panes_and_dialogs`, `test_small_widgets`, `test_status_window`, `test_versions_window`, `test_wizard`); and
-      `scripts/smoke_session.py`.
+- [x] Split by responsibility the files over about 300 lines, which `AGENTS.md` asks to avoid (2026-11-25). The tests are the same
+      before and after (2292 collected both times): what the halves of a test file share (stand-ins, helpers, fixtures) is in a
+      `<name>_support.py` next to them, and each half imports the fixtures it asks for (`F811` is off for `tests/`, since a fixture
+      asked for by name looks like a redefinition). `scripts/smoke_session.py` keeps its phases and `scripts/smoke_support.py` has the
+      isolated session they share.
 - [x] The bytecode of a working copy no longer goes into what Meson installs (`__pycache__` had to be named for each subpackage).
 - [ ] Optional: rename the local project directory from `gnome-time-machine` to `delta`.
 

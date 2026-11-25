@@ -15,6 +15,7 @@ on:
       - ".github/workflows/package-smoke.yml"
       - "scripts/ci/package_smoke.*"
       - "scripts/smoke_session.py"
+      - "scripts/smoke_support.py"
   workflow_run:
     workflows: ["Publish packages"]
     types: [completed]

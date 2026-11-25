@@ -131,3 +131,8 @@ extend-exclude = [".devenv", "build", "result"]
 select = ["E4", "E7", "E9", "F"]
 # PyGObject needs `gi.require_version(...)` to run before `from gi.repository import ...`, so some imports follow code.
 ignore = ["E402"]
+
+[tool.ruff.lint.per-file-ignores]
+# A fixture shared by several test files lives in a `*_support` module and is imported by each one, so the tests that ask
+# for it by name look like a redefinition.
+"tests/**" = ["F811"]
