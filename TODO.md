@@ -24,15 +24,22 @@ builds and is deployed from `main`.
 
 - [x] **Ruleset for `main`** and **ruleset for the tags `v*`** (`releases-tag`): both active.
 - [x] **Settings:** description, website and topics; squash merging only.
-- [ ] **Settings, still to check:** delete branches automatically after merging (it is off; `gh pr merge --delete-branch` does it),
-      workflow permissions read-only, approval for first-time contributors, a social preview image.
+- [x] **Settings:** branches are deleted after merging, workflow permissions are read-only and cannot approve pull requests
+      (checked with the API, 2026-11-25).
+- [ ] **Settings, still to check:** approval for first-time contributors (Settings → Actions → General; the API does not show it)
+      and a social preview image.
 - [x] **Code security:** Dependabot security updates, secret scanning and push protection.
-- [ ] **Code security, still to check:** Dependabot alerts and private vulnerability reporting. Leave CodeQL's *default setup* off:
-      the workflow `.github/workflows/codeql.yml` does it.
+- [x] **Code security:** Dependabot alerts and private vulnerability reporting are on (2026-11-25). Leave CodeQL's *default setup*
+      off: the workflow `.github/workflows/codeql.yml` does it.
 - [x] **Pages:** source *GitHub Actions* and the custom domain `delta.sincorchetes.tech`.
-- [ ] **Pages:** GitHub reports no certificate of its own for the domain (*Enforce HTTPS* is off), although the site is served
-      over HTTPS. Check who serves it (a proxy such as Cloudflare would) and that `http://` redirects to `https://`. Limit the
-      `github-pages` environment to `main`.
+- [x] **Pages, HTTPS:** the domain is behind the Cloudflare proxy, which serves the certificate and redirects `http://` to
+      `https://` (*Always Use HTTPS*); the minimum TLS version is 1.2. Its encryption mode is **Full**, not *Full (strict)*:
+      GitHub has no certificate for the domain and gives its generic one, which *strict* rejects (error 526). GitHub reports no certificate of its own and *Enforce HTTPS*
+      stays off **on purpose**: it cannot issue one behind a proxy, and forcing HTTPS at the origin too would make redirect loops.
+      HSTS is left off until every subdomain is known to go over HTTPS.
+- [ ] **Pages, still to check:** limit the `github-pages` environment to `main`; and that the domain is *verified* in the GitHub
+      account (Settings → Pages → Add a domain, with a TXT record): the DNS has a wildcard `*` that points to `github.io`, so
+      without verification anybody could serve a site from an invented subdomain.
 - [x] **SonarQube Cloud:** the project `sincorchetes_delta` analyzes on every change to the code (the secret `SONAR_TOKEN`).
 - [x] **SonarQube Cloud:** mark the six `--no-build` hotspots of `scripts/sync-venv.sh` and `scripts/ci/check_mutants.sh` as *Safe*:
       the GNOME sdists have to be built against the system libraries (see "Known traps" in `AGENTS.md`).
@@ -125,10 +132,11 @@ Building and importing in a clean container is not the same as running it.
 - [x] **A drive that is not connected, with a drive** (a loop device mounted with `udisksctl`, 2026-11-20): the window says "The
       drive with your backups is not connected", and another drive in the same place says "Your backups are not on this drive". The
       root of a freshly formatted ext4 drive (it holds only `lost+found`) is accepted by the wizard.
-- [ ] **The other causes, with a drive:** a full one (`dd` into it until "No space left"), a read-only one (`sudo mount -o
-      remount,ro`) and one without permission (`chmod 500` on the folder of the repository): the window and the single notification
-      of each, and that the backup goes on by itself when it is put right. Also that mounting the drive starts the waiting backup,
-      and a pull of a drive in the middle of a copy.
+- [x] **The other causes, with a drive:** a full one, a read-only one and one without permission, the window and the single
+      notification of each, that the backup goes on by itself when it is put right, that mounting the drive starts the waiting
+      backup, and a failure of the device in the middle of a copy (a `dmsetup` `error` target under a loop device, 2026-11-24).
+      That last one showed that ext4 refuses writes with `EROFS` while the mount stays `rw` (`emergency_ro`), so the probe cannot
+      see it: the failed backup is what tells (the whole report of Borg is classified, not its one-line account).
 - [ ] **The identity of the repository** (in 0.2.0, tried with a real Borg but not with real drives): Delta remembers the identifier of the repository it made
       or adopted and notices another one in its place, even with the same passphrase, instead of backing up into it. Tested with a
       real Borg (another repository with the same and with another passphrase, and an older copy of the same one).
@@ -157,9 +165,20 @@ Building and importing in a clean container is not the same as running it.
   (`job_calls`, `query_calls`), the wiring (`composition`, `main`), and the adapters (`borg_runner`, `borg_mounter`, `libsecret_store`,
   `systemd_scheduler`, `background_portal`, `session_events`, `ui_launcher`, `gio_notifier`). `gio_notifier` would need each message
   asserted exactly. `sh scripts/ci/mutants_by_module.sh` shows where the survivors are after a run.
-- **A drive that goes away while Borg is copying** is told as "not connected" when the place cannot be reached afterwards, but it
-  was only tried with fakes, not by pulling a real drive in the middle of a copy. Unmounted places under `/mnt` are not
-  recognized (anybody makes folders there by hand), only those under `/run/media` and `/media`.
+- **A drive that goes away while Borg is copying** was tried with a device-mapper failure under a loop device, not with a physical
+  drive that is pulled. Unmounted places under `/mnt` are not recognized (anybody makes folders there by hand), only those under
+  `/run/media` and `/media`.
+- **The check of the data of every backup** (`borg check` without `--repository-only`, or with `--verify-data`): it reads every
+  chunk, so it takes hours on a large repository. It would be an option of «Check backups», with progress and cancel, and a
+  warning that it is slow. «Check backups» today only checks that the files of the repository can be read.
+- **A notification when a check ends**, for when the window was closed (a check can take long): `BackupNotifications` has no kind
+  for it yet.
+- **The state of the drive (SMART) through UDisks2**, as a hint only («the drive says it may fail»), never blocking anything:
+  `Drive.Ata` and `Nvme.Controller` on the system bus, behind a port, like the scheduler and the keyring; no `smartctl` (it needs
+  root and a host binary). Native first. In a Flatpak it needs `--system-talk-name=org.freedesktop.UDisks2` (find out whether
+  Flathub accepts it for this) and a way from the repository folder to its block device that the sandbox may hide (its
+  `mountinfo` is not the host's): hide it there, as `CanMount` is, until both are proven. Many USB drives do not pass SMART
+  through their adapter, so «unknown» has to be a normal answer, and «SMART passed» must not read as «the drive is fine».
 - **Run backups as transient units** (`systemd-run --user`): they survive the daemon, with `Nice` and `IOSchedulingClass`, and log to
   the journal.
 - **Borg 2:** review its API policy before migrating.
