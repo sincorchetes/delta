@@ -15,6 +15,7 @@
     dbus
     libsecret
     gnome-keyring
+    podman
     borgbackup
     appstream
     desktop-file-utils # desktop-file-validate: the one from the user profile needs another glibc than the devenv's libraries
