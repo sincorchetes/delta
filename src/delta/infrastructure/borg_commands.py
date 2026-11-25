@@ -26,6 +26,11 @@ def break_lock(repo: Repository) -> list[str]:
     return ["borg", "break-lock", repo.location]
 
 
+def check(repo: Repository) -> list[str]:
+    """The consistency of the repository itself: the check of the data of every backup takes far longer."""
+    return ["borg", "check", "--repository-only", repo.location]
+
+
 def list_archives(repo: Repository) -> list[str]:
     return ["borg", "list", "--json", repo.location]
 

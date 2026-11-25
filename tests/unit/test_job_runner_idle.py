@@ -154,3 +154,27 @@ def test_clearing_the_error_forgets_the_last_failure(runner):
     runner.last_error = "locked"
     runner.clear_error()
     assert runner.last_error == ""
+
+
+def test_a_check_is_the_status_while_it_runs_and_idle_after(runner):
+    release = threading.Event()
+
+    def task(on_progress):
+        release.wait(5)
+        return True, ""
+
+    runner.submit("job", task, checking=True)
+    assert runner.status == "checking"
+
+    release.set()
+    assert iterate_until(lambda: runner.status == "idle")
+
+
+def test_a_backup_is_running_and_not_checking(runner):
+    release = threading.Event()
+    runner.submit("job", lambda on_progress: (release.wait(5), (True, ""))[1], records_backup=True)
+
+    assert runner.status == "running"
+
+    release.set()
+    assert iterate_until(lambda: runner.status == "idle")

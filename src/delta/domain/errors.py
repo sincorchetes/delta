@@ -132,6 +132,18 @@ class PassphraseError(DeltaError):
     pass
 
 
+class RepositoryDamaged(DeltaError):
+    """The check of the repository found problems: what it said is kept, shortened."""
+
+    def __init__(self, details: str) -> None:
+        super().__init__(
+            _(
+                "The check found problems in your backups. Check the drive and, if the backups are still there, "
+                "repair them with “borg check --repair”. Borg said: {details}"
+            ).format(details=details[:300])
+        )
+
+
 class BackupWarning(DeltaError):
     """The backup was created, but the engine reported non-fatal problems."""
 

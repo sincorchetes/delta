@@ -11,6 +11,7 @@ from gi.repository import GLib
 
 from delta.application.backup_service import BackupService
 from delta.application.browse_service import BrowseService
+from delta.application.check_service import CheckService
 from delta.application.deleted_service import DeletedService
 from delta.application.ports import BackupEngine, SnapshotMounter
 from delta.application.preview_service import PreviewService
@@ -42,6 +43,7 @@ class Services:
     versions: VersionService
     prune: PruneService
     unlock: UnlockService
+    check: CheckService
     preview: PreviewService
     deleted: DeletedService
     browse: BrowseService | None  # None where snapshots cannot be mounted (Flatpak)
@@ -115,6 +117,7 @@ def build_services(engine: BackupEngine, mounter: SnapshotMounter | None = None)
         versions=VersionService(engine, repo, home),
         prune=PruneService(engine, repo, configured_retention()),
         unlock=UnlockService(engine, repo, LocalDestination()),
+        check=CheckService(engine, repo, LocalDestination()),
         preview=PreviewService(engine, repo, home, preview_root()),
         deleted=DeletedService(engine, repo, home, restore),
         browse=None if mounter is None else BrowseService(engine, mounter, repo, browse_root()),

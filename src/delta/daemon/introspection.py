@@ -17,6 +17,10 @@ INTERFACE_XML = """
     <method name="UnlockRepository">
       <arg name="job_id" type="s" direction="out"/>
     </method>
+    <method name="CheckRepository">
+      <arg name="job_id" type="s" direction="out"/>
+    </method>
+    <method name="CancelCheck"/>
     <method name="UseRepository">
       <arg name="location" type="s" direction="in"/>
       <arg name="passphrase" type="s" direction="in"/>

@@ -28,6 +28,7 @@ def test_borg_is_started_with_exactly_these_arguments():
     assert commands.init(REPO) == ["borg", "init", "--encryption=repokey-blake2", "/srv/repo"]
     assert commands.list_archives(REPO) == ["borg", "list", "--json", "/srv/repo"]
     assert commands.break_lock(REPO) == ["borg", "break-lock", "/srv/repo"]
+    assert commands.check(REPO) == ["borg", "check", "--repository-only", "/srv/repo"]
 
 
 def test_a_path_is_given_to_borg_without_its_leading_slash_and_nothing_else_trimmed():

@@ -16,7 +16,7 @@ from gi.repository import Gio, GLib
 
 from delta.application.ports import SecretStore
 from delta.domain.backup_job import BackupJob
-from delta.domain.errors import BackupInterrupted, BackupWarning, EngineError, PassphraseError
+from delta.domain.errors import BackupInterrupted, BackupWarning, EngineError, PassphraseError, RepositoryDamaged
 from delta.domain.file_version import FileEntry, FolderEntry
 from delta.domain.progress import ProgressEvent
 from delta.domain.repository import Repository
@@ -104,6 +104,12 @@ class BorgRunner:
 
     def break_lock(self, repo: Repository) -> None:
         self._run(commands.break_lock(repo), repo)
+
+    def check(self, repo: Repository) -> None:
+        try:
+            self._run(commands.check(repo), repo)
+        except EngineError as err:  # what is not a lock, a passphrase or a missing place is the check's own finding
+            raise RepositoryDamaged(str(err)) from err
 
     def list_snapshots(self, repo: Repository) -> list[Snapshot]:
         """The repository's snapshots, newest last. Asked of borg at most once a minute: every other
