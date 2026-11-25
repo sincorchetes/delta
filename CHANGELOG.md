@@ -7,6 +7,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **The check of a published package on Fedora no longer waits for a version it already has.** `dnf install` of a package that is
+  installed does nothing in DNF 5, so after the first try it never took the newer version that the Build Service published, and the
+  job failed after 180 minutes although the package was there (a fault of the check, not of the package).
+
 - **The icon of a check in progress is a clean symbolic one**, like those of the other states (the previous one was drawn as a blurry
   bitmap), and the daemon says in its log when a check starts and how it ended.
 

@@ -49,7 +49,9 @@ prepare() {
 
 install_package() {
     case $kind in
-        fedora | el) dnf clean all && dnf -y install delta-backup dbus-daemon gnome-keyring ;;
+        # `dnf install` of what is installed already does nothing in DNF 5 (Fedora 43 and 44): it does not take the newer version
+        # that the Build Service published meanwhile, so the upgrade is asked for.
+        fedora | el) dnf clean all && dnf -y install delta-backup dbus-daemon gnome-keyring && dnf -y upgrade delta-backup ;;
         suse) zypper -n --gpg-auto-import-keys refresh && zypper -n install delta-backup dbus-1-daemon gnome-keyring ;;
         deb) apt-get update && apt-get -y install delta-backup dbus gnome-keyring ;;
     esac
