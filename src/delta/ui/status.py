@@ -173,7 +173,7 @@ def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
             Health.CHECKING,
             _("Checking your backups…"),
             _("Delta is making sure your backups can be read. It may take a while; you can close this window."),
-            "emblem-synchronizing-symbolic",
+            "system-search-symbolic",
             Action.CANCEL_CHECK,
             _("Cancel"),
         )
