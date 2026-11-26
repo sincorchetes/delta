@@ -13,6 +13,9 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 - **The tests of the devenv scripts `test` and `cov` run on every core** (`pytest-xdist`): the whole suite goes from about 110 to
   about 40 seconds. `test -n 0` runs it in one process, and the commands of `AGENTS.md` and the CI are unchanged.
 
+- **The CI runs the tests on every core of its runner** (`pytest-xdist`), with the coverage of each worker combined into the same
+  report that Sonar reads.
+
 ### Fixed
 
 - **Every failure of Borg is in the daemon's log, with its exit status and all it said**, not only the crashes and the backups. A
