@@ -12,6 +12,11 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **Every failure of Borg is in the daemon's log, with its exit status and all it said**, not only the crashes and the backups. A
+  question of a window (versions, a folder, what was deleted, a search) that failed was answered to the window and left no trace; and
+  one that broke in a way Delta did not foresee was never answered at all, so the window waited for the bus to give up. Now it
+  is logged with its traceback and answered as a failure.
+
 - **The check of a published package on Fedora no longer waits for a version it already has.** `dnf install` of a package that is
   installed does nothing in DNF 5, so after the first try it never took the newer version that the Build Service published, and the
   job failed after 180 minutes although the package was there (a fault of the check, not of the package).
