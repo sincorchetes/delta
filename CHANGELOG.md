@@ -12,6 +12,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **A backup that ends with warnings now writes them in full in the daemon's log.** The notification cuts the text at 300
+  characters, and nothing else kept it, so the files that Borg could not back up (or a prune that failed after a good backup) were
+  not to be found in `journalctl --user -u delta-daemon`. Failures were already logged; now every outcome that says something is.
+
 - **The check of a published package on Fedora no longer waits for a version it already has.** `dnf install` of a package that is
   installed does nothing in DNF 5, so after the first try it never took the newer version that the Build Service published, and the
   job failed after 180 minutes although the package was there (a fault of the check, not of the package).
