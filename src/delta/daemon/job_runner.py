@@ -141,6 +141,8 @@ class JobRunner:
             log.info("job %s waits, the place of the backups cannot be used: %s", job_id, message)
         elif not ok:
             log.warning("job %s did not succeed: %s", job_id, message)
+        elif message:  # done, but with something to say (Borg's warnings, a failed prune): the notification cuts it short
+            log.warning("job %s finished with warnings:\n%s", job_id, message)
         if not records_backup:
             return
         if ok:

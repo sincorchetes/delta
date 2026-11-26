@@ -52,6 +52,7 @@ def test_the_schema_is_not_installed_when_there_is_no_default_source(monkeypatch
 
 def test_the_repository_comes_from_the_environment_first(monkeypatch):
     monkeypatch.setenv("DELTA_REPOSITORY", "/srv/repo")
+    with_schema(monkeypatch, Stored(**{"repository-location": "/media/disk/backups"}))
 
     assert settings.configured_repository() == Repository("/srv/repo")
 
