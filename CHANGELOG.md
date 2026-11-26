@@ -10,6 +10,9 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 - **The check of a published package also opens its window.** After the backup and the restore, the window of the versions of a file
   is opened from the installed package, under a virtual display, and it must stay open with no traceback and no GLib critical.
 
+- **The tests of the devenv scripts `test` and `cov` run on every core** (`pytest-xdist`): the whole suite goes from about 110 to
+  about 40 seconds. `test -n 0` runs it in one process, and the commands of `AGENTS.md` and the CI are unchanged.
+
 ### Fixed
 
 - **A backup that ends with warnings now writes them in full in the daemon's log.** The notification cuts the text at 300
