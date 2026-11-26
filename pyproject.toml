@@ -15,6 +15,7 @@ dependencies = [
 dev = [
     "pytest>=8",
     "pytest-cov>=5",
+    "pytest-xdist>=3",  # `test` and `cov` of devenv run the suite on every core (`-n 0` for one process)
     "python-dbusmock>=0.32",
     "pyyaml>=6",  # so that a workflow that is not valid YAML fails here and not as an empty run on GitHub
     "hypothesis>=6",  # properties that must hold for any input (tests/unit/test_properties.py)
