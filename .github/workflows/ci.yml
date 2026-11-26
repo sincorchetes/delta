@@ -21,6 +21,7 @@ jobs:
     outputs:
       code: ${{ steps.areas.outputs.code }}
       web: ${{ steps.areas.outputs.web }}
+      mutation: ${{ steps.areas.outputs.mutation }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -79,6 +80,9 @@ jobs:
 
       - name: Mutation tests
         # Changes the code on purpose and checks that some test notices; fails if more survive than the one equivalent.
+        # A pull request that changes nothing they read (documents, packaging, other scripts) skips them: they are more than
+        # half of this job. Every push to main runs them, so what is merged is always checked.
+        if: github.event_name != 'pull_request' || needs.changes.outputs.mutation == 'true'
         run: devenv shell -- sh scripts/ci/check_mutants.sh
 
       - name: SonarQube Cloud

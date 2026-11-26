@@ -13,6 +13,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 - **The tests of the devenv scripts `test` and `cov` run on every core** (`pytest-xdist`): the whole suite goes from about 110 to
   about 40 seconds. `test -n 0` runs it in one process, and the commands of `AGENTS.md` and the CI are unchanged.
 
+- **A pull request that changes nothing the mutation tests read skips them.** They were 511 of the 780 seconds of the `devenv` job,
+  even for a change to `TODO.md`. They run when `src/`, `tests/`, `po/` or their configuration change (and for anything not known to
+  be safe), and on every push to `main`.
+
 ### Fixed
 
 - **Every failure of Borg is in the daemon's log, with its exit status and all it said**, not only the crashes and the backups. A
