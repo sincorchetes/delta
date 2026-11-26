@@ -208,6 +208,7 @@ def error_for(returncode: int, stderr: str) -> DeltaError:
     if reason is not None:
         log.warning("borg stopped with an internal error:\n%s", text)
         return EngineError(_("Borg stopped unexpectedly: {error}").format(error=reason), returncode, text)
+    log.info("borg exited with status %s:\n%s", returncode, text or "(nothing on stderr)")
     if "does not exist" in lowered or "is not a valid repository" in lowered:
         return RepositoryNotFound(text)
     if is_lock_message(text):

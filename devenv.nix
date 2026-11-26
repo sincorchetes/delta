@@ -70,9 +70,10 @@
     meson compile -C build
   '';
 
+  # Both `test` and `cov` use every core (pytest-xdist); `test -n 0` runs in one process, e.g. to debug a test.
   scripts.test.exec = ''
     sh scripts/sync-venv.sh
-    uv run pytest "$@"
+    uv run pytest -n auto "$@"
   '';
 
   # Tests with coverage (100 % required). The GTK widget tests need a display: the session's own
@@ -81,9 +82,9 @@
   scripts.cov.exec = ''
     sh scripts/sync-venv.sh
     if [ -n "$WAYLAND_DISPLAY$DISPLAY" ]; then
-      uv run pytest --cov --cov-report=term-missing "$@"
+      uv run pytest -n auto --cov --cov-report=term-missing "$@"
     else
-      xvfb-run -a uv run pytest --cov --cov-report=term-missing "$@"
+      xvfb-run -a uv run pytest -n auto --cov --cov-report=term-missing "$@"
     fi
   '';
 

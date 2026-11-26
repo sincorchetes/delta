@@ -1,5 +1,6 @@
 """Read-only D-Bus questions: slow ones run off the main loop and answer with `aa{sv}`."""
 
+import logging
 import threading
 
 import gi
@@ -14,6 +15,8 @@ from delta.daemon.variants import folder_entry_to_variant, version_to_variant
 from delta.domain.errors import DeltaError, InvalidPath
 from delta.i18n import _
 
+log = logging.getLogger(__name__)
+
 
 def run_query(invocation, produce) -> None:
     """Run a slow read-only query off the main loop and reply with `aa{sv}`."""
@@ -25,7 +28,11 @@ def run_query(invocation, produce) -> None:
         except InvalidPath as err:
             GLib.idle_add(invocation.return_dbus_error, ERROR_INVALID_PATH, str(err))
         except DeltaError as err:
+            log.warning("a query failed: %s", err)
             GLib.idle_add(invocation.return_dbus_error, ERROR_FAILED, str(err))
+        except Exception:  # without an answer the window would wait for the D-Bus timeout
+            log.exception("a query crashed")
+            GLib.idle_add(invocation.return_dbus_error, ERROR_FAILED, "unexpected error")
 
     threading.Thread(target=work, daemon=True).start()
 
