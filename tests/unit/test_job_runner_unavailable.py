@@ -101,6 +101,24 @@ def test_it_replaces_the_last_error_of_a_failure_that_came_before(runner):
     assert (runner.status, runner.last_error) == ("unavailable", "")
 
 
+def test_a_backup_done_with_something_to_say_leaves_all_of_it_in_the_log(runner, caplog):
+    said = "/home/user/.local/share/Telegram/tdata/socket: file changed while we backed it up\n" + "x" * 400
+
+    with caplog.at_level("WARNING", logger="delta.daemon.job_runner"):
+        finish(runner, lambda on_progress: (True, said))
+
+    logged = [(r.levelname, r.getMessage()) for r in caplog.records if r.name == "delta.daemon.job_runner"]
+    assert logged == [("WARNING", f"job job finished with warnings:\n{said}")]
+    assert runner.last_error == "" and runner.last_backup > 0
+
+
+def test_a_clean_backup_logs_no_warning(runner, caplog):
+    with caplog.at_level("WARNING", logger="delta.daemon.job_runner"):
+        finish(runner, done)
+
+    assert caplog.text == ""
+
+
 def test_a_job_that_is_not_a_backup_leaves_the_state_alone(runner):
     finish(runner, away)
 
