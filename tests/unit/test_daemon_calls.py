@@ -1,12 +1,13 @@
 """The error answers of the daemon's job and query calls, without a bus: a stand-in invocation."""
 
 import logging
+from types import SimpleNamespace
 
 import pytest
 
 from delta.daemon import job_calls, query_calls
 from delta.daemon.job_runner import JobAlreadyRunning
-from delta.domain.errors import BackupInterrupted, InvalidPath
+from delta.domain.errors import BackupInterrupted, EngineError, InvalidPath
 
 
 class Invocation:
@@ -245,3 +246,49 @@ def test_cancelling_without_the_job_runner_does_nothing():
     job_calls.cancel_check(None, lambda: stopped.append(1), invocation)
 
     assert stopped == [] and len(invocation.values) == 1
+
+
+@pytest.fixture
+def at_once(monkeypatch):
+    """A query that runs where it is called and answers at once, instead of on a thread and the main loop."""
+    monkeypatch.setattr(query_calls, "threading", SimpleNamespace(Thread=lambda target, daemon: SimpleNamespace(start=target)))
+    monkeypatch.setattr(query_calls, "GLib", SimpleNamespace(idle_add=lambda call, *args: call(*args)))
+
+
+def failing(error):
+    def produce():
+        raise error
+
+    return produce
+
+
+def test_a_query_that_fails_is_answered_and_logged_with_what_it_said(at_once, caplog):
+    invocation = Invocation()
+
+    with caplog.at_level(logging.WARNING, logger="delta.daemon.query_calls"):
+        query_calls.run_query(invocation, failing(EngineError("repository is locked")))
+
+    assert invocation.errors == [(query_calls.ERROR_FAILED, "repository is locked")]
+    assert [(r.levelname, r.getMessage()) for r in caplog.records] == [("WARNING", "a query failed: repository is locked")]
+
+
+def test_a_query_that_crashes_is_still_answered_and_the_traceback_is_logged(at_once, caplog):
+    invocation = Invocation()
+
+    with caplog.at_level(logging.WARNING, logger="delta.daemon.query_calls"):
+        query_calls.run_query(invocation, failing(KeyError("snapshot")))
+
+    assert invocation.errors == [(query_calls.ERROR_FAILED, "unexpected error")]
+    record = caplog.records[0]
+    assert (record.levelname, record.getMessage()) == ("ERROR", "a query crashed")
+    assert record.exc_info is not None and record.exc_info[0] is KeyError
+
+
+def test_a_path_that_is_refused_is_not_a_failure_to_log(at_once, caplog):
+    invocation = Invocation()
+
+    with caplog.at_level(logging.INFO, logger="delta.daemon.query_calls"):
+        query_calls.run_query(invocation, failing(InvalidPath("outside the home folder")))
+
+    assert invocation.errors == [(query_calls.ERROR_INVALID_PATH, "outside the home folder")]
+    assert caplog.records == []

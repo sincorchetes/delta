@@ -68,3 +68,14 @@ def test_a_failure_that_said_nothing_is_described_by_its_exit_status():
     error = error_for(3, "")
 
     assert (type(error), str(error), error.returncode) == (EngineError, "borg exited with status 3", 3)
+
+
+def test_every_failure_leaves_the_exit_status_and_all_borg_said_in_the_log(caplog):
+    with caplog.at_level("INFO", logger="delta.infrastructure.borg_parsing"):
+        error_for(2, log("first") + "\n" + log("second"))
+        error_for(3, "")
+
+    assert [r.getMessage() for r in caplog.records] == [
+        "borg exited with status 2:\nfirst\nsecond",
+        "borg exited with status 3:\n(nothing on stderr)",
+    ]
