@@ -107,7 +107,9 @@ def test_a_backup_done_with_something_to_say_leaves_all_of_it_in_the_log(runner,
     with caplog.at_level("WARNING", logger="delta.daemon.job_runner"):
         finish(runner, lambda on_progress: (True, said))
 
-    assert said in caplog.text and runner.last_error == "" and runner.last_backup > 0
+    logged = [(r.levelname, r.getMessage()) for r in caplog.records if r.name == "delta.daemon.job_runner"]
+    assert logged == [("WARNING", f"job job finished with warnings:\n{said}")]
+    assert runner.last_error == "" and runner.last_backup > 0
 
 
 def test_a_clean_backup_logs_no_warning(runner, caplog):
