@@ -120,7 +120,9 @@ mutated is `[tool.mutmut]` in `pyproject.toml`, with the reason for what is left
 says where the survivors are. A mutant that is **equivalent** (it does the same as the original) is not hidden: the code is written
 another way so that it does not exist). A change
 **in `website/`** runs only the website: it builds the site, checks its pages and, on `main`, **publishes** it. A change in
-both runs both. The job that does not apply is skipped, and a skipped job counts as passed for the required checks. The packages
+both runs both. The job that does not apply is skipped, and a skipped job counts as passed for the required checks. In a pull request the
+**mutation tests** are skipped as well when nothing they read changed (only documents, packaging, Flatpak, Nix or CI scripts other
+than `check_mutants.sh`: the list is in `changed_areas.sh`, and what is not listed runs them); a push to `main` always runs them. The packages
 for each distribution are not built here: OBS builds them when a tag is published. **CodeQL** (`.github/workflows/codeql.yml`) analyzes, in another workflow, the Python code and the
 workflows themselves, on every PR, on `main` and once a week.
 

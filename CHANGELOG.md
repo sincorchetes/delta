@@ -10,6 +10,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 - **The check of a published package also opens its window.** After the backup and the restore, the window of the versions of a file
   is opened from the installed package, under a virtual display, and it must stay open with no traceback and no GLib critical.
 
+- **A pull request that changes nothing the mutation tests read skips them.** They were 511 of the 780 seconds of the `devenv` job,
+  even for a change to `TODO.md`. They run when `src/`, `tests/`, `po/` or their configuration change (and for anything not known to
+  be safe), and on every push to `main`.
+
 ### Fixed
 
 - **A backup that ends with warnings now writes them in full in the daemon's log.** The notification cuts the text at 300
