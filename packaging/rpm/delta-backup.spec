@@ -2,7 +2,7 @@
 %global appid io.github.sincorchetes.Delta
 
 Name:           delta-backup
-Version:        0.4.0
+Version:        0.5.0
 Release:        1%{?dist}
 Summary:        Time travel for your files in GNOME, with BorgBackup
 License:        GPL-3.0-or-later
@@ -108,6 +108,11 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_userunitdir}/delta.timer
 
 %changelog
+* Fri Nov 27 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.5.0-1
+- Right click on the empty space of the home folder offers «Restore Previous Version…», so what was deleted from it can be recovered
+- The cache of Flatpak apps (~/.var/app/*/cache) is no longer backed up
+- Every failure of Borg is in the daemon log, with its exit status and all it said, and a question of a window that breaks is still answered
+
 * Wed Nov 25 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.4.0-1
 - New: «Check backups» in the main menu checks that the files of the repository can be read, with progress and cancel; a repository with problems is told as such
 - The text for a read-only place says that the drive may be failing
