@@ -125,7 +125,10 @@ builds and is deployed from `main`.
 Building and importing in a clean container is not the same as running it.
 
 - [ ] Install each package and run it: the window opens and Files shows its menu. (The service, a backup and a restore are
-      checked by *Package smoke*.)
+      checked by *Package smoke*.) **AlmaLinux 10 tried (2026-11-27)**: it installs, the window opens, the daemon starts, the backups
+      are set up and the key is in the keyring. It showed that the empty space of the home folder had no menu (fixed in 0.5.0: to
+      be tried with that package). The others, still to try.
+- [ ] **A full session with GNOME** (a VM): the timer, the notifications, the keyring unlocked by the session and a real drive.
 - [x] A pass with a screen reader (Orca): it works.
 - [x] A pass with the keyboard only: it works.
 - [ ] Flatpak: the background permission with the portals active (`services.flatpak.enable = true` on NixOS).
@@ -153,6 +156,10 @@ Building and importing in a clean container is not the same as running it.
 - [ ] Optional: rename the local project directory from `gnome-time-machine` to `delta`.
 
 ## Deferred on purpose
+
+- **«Unable to send notifications … not activatable» at login** in the journal: the hourly timer is `Persistent=true`, so the
+  missed run is made as soon as the session starts, and the daemon announces it («Backup in progress») before GNOME Shell owns
+  `org.freedesktop.Notifications`. Harmless: the backup is made, and only that one notice is lost. Known and accepted.
 
 - **Unlock repository** on screen: done with tests, but a real lock could never be provoked (Borg cleans the ones left by an
   abrupt shutdown).
