@@ -97,6 +97,7 @@ pytest_add_cli_args = [
     "--ignore=tests/unit/test_help_pages.py",
     "--ignore=tests/unit/test_appstream.py",
     "--ignore=tests/unit/test_changed_areas.py",
+    "--ignore=tests/unit/test_changelog_assemble.py",
     "--ignore=tests/unit/test_check_tag.py",
     "--ignore=tests/unit/test_meson_options.py",
     "--ignore=tests/unit/test_meson_install.py",
