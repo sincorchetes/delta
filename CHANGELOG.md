@@ -5,6 +5,18 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-11-27
+
+### Added
+
+- **When the keyring no longer has the passphrase of your backups, the window asks for it.** Instead of «The last backup failed» with a
+  «Try again» that could not help, it says that the passphrase is not in the keyring and offers **«Enter passphrase…»**: the daemon
+  opens the repository with what you type and keeps it in the keyring only if it opens. Before, the only way was *Preferences →
+  Destination → Change…* choosing the same folder again.
+
+- **A test that reads the repository must be ignored by the mutation tests, and a test now checks it.** One that was not failed only in
+  the CI, 12 minutes into the job; now it fails in the suite, saying what to add to `[tool.mutmut]`.
+
 ## [0.5.0] - 2026-11-27
 
 ### Added
