@@ -1,5 +1,6 @@
 """BackupEngine implementation that drives the borg CLI via Gio.Subprocess."""
 
+import logging
 import os
 import signal
 import threading
@@ -36,6 +37,7 @@ from delta.infrastructure.borg_parsing import (
     parse_snapshots,
 )
 
+log = logging.getLogger(__name__)
 
 PASSPHRASE_FD = 3
 SNAPSHOTS_TTL = 60.0  # seconds a list of snapshots is trusted, should something else have changed the repository
@@ -261,6 +263,7 @@ class BorgRunner:
             if PASSPHRASE_SOURCES & self._env.keys():
                 return  # a development override supplies it
             # Without this, borg would try to ask on a terminal that does not exist.
+            log.warning("the keyring has no passphrase for the repository at %s", repo.location)
             raise PassphraseError(missing_passphrase())
         read_fd, write_fd = os.pipe()
         with os.fdopen(write_fd, "wb") as writer:

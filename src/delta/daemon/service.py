@@ -251,9 +251,9 @@ class DeltaService:
             try:
                 if adopt:
                     jobs.seed_last_backup(setup.adopt(repo, passphrase))
-                    jobs.clear_error()  # a passphrase that opens it: «not in the keyring» and the like no longer apply
                 else:
                     setup.create(repo, passphrase or None)
+                jobs.clear_error()  # a repository that opens (new or not): the failure of the one before no longer applies
             except DeltaError as err:
                 if notes is not None:
                     notes.repository_failed(str(err))
