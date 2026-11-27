@@ -103,6 +103,7 @@ def resolve_excludes(configured: tuple[str, ...], home: str) -> tuple[str, ...]:
 def build_services(engine: BackupEngine, mounter: SnapshotMounter | None = None) -> Services:
     """Read the current configuration and wire the services around it."""
     repo, home = configured_repository(), os.path.expanduser("~")
+    log.info("the services are built for the repository at %s", repo.location if repo is not None else "(none)")
     restore = RestoreService(engine, repo, home)
     return Services(
         snapshots=SnapshotService(engine, repo),

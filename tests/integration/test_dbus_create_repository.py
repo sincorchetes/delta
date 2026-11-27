@@ -259,3 +259,18 @@ def test_a_passphrase_that_does_not_open_the_repository_leaves_the_error_as_it_w
 
     assert finished is not None and finished[1] is False, finished
     assert jobs.last_error == "The passphrase for this repository is not in the keyring."
+
+
+def test_creating_a_repository_clears_the_error_of_the_last_backup(bus, tmp_path):
+    store = MemoryStore()
+    runner = BorgRunner(env={"BORG_BASE_DIR": str(tmp_path / "bh")}, secrets=store)
+    repo = Repository(str(tmp_path / "new"))
+    jobs = JobRunner(bus)
+    service = DeltaService(bus, SnapshotService(runner, repo), jobs, setup=RepositorySetup(runner, store))
+    jobs.last_error = "The passphrase for this repository is not in the keyring."
+
+    _, finished, _ = call_and_wait_finished(bus, "CreateRepository", GLib.Variant("(ss)", (repo.location, "")))
+    service.unregister()
+
+    assert finished is not None and finished[1] is True, finished
+    assert jobs.last_error == ""
