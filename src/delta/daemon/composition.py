@@ -32,7 +32,8 @@ from delta.infrastructure.settings import (
 
 log = logging.getLogger(__name__)
 
-DEFAULT_EXCLUDES = (".cache", ".local/share/Trash")
+# Borg patterns under the home folder: a Flatpak app keeps its cache in ~/.var/app/<id>/cache, not in ~/.cache.
+DEFAULT_EXCLUDES = (".cache", ".local/share/Trash", ".var/app/*/cache")
 
 
 @dataclass(frozen=True)

@@ -6,7 +6,9 @@ app, which it opens through a desktop entry. The only thing it asks the daemon i
 backup was (a cheap D-Bus property, cached), to tell which files changed since.
 """
 
+import fnmatch
 import gettext
+import glob
 import os
 import time
 from dataclasses import dataclass
@@ -35,7 +37,7 @@ ATTRIBUTE = "delta_backup"
 SAVED, PENDING = "saved", "pending"
 PENDING_EMBLEM = "emblem-synchronizing"
 # What the daemon never backs up on its own (daemon/composition.py DEFAULT_EXCLUDES).
-DEFAULT_EXCLUDES = (".cache", ".local/share/Trash")
+DEFAULT_EXCLUDES = (".cache", ".local/share/Trash", ".var/app/*/cache")
 
 
 def flatpak_share_dirs(user_data_dir=None) -> list[str]:
@@ -105,15 +107,23 @@ def _within(path: str, folder: str) -> bool:
     return path == folder or path.startswith(folder.rstrip("/") + "/")
 
 
+def _skipped_by_default(path: str, home: str) -> bool:
+    """Borg's own matching: `*` also crosses folders, and a folder takes what is inside it."""
+    return any(
+        fnmatch.fnmatchcase(path, f"{glob.escape(home)}/{relative}{inside}")
+        for relative in DEFAULT_EXCLUDES
+        for inside in ("", "/*")
+    )
+
+
 def is_covered(path: str, home: str, info: BackupInfo) -> bool:
     """Whether the backup takes this file: inside a chosen folder and not in a skipped one."""
     roots = [_expand(s, home) for s in info.sources]
     roots = [r for r in roots if r.startswith("/")] or [home]
     if not any(_within(path, root) for root in roots):
         return False
-    skipped = [os.path.join(home, relative) for relative in DEFAULT_EXCLUDES]
-    skipped += [e for e in (_expand(e, home) for e in info.excludes) if e.startswith("/")]
-    return not any(_within(path, folder) for folder in skipped)
+    skipped = [e for e in (_expand(e, home) for e in info.excludes) if e.startswith("/")]
+    return not (_skipped_by_default(path, home) or any(_within(path, folder) for folder in skipped))
 
 
 def backup_status(path: str, changed_at: float, info: BackupInfo, home: str) -> str | None:
