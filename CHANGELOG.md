@@ -5,6 +5,48 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-27
+
+### Added
+
+- **Each change writes its entry of the changelog in a file of its own** (`changelog.d/`), not in `CHANGELOG.md`, so two pull
+  requests no longer conflict there; the version pull request gathers them with `scripts/ci/changelog_assemble.sh`.
+
+- **The CI runs the tests on every core of its runner** (`pytest-xdist`), with the coverage of each worker combined into the same
+  report that Sonar reads.
+
+- **The tests of the devenv scripts `test` and `cov` run on every core** (`pytest-xdist`): the whole suite goes from about 110 to
+  about 40 seconds. `test -n 0` runs it in one process, and the commands of `AGENTS.md` and the CI are unchanged.
+
+- **A pull request that changes nothing the mutation tests read skips them.** They were 511 of the 780 seconds of the `devenv` job,
+  even for a change to `TODO.md`. They run when `src/`, `tests/`, `po/` or their configuration change (and for anything not known to
+  be safe), and on every push to `main`.
+
+- **The check of a published package also opens its window.** After the backup and the restore, the window of the versions of a file
+  is opened from the installed package, under a virtual display, and it must stay open with no traceback and no GLib critical.
+
+### Fixed
+
+- **Every failure of Borg is in the daemon's log, with its exit status and all it said**, not only the crashes and the backups. A
+  question of a window (versions, a folder, what was deleted, a search) that failed was answered to the window and left no trace; and
+  one that broke in a way Delta did not foresee was never answered at all, so the window waited for the bus to give up. Now it
+  is logged with its traceback and answered as a failure.
+
+- **The icon of a check in progress is a clean symbolic one**, like those of the other states (the previous one was drawn as a blurry
+  bitmap), and the daemon says in its log when a check starts and how it ended.
+
+- **The check of a published package on Fedora no longer waits for a version it already has.** `dnf install` of a package that is
+  installed does nothing in DNF 5, so after the first try it never took the newer version that the Build Service published, and the
+  job failed after 180 minutes although the package was there (a fault of the check, not of the package).
+
+- **The cache of Flatpak apps is no longer backed up.** Only `~/.cache` was skipped, but a Flatpak app keeps its cache in
+  `~/.var/app/<id>/cache`, which with the whole home folder as the source filled the backups with what any app makes again. Its data
+  (`~/.var/app/<id>/data`, `config`) is still copied.
+
+- **The empty space of your home folder offers «Restore Previous Version…».** It was left out on purpose, but it is the place
+  where a folder you deleted from the home folder is looked for, so nothing could be recovered from there. The versions of the home
+  folder are browsed and what was deleted in it is recovered; the folder as a whole is still never replaced.
+
 ## [0.4.0] - 2026-11-25
 
 ### Added
