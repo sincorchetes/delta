@@ -15,6 +15,7 @@ from delta.ui.about import build_about
 from delta.ui.client import DeltaClient
 from delta.ui.history_window import HistoryWindow
 from delta.ui.job_tracker import JobTracker
+from delta.ui.passphrase_dialog import ask_passphrase
 from delta.ui.preferences_dialog import PreferencesDialog
 from delta.ui.status import Action, DaemonSnapshot, Health, build_status, summarise
 from delta.ui.wizard_window import SetupWizard
@@ -120,6 +121,9 @@ class StatusWindow(Adw.ApplicationWindow):
         if self._action is Action.UNLOCK:
             self._confirm_unlock()
             return
+        if self._action is Action.ENTER_PASSPHRASE:
+            ask_passphrase(self, self._setting("repository-location", ""), self._on_passphrase)
+            return
         if self._action is Action.CANCEL_CHECK:
             button.set_sensitive(False)
             self._client.cancel_check(lambda value, error: self.refresh())
@@ -151,6 +155,11 @@ class StatusWindow(Adw.ApplicationWindow):
         if dialog.choose_finish(result) == "unlock":
             self._button.set_sensitive(False)
             self._client.unlock_repository(self._on_started)
+
+    def _on_passphrase(self, passphrase: str) -> None:
+        """The daemon opens the repository with it and, only if that works, keeps it in the keyring."""
+        self._button.set_sensitive(False)
+        self._client.use_repository(self._setting("repository-location", ""), passphrase, self._on_started)
 
     def _on_started(self, job_id, error) -> None:
         if error:

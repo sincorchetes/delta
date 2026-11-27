@@ -227,9 +227,7 @@ msgstr ""
 msgid "stopped on request"
 msgstr ""
 
-#. a development override supplies it
-#. Without this, borg would try to ask on a terminal that does not exist.
-#: src/delta/infrastructure/borg_runner.py:254
+#: src/delta/domain/errors.py:33
 msgid "The passphrase for this repository is not in the keyring."
 msgstr ""
 
@@ -1479,4 +1477,22 @@ msgid "Checking your backups…"
 msgstr ""
 
 msgid "Delta is making sure your backups can be read. It may take a while; you can close this window."
+msgstr ""
+
+msgid "The passphrase of your backups is not in the keyring"
+msgstr ""
+
+msgid "Delta cannot open your backups without it, so nothing is backed up. Type it again and it is kept in the keyring."
+msgstr ""
+
+msgid "Enter passphrase…"
+msgstr ""
+
+msgid "Enter the passphrase of your backups"
+msgstr ""
+
+msgid "The passphrase of the backups in {location}. It is checked before it is kept in the keyring."
+msgstr ""
+
+msgid "Use passphrase"
 msgstr ""

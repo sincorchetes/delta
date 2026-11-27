@@ -20,7 +20,7 @@ Unlocking one that is in use can damage your backups. Delta never does it by its
 
 Choose **Try again**. If it fails again, the message tells you why. The most common causes:
 
-- **The passphrase for this repository is not in the keyring.** Open the keyring, or use your recovery key as described in [Recovery key and passphrase](../recovery-key/).
+- **The passphrase of your backups is not in the keyring.** The window offers **Enter passphrase…**: type your passphrase, or your recovery key as described in [Recovery key and passphrase](../recovery-key/). Delta checks it against your backups before keeping it in the keyring.
 - **Timed out waiting for the keyring. Is it locked?** Unlock it (log in again) and try again.
 - **The keyring service is not available.** Start your keyring, for example GNOME Keyring, in your session.
 - **The backup destination could not be created.** Check that the folder or the drive is connected and that you can write to it.

@@ -225,3 +225,37 @@ def test_adopting_a_repository_makes_its_last_backup_known(bus, tmp_path):
 
     assert finished is not None and finished[1] is True, finished
     assert jobs.last_backup > 0
+
+
+def adoptable(bus, tmp_path, failure):
+    """A repository with its passphrase gone from the keyring, after a backup that failed for it."""
+    store = MemoryStore()
+    runner = BorgRunner(env={"BORG_BASE_DIR": str(tmp_path / "bh")}, secrets=store)
+    repo = Repository(str(tmp_path / "repo"))
+    jobs = JobRunner(bus)
+    service = DeltaService(bus, SnapshotService(runner, repo), jobs, setup=RepositorySetup(runner, store))
+    store.data[repo.location] = "pw"
+    runner.init(repo)
+    store.data.clear()
+    jobs.last_error = failure
+    return repo, jobs, service
+
+
+def test_adopting_a_repository_clears_the_error_that_asked_for_its_passphrase(bus, tmp_path):
+    repo, jobs, service = adoptable(bus, tmp_path, "The passphrase for this repository is not in the keyring.")
+
+    _, finished, _ = call_and_wait_finished(bus, "UseRepository", GLib.Variant("(ss)", (repo.location, "pw")))
+    service.unregister()
+
+    assert finished is not None and finished[1] is True, finished
+    assert jobs.last_error == ""
+
+
+def test_a_passphrase_that_does_not_open_the_repository_leaves_the_error_as_it_was(bus, tmp_path):
+    repo, jobs, service = adoptable(bus, tmp_path, "The passphrase for this repository is not in the keyring.")
+
+    _, finished, _ = call_and_wait_finished(bus, "UseRepository", GLib.Variant("(ss)", (repo.location, "wrong")))
+    service.unregister()
+
+    assert finished is not None and finished[1] is False, finished
+    assert jobs.last_error == "The passphrase for this repository is not in the keyring."

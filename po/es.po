@@ -239,9 +239,7 @@ msgstr "no se puede ejecutar {program}: {reason}"
 msgid "stopped on request"
 msgstr "detenido a petición"
 
-#. a development override supplies it
-#. Without this, borg would try to ask on a terminal that does not exist.
-#: src/delta/infrastructure/borg_runner.py:254
+#: src/delta/domain/errors.py:33
 msgid "The passphrase for this repository is not in the keyring."
 msgstr "La contraseña de este repositorio no está en el llavero."
 
@@ -1536,3 +1534,21 @@ msgstr "Comprobando tus copias…"
 
 msgid "Delta is making sure your backups can be read. It may take a while; you can close this window."
 msgstr "Delta está comprobando que tus copias se pueden leer. Puede tardar; puedes cerrar esta ventana."
+
+msgid "The passphrase of your backups is not in the keyring"
+msgstr "La contraseña de tus copias no está en el llavero"
+
+msgid "Delta cannot open your backups without it, so nothing is backed up. Type it again and it is kept in the keyring."
+msgstr "Delta no puede abrir tus copias sin ella, así que no se copia nada. Escríbela de nuevo y se guardará en el llavero."
+
+msgid "Enter passphrase…"
+msgstr "Introducir contraseña…"
+
+msgid "Enter the passphrase of your backups"
+msgstr "Introduce la contraseña de tus copias"
+
+msgid "The passphrase of the backups in {location}. It is checked before it is kept in the keyring."
+msgstr "La contraseña de las copias de {location}. Se comprueba antes de guardarla en el llavero."
+
+msgid "Use passphrase"
+msgstr "Usar contraseña"

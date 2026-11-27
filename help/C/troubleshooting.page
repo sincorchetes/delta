@@ -28,8 +28,8 @@
     <title>The last backup failed</title>
     <p>Choose <gui style="button">Try again</gui>. If it fails again, the message says why. The usual causes:</p>
     <list>
-      <item><p><em>The passphrase for this repository is not in the keyring.</em> Open the keyring, or use your recovery key as
-      in <link xref="recovery-key"/>.</p></item>
+      <item><p><em>The passphrase of your backups is not in the keyring.</em> The window offers <gui>Enter passphrase…</gui>: type your passphrase,
+      or your recovery key as in <link xref="recovery-key"/>. Delta checks it against your backups before keeping it in the keyring.</p></item>
       <item><p><em>Timed out waiting for the keyring. Is it locked?</em> Unlock it (log in again) and try again.</p></item>
       <item><p><em>The keyring service is not available.</em> Start your keyring, for example GNOME Keyring, in your session.</p></item>
       <item><p><em>The backup destination could not be created.</em> Check that the folder or drive is connected and that you can write to it.</p></item>

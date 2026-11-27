@@ -40,6 +40,7 @@ src/delta/ui/folder_listing.py
 src/nautilus/delta_extension.py
 src/delta/ui/status.py
 src/delta/ui/window.py
+src/delta/ui/passphrase_dialog.py
 src/delta/ui/wizard.py
 src/delta/ui/wizard_pages.py
 src/delta/ui/wizard_destination.py

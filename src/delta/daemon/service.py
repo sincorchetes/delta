@@ -251,6 +251,7 @@ class DeltaService:
             try:
                 if adopt:
                     jobs.seed_last_backup(setup.adopt(repo, passphrase))
+                    jobs.clear_error()  # a passphrase that opens it: «not in the keyring» and the like no longer apply
                 else:
                     setup.create(repo, passphrase or None)
             except DeltaError as err:
