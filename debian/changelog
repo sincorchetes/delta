@@ -1,3 +1,10 @@
+delta-backup (0.5.2-1) unstable; urgency=medium
+
+  * The daemon says in its log which repository it works on, and for which one the keyring has no passphrase.
+  * Creating a repository in another folder clears the failure of the last backup.
+
+ -- Álvaro Castillo <sincorchetes@gmail.com>  Fri, 27 Nov 2026 12:00:00 +0100
+
 delta-backup (0.5.1-1) unstable; urgency=medium
 
   * When the keyring has lost the passphrase of the backups, the window says so and offers "Enter passphrase…": the daemon opens the repository with it and keeps it in the keyring only if it opens.
