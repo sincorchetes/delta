@@ -194,14 +194,17 @@ class DeltaMenuProvider(GObject.GObject, Nautilus.MenuProvider):
         """Right click on the empty space of a folder: its own previous versions."""
         # (folder); older releases passed (window, folder). Nautilus keys each entry's action by
         # its name, so this one must differ from the file entry or the two would run each other's.
-        return self._items_for(args[-1], "Delta::RestorePreviousVersionHere")
+        return self._items_for(args[-1], "Delta::RestorePreviousVersionHere", browsable_home=True)
 
-    def _items_for(self, selected, name):
+    def _items_for(self, selected, name, browsable_home=False):
+        """The home folder itself is browsed (what was deleted in it is recovered), never replaced as a whole."""
         if selected is None or selected.get_uri_scheme() != "file":
             return []
         location = selected.get_location()
         path = location.get_path() if location is not None else None
-        if not is_restorable(path, GLib.get_home_dir()) or not has_backups(repository_location()):
+        home = GLib.get_home_dir()
+        is_home = bool(path) and browsable_home and os.path.normpath(path) == os.path.normpath(home)
+        if not (is_home or is_restorable(path, home)) or not has_backups(repository_location()):
             return []
         _ = self._gettext  # named `_` so xgettext finds the string below
         entry = Nautilus.MenuItem(
