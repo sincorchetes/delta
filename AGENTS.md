@@ -156,7 +156,8 @@ window of the versions of a file against that daemon.
   every branch, a one-line fix and a change to the CI included, and a push is not "just to let the CI try it".
 - To merge, the jobs `devenv` (tests and mutants) and `web` must pass in the PR. The distributions workflow is a check, not a gate.
 - A tag is pushed only after the PR that raises the version is merged: `scripts/ci/check_tag.sh` stops the publication otherwise.
-- A new version is one more PR: it raises the version in `meson.build`, `packaging/rpm/delta-backup.spec` (with its `%changelog`),
+- A new version is one more PR, in a branch called `chore/release-X.Y.Z` (`release/…` cannot be: `release` is already a branch, the one
+  of OBS): it raises the version in `meson.build`, `packaging/rpm/delta-backup.spec` (with its `%changelog`),
   `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md` (`tests/unit/test_packaging.py` fails
   if they disagree) and, once in `main`, it is tagged `vX.Y.Z` (with the `v` attached to the number: `v0.1.0`, never `v.0.1.0`).
   The section of the version in `CHANGELOG.md` is made by `sh scripts/ci/changelog_assemble.sh X.Y.Z`, which gathers the fragments.
