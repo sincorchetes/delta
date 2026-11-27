@@ -159,6 +159,10 @@ window of the versions of a file against that daemon.
 - A new version is one more PR: it raises the version in `meson.build`, `packaging/rpm/delta-backup.spec` (with its `%changelog`),
   `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md` (`tests/unit/test_packaging.py` fails
   if they disagree) and, once in `main`, it is tagged `vX.Y.Z` (with the `v` attached to the number: `v0.1.0`, never `v.0.1.0`).
+  The section of the version in `CHANGELOG.md` is made by `sh scripts/ci/changelog_assemble.sh X.Y.Z`, which gathers the fragments.
+- **The changelog is written in fragments.** A change that a person would notice adds one file `changelog.d/<name>.<kind>.md`
+  (kind: `added`, `changed`, `fixed`…; see `changelog.d/README.md`) and **does not edit `CHANGELOG.md`**: two pull requests editing
+  the same lines conflict, and resolving that means running every test again.
   The guide for contributors is in `CONTRIBUTING.md`.
 
 ## Definition of done
