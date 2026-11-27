@@ -5,6 +5,17 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.2] - 2026-11-27
+
+### Fixed
+
+- **Creating a repository in another folder clears the failure of the last backup.** The window kept saying «the passphrase is not in
+  the keyring» after the new repository was made, until a backup ended well; only adopting an existing one cleared it.
+
+- **The daemon says in its log which repository it works on, and for which one the keyring has no passphrase.** «The passphrase for this
+  repository is not in the keyring» said nothing about which, so it could not be told from the log whether the passphrase was missing or
+  the daemon was looking for another repository's. Each time the services are built, the repository is logged.
+
 ## [0.5.1] - 2026-11-27
 
 ### Added

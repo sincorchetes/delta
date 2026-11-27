@@ -2,7 +2,7 @@
 %global appid io.github.sincorchetes.Delta
 
 Name:           delta-backup
-Version:        0.5.1
+Version:        0.5.2
 Release:        1%{?dist}
 Summary:        Time travel for your files in GNOME, with BorgBackup
 License:        GPL-3.0-or-later
@@ -108,6 +108,10 @@ sed -i '1s|^#!.*|#!%{__python3}|' %{buildroot}%{_bindir}/delta-ui %{buildroot}%{
 %{_userunitdir}/delta.timer
 
 %changelog
+* Fri Nov 27 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.5.2-1
+- The daemon says in its log which repository it works on, and for which one the keyring has no passphrase
+- Creating a repository in another folder clears the failure of the last backup
+
 * Fri Nov 27 2026 Álvaro Castillo <sincorchetes@gmail.com> - 0.5.1-1
 - When the keyring has lost the passphrase of the backups, the window says so and offers «Enter passphrase…»: the daemon opens the repository with it and keeps it in the keyring only if it opens
 
