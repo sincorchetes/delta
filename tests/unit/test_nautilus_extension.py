@@ -66,9 +66,21 @@ def test_the_empty_space_of_a_folder_offers_that_folders_versions(provider, exte
     assert launched == ["/home/ana/Documents"]
 
 
-@pytest.mark.parametrize("folder", [None, FileInfo("/home/ana"), FileInfo("/etc"), FileInfo(None)])
-def test_no_entry_on_the_background_of_home_or_outside_it(provider, folder):
+@pytest.mark.parametrize("folder", [None, FileInfo("/etc"), FileInfo("/home/analyst"), FileInfo(None)])
+def test_no_entry_on_the_background_outside_the_home_folder(provider, folder):
     assert provider.get_background_items(folder) == []
+
+
+@pytest.mark.parametrize("home", ["/home/ana", "/home/ana/"])
+def test_the_empty_space_of_the_home_folder_offers_its_versions(provider, extension, monkeypatch, home):
+    launched = []
+    monkeypatch.setattr(extension, "launch_versions", launched.append)
+    (entry,) = provider.get_background_items(FileInfo(home, directory=True))
+    _, callback, args = entry.handlers[0]
+
+    callback(entry, *args)
+
+    assert launched == [home]
 
 
 def test_older_nautilus_passing_the_window_first_still_works(provider):
