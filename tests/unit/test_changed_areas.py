@@ -96,6 +96,8 @@ def test_what_the_mutation_tests_read_runs_them(tmp_path, changed):
     [
         {"TODO.md": "x"},
         {"CHANGELOG.md": "x"},
+        {"changelog.d/a-change.fixed.md": "x"},
+        {"scripts/ci/changelog_assemble.sh": "x"},
         {"docs/roadmap.md": "x"},
         {"LICENSE": "x"},
         {"packaging/rpm/delta-backup.spec": "x"},

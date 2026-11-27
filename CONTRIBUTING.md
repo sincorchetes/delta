@@ -56,11 +56,16 @@ pyright                             # types: no errors (PyGObject has no stubs, 
 - **Flatpak.** Nothing from the host (paths, binaries, `secret-tool`) outside its adapter. The window and the Files extension only
   talk to the daemon over D-Bus.
 
+## The changelog
+
+A change that a person would notice adds **a file of its own** in `changelog.d/` (`<name>.<kind>.md`, with a single entry: see
+`changelog.d/README.md`) and does not edit `CHANGELOG.md`, so that two pull requests never conflict there.
+
 ## A new version
 
 A release is one more pull request. It changes the version in `meson.build`, `packaging/rpm/delta-backup.spec` (and its
-`%changelog`), `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md`, and sets the date of the
-release in the changelog. `tests/unit/test_packaging.py` fails if they disagree. Once it is merged, **and not before**, tag `main`
+`%changelog`), `debian/changelog`, `packaging/arch/PKGBUILD`, `packaging/obs/delta-backup.dsc` and `CHANGELOG.md`: for this one, run
+`sh scripts/ci/changelog_assemble.sh X.Y.Z`, which gathers the fragments into the section of the version, with the date of today. `tests/unit/test_packaging.py` fails if they disagree. Once it is merged, **and not before**, tag `main`
 as `vX.Y.Z` (for example `v0.1.0`, with no dot after the `v`). The publication checks the tag first (`scripts/ci/check_tag.sh`): if
 the tree it points to does not say that version in `meson.build` and in `CHANGELOG.md`, it stops before it publishes anything. (It
 was added after a tag was pushed before the version pull request was merged: the AUR and the GitHub Release failed, and OBS tried
