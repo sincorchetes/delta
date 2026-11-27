@@ -60,6 +60,11 @@
   </supports>
 
   <releases>
+    <release version="0.5.1" date="2026-11-27">
+      <description>
+        <p>When the keyring has lost the passphrase of your backups, the window asks for it again.</p>
+      </description>
+    </release>
     <release version="0.5.0" date="2026-11-27">
       <description>
         <p>Right click on the empty space of your home folder offers «Restore Previous Version…». The cache of Flatpak apps is no longer backed up.</p>
