@@ -22,6 +22,10 @@ and the versions follow [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- **The empty space of your home folder offers «Restore Previous Version…».** It was left out on purpose, but it is the place
+  where a folder you deleted from the home folder is looked for, so nothing could be recovered from there. The versions of the home
+  folder are browsed and what was deleted in it is recovered; the folder as a whole is still never replaced.
+
 - **Every failure of Borg is in the daemon's log, with its exit status and all it said**, not only the crashes and the backups. A
   question of a window (versions, a folder, what was deleted, a search) that failed was answered to the window and left no trace; and
   one that broke in a way Delta did not foresee was never answered at all, so the window waited for the bus to give up. Now it
