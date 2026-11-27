@@ -92,3 +92,15 @@ def test_an_excluded_single_file_is_skipped(world):
     (root / "notes.txt").write_text("keep")
 
     assert backed_up(runner, repo, root, tmp_path, [root / "secret.txt"]) == {"notes.txt"}
+
+
+def test_the_cache_of_a_flatpak_app_is_skipped_but_not_its_data(world):
+    runner, repo, _, tmp_path = world
+    home = tmp_path / "home"
+    for folder in (".cache/x", ".var/app/org.x.App/cache/deep", ".var/app/org.x.App/data", ".var/app/org.x.App/cached"):
+        (home / folder).mkdir(parents=True)
+        (home / folder / "f").write_text("x")
+
+    files = backed_up(runner, repo, home, tmp_path, [])
+
+    assert files == {".var/app/org.x.App/data/f", ".var/app/org.x.App/cached/f"}

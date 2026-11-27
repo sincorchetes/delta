@@ -12,6 +12,9 @@ from nautilus_extension_support import extension, home  # noqa: F401  (fixtures)
         ("/home/ana/Documents/a.txt", (), (), True),  # no folders chosen: the whole home folder
         ("/home/ana/.cache/x/y", (), (), False),  # what the daemon never backs up
         ("/home/ana/.local/share/Trash/files/old", (), (), False),
+        ("/home/ana/.var/app/org.x.App/cache/y", (), (), False),  # the cache of a Flatpak app
+        ("/home/ana/.var/app/org.x.App/data/y", (), (), True),  # its data is backed up
+        ("/home/ana/.var/app/org.x.App/cached", (), (), True),  # a similar name
         ("/home/ana/Pictures/me.jpg", ("~/Pictures",), (), True),
         ("/home/ana/Documents/a.txt", ("~/Pictures",), (), False),  # outside the chosen folders
         ("/home/ana/Picturesque/a.txt", ("~/Pictures",), (), False),  # a sibling, not inside

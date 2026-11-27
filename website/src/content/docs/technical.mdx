@@ -59,7 +59,7 @@ deduplicate and encrypt. Delta uses Borg **for what it needs**, and each reason 
 
 1. **The schedule.** Every hour by default, a `systemd` user timer asks Delta's service for a backup. If the computer was off at the due time, one is made on start, as `Persistent=true` does. In the Flatpak, Delta's own timer does the same.
 2. **One job at a time.** A backup moves through a few states: pending, running, and then succeeded, succeeded with warnings, interrupted or failed. Nothing else is allowed.
-3. **What is copied.** The folders you chose or, with none chosen, your home folder, except `~/.cache`, the trash and the backup folder itself (a destination inside your home folder is never copied into itself). If you chose folders and none is valid, the backup fails: it never grows to your whole home folder on its own.
+3. **What is copied.** The folders you chose or, with none chosen, your home folder, except `~/.cache`, the caches of Flatpak apps, the trash and the backup folder itself (a destination inside your home folder is never copied into itself). If you chose folders and none is valid, the backup fails: it never grows to your whole home folder on its own.
 4. **The key.** The repository password stays in your keyring and reaches Borg through a private pipe that only its process can read.
 5. **What is kept.** After each copy, old ones are removed by a grandfather-father-son rule: by default 24 hourly, 7 daily, 4 weekly and 12 monthly. Delta refuses a rule that would keep nothing.
 6. **If it is interrupted.** A marker file records that a copy is running. If the service starts and finds it, the copy is resumed.
