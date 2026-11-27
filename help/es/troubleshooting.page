@@ -28,8 +28,8 @@
     <title>La última copia falló</title>
     <p>Pulsa <gui style="button">Reintentar</gui>. Si vuelve a fallar, el mensaje dice por qué. Las causas habituales:</p>
     <list>
-      <item><p><em>La contraseña de este repositorio no está en el llavero.</em> Abre el llavero, o usa tu clave de recuperación como
-      en <link xref="recovery-key"/>.</p></item>
+      <item><p><em>La contraseña de tus copias no está en el llavero.</em> La ventana ofrece <gui>Introducir contraseña…</gui>: escribe tu contraseña,
+      o tu clave de recuperación como en <link xref="recovery-key"/>. Delta la comprueba con tus copias antes de guardarla en el llavero.</p></item>
       <item><p><em>Se agotó el tiempo esperando al llavero. ¿Está bloqueado?</em> Desbloquéalo (vuelve a iniciar sesión) e inténtalo de nuevo.</p></item>
       <item><p><em>El servicio del llavero no está disponible.</em> Inicia tu llavero, por ejemplo GNOME Keyring, en tu sesión.</p></item>
       <item><p><em>No se pudo crear el destino de las copias.</em> Comprueba que la carpeta o la unidad está conectada y que puedes escribir en ella.</p></item>

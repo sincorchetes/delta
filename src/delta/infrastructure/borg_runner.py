@@ -16,7 +16,7 @@ from gi.repository import Gio, GLib
 
 from delta.application.ports import SecretStore
 from delta.domain.backup_job import BackupJob
-from delta.domain.errors import BackupInterrupted, BackupWarning, EngineError, PassphraseError, RepositoryDamaged
+from delta.domain.errors import BackupInterrupted, BackupWarning, EngineError, PassphraseError, RepositoryDamaged, missing_passphrase
 from delta.domain.file_version import FileEntry, FolderEntry
 from delta.domain.progress import ProgressEvent
 from delta.domain.repository import Repository
@@ -261,7 +261,7 @@ class BorgRunner:
             if PASSPHRASE_SOURCES & self._env.keys():
                 return  # a development override supplies it
             # Without this, borg would try to ask on a terminal that does not exist.
-            raise PassphraseError(_("The passphrase for this repository is not in the keyring."))
+            raise PassphraseError(missing_passphrase())
         read_fd, write_fd = os.pipe()
         with os.fdopen(write_fd, "wb") as writer:
             writer.write(passphrase.encode())

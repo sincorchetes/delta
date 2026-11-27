@@ -26,6 +26,21 @@ def is_lock_message(text: str) -> bool:
     return "lock" in lowered and ("failed" in lowered or "timeout" in lowered) and engine_errno(text) is None
 
 
+MISSING_PASSPHRASE = "The passphrase for this repository is not in the keyring."
+
+
+def missing_passphrase() -> str:
+    return _("The passphrase for this repository is not in the keyring.")
+
+
+def is_missing_passphrase_message(text: str) -> bool:
+    """Whether an error says that the keyring has no passphrase for the repository, so the person can type it again.
+
+    The daemon may tell it in another language than the window's, so the original wording counts as well.
+    """
+    return MISSING_PASSPHRASE in text or missing_passphrase() in text
+
+
 def is_full_message(text: str) -> bool:
     """Whether an engine message says that a disk has no room left (or a quota is used up)."""
     lowered = text.lower()

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 
-from delta.domain.errors import is_lock_message
+from delta.domain.errors import is_lock_message, is_missing_passphrase_message
 from delta.i18n import _, ngettext
 
 
@@ -17,6 +17,7 @@ class Health(str, Enum):
     UNAVAILABLE = "unavailable"
     FAILED = "failed"
     LOCKED = "locked"
+    NO_PASSPHRASE = "no-passphrase"
     PENDING = "pending"
     OK = "ok"
 
@@ -26,6 +27,7 @@ class Action(Enum):
     BACK_UP = "back-up"
     SET_UP = "set-up"
     UNLOCK = "unlock"  # always behind an explicit confirmation
+    ENTER_PASSPHRASE = "enter-passphrase"
     CANCEL_CHECK = "cancel-check"
 
 
@@ -196,6 +198,15 @@ def build_status(snapshot: DaemonSnapshot, now: datetime) -> StatusView:
             "dialog-warning-symbolic",
             Action.UNLOCK,
             _("Unlock…"),
+        )
+    if snapshot.last_error and is_missing_passphrase_message(snapshot.last_error):
+        return StatusView(
+            Health.NO_PASSPHRASE,
+            _("The passphrase of your backups is not in the keyring"),
+            _("Delta cannot open your backups without it, so nothing is backed up. Type it again and it is kept in the keyring."),
+            "dialog-password-symbolic",
+            Action.ENTER_PASSPHRASE,
+            _("Enter passphrase…"),
         )
     if snapshot.last_error:
         return StatusView(
