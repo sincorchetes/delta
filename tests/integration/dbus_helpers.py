@@ -34,16 +34,23 @@ def call_rows(bus, method, parameters, timeout_ms=15000):
 
 
 def call_and_wait_finished(bus, method, parameters=None, timeout_ms=15000):
-    """Call `method` asynchronously and wait for BackupFinished.
+    """Call `method` asynchronously and wait for the BackupFinished of the job it returned.
 
-    Returns (job_id, finished_params, error_message).
+    Another job can finish first (the backup that a closed snapshot lets go on), so the signals are kept and the one
+    of this job is looked for. Returns (job_id, finished_params, error_message).
     """
     loop = GLib.MainLoop()
-    outcome = {}
+    outcome, seen = {}, []
+
+    def settle():
+        for finished in seen:
+            if finished[0] == outcome.get("job_id"):
+                outcome["finished"] = finished
+                loop.quit()
 
     def on_finished(*args):
-        outcome["finished"] = args[-1].unpack()
-        loop.quit()
+        seen.append(args[-1].unpack())
+        settle()
 
     def on_reply(connection, result):
         try:
@@ -51,12 +58,17 @@ def call_and_wait_finished(bus, method, parameters=None, timeout_ms=15000):
         except GLib.Error as err:
             outcome["error"] = err.message
             loop.quit()
+        else:
+            settle()
 
-    bus.signal_subscribe(None, IFACE, "BackupFinished", PATH, None, Gio.DBusSignalFlags.NONE, on_finished)
+    subscription = bus.signal_subscribe(
+        None, IFACE, "BackupFinished", PATH, None, Gio.DBusSignalFlags.NONE, on_finished
+    )
     bus.call(
         bus.get_unique_name(), PATH, IFACE, method, parameters, None,
         Gio.DBusCallFlags.NONE, 5000, None, on_reply,
     )
     GLib.timeout_add(timeout_ms, loop.quit)
     loop.run()
+    bus.signal_unsubscribe(subscription)
     return outcome.get("job_id"), outcome.get("finished"), outcome.get("error")
